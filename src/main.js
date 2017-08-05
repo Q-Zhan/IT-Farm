@@ -1,0 +1,14 @@
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
+// 使用axios进行数据请求
+Vue.use(VueAxios, axios)
+
+new Vue({
+  el: '#app',
+  router,
+  render: h => h(App)
+})
