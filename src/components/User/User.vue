@@ -1,6 +1,6 @@
 <template>
-  <div id="bar">
-    bar
+  <div id="user">
+    user
   </div>
 </template>
 
@@ -14,10 +14,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-#bar {
-  width: 100px;
-  height: 1000px;
-  background: blue;
-}
+<style lang="scss" scoped>
+
 </style>
