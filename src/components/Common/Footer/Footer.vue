@@ -1,25 +1,25 @@
 <template>
   <div id="footer">
     <div class="button" @click="switchTo('home')">
-      <router-link to="/home">
+      <router-link to="/app/home">
         <img :src="chosen=='home' ? home_chose : home"/>
         <span :style="{color: chosen=='home' ? '#282D33':'#A1A5A8'}">无秘</span>
       </router-link>
     </div>
     <div class="button" @click="switchTo('find')">
-      <router-link to="/find">
+      <router-link to="/app/find">
         <img :src="chosen=='find' ? find_chose : find"/>
         <span :style="{color: chosen=='find' ? '#282D33':'#A1A5A8'}">发现</span>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('message')">
-      <router-link to="/message">
+      <router-link to="/app/message">
         <img :src="chosen=='message' ? message_chose : message"/>
         <span :style="{color: chosen=='message' ? '#282D33':'#A1A5A8'}">消息</span>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('user')">
-      <router-link to="/user">
+      <router-link to="/app/user">
         <img :src="chosen=='user' ? user_chose : user"/>
         <span :style="{color: chosen=='user' ? '#282D33':'#A1A5A8'}">我的</span>
       </router-link>
@@ -66,6 +66,7 @@ export default {
   background: white;
   position: fixed;
   bottom: 0;
+  border-top: 1px solid whitesmoke;
   display: flex;
   justify-content: space-around;
   align-items: center;

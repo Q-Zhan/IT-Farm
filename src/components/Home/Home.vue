@@ -54,6 +54,13 @@ export default {
           content: '哈哈哈阿达哈哈哈哈哈哈哈哈规范与而他哈哈哈哈哈哈哈哈',
           comment_num: '122',
           praise_num: '0'
+        },
+        {
+          id: '5',
+          area: '嵩山区',
+          content: '哈哈哈阿达哈哈哈哈哈哈哈哈规范与而他哈哈哈哈哈哈哈哈',
+          comment_num: '12',
+          praise_num: '0'
         }
 
       ]
@@ -67,6 +74,7 @@ export default {
   width: 100%;
   header {
     position: fixed;
+    top: 0;
     width: 100%;
     height: 1.4rem;
     border-bottom: 1px solid #F2F2F2;

@@ -1,16 +1,18 @@
 <template>
   <div id="list">
     <div v-for="(item, index) in items" :key="item.id" class="item" :style="{ background: getBackground(index)}">
-      <div class="header">
-        <img :src="avatar_img"/>
-        <div class="text">
-          <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
-          <span>{{ item.area }}</span>
+      <router-link :to="{name: 'detail', params: { id : item.id}}">
+        <div class="header">
+          <img :src="avatar_img"/>
+          <div class="text">
+            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
+            <span>{{ item.area }}</span>
+          </div>
         </div>
-      </div>
-      <div class="content">
-        {{ item.content }}
-      </div>
+        <div class="content">
+          {{ item.content }}
+        </div>
+      </router-link>
       <div class="footer">
         <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.comment_num }}</div>
         <div class="praise"><img :src="praise"/><span>{{ item.praise_num }}</span></div>
@@ -89,7 +91,7 @@ export default {
       margin: 0 auto;
       margin-top: 0.2rem;
       margin-bottom: 0.4rem;
-      font-size: 0.45rem;
+      font-size: 0.5rem;
       letter-spacing: 3px;
     }
     .footer {

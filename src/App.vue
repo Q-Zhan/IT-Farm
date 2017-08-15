@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <router-view class="router"></router-view>
-    <VFooter />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import VFooter from './components/Common/Footer/Footer.vue'
 export default {
   name: 'app',
-  components: {
-    VFooter
-  },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
@@ -30,9 +25,6 @@ html, body {
 #app {
   height: 100%;
   width: 100%;
-}
-.router {
-  padding-bottom: 1.5rem;
 }
 a {
   text-decoration: none;
