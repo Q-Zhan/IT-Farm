@@ -7,6 +7,7 @@
 
 <script>
 import VFooter from '../Common/Footer/Footer.vue'
+import { mapState } from 'vuex'
 export default {
   components: {
     VFooter
@@ -15,8 +16,17 @@ export default {
     return {
       
     }
-  }
-  
+  },
+  mounted() {
+    setTimeout(() => {
+      this.$store.commit('add')
+      console.log(this.count)
+    }, 2000)
+    
+  },
+  computed: mapState([
+    'count'
+  ])
 }
 </script>
 
