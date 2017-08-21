@@ -18,10 +18,6 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.$store.commit('add')
-      console.log(this.count)
-    }, 2000)
     
   },
   computed: mapState([
