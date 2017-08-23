@@ -26,29 +26,73 @@
     <div class="hint">
       请牢记您的密码！
     </div>
-    <Toast :message="toast.message" v-show="toast.ifShowed"/>
+    <Toast :message="toast.message" v-show="toast.isShowed"/>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
+import Loading from '../Common/Loading/Loading.vue'
 import back_arrow from './back_arrow.svg'
+
 export default {
   components: {
-    Toast
+    Toast,
+    Loading
   },
   data () {
     return {
       toast: {
         timer: '',
         message: '',
-        ifShowed: ''
+        isShowed: ''
       },
       back_arrow,
       account: '',
       name: '',
       password: '',
       password_again: ''
+    }
+  },
+  computed: mapState({
+    //'registerReply'
+    registerReply: state => state.register.registerReply,
+    registerToast: state => state.register.registerToast,
+    loginToast: state => state.login.loginToast,
+    isLoading: state => state.isLoading
+  }),
+  watch: {
+    registerToast: function(newToast) {
+      if (newToast == true) {
+        this.$store.commit('registerToasted')
+        switch(this.registerReply) {
+          case 'user name repeat':
+            this.passMessage('账号名已被注册')
+            this.account = ''
+            break
+          case 'nick name repeat':
+            this.passMessage('昵称已被注册')
+            this.name = ''
+            break
+          case 'success':
+            this.$store.dispatch('login', {
+              uname: this.account,
+              passwd: this.password
+            })
+            break
+        }
+      }
+    },
+    loginToast: function(newToast) {
+      if (newToast == true) {
+        this.passMessage('注册成功')
+        setTimeout(() => {
+          this.$router.push('/app/home')
+        }, 800)
+        this.$store.commit('loginToasted')
+      }
     }
   },
   methods: {
@@ -69,17 +113,22 @@ export default {
         this.passMessage('两次密码输入不一致')
         return 0
       }
-
+      this.$store.dispatch('register', {
+        uname: this.account,
+        nname: this.name,
+        passwd: this.password,
+        rpasswd: this.password_again
+      })
     },
     passMessage(message) {
       if (this.toast.timer != '') {
         clearTimeout(this.toast.timer)
       }
-      this.toast.ifShowed = true
+      this.toast.isShowed = true
       this.toast.message = message
       this.toast.timer = setTimeout(() => {
-        this.toast.ifShowed = false
-      }, 1500)
+        this.toast.isShowed = false
+      }, 1200)
     },
     turnBack() {
       this.$router.go(-1)
