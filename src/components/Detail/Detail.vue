@@ -113,7 +113,7 @@ export default {
     top: 0;
     height: 1.4rem;
     width: 100%;
-    border-bottom: 1px solid #F2F2F2;
+    border-bottom: 1px solid #D6D6D6;
     background: white;
     display: flex;
     align-items: center;
@@ -250,6 +250,7 @@ export default {
     position: fixed;
     bottom: 0;
     background: white;
+    border-top: 1px solid #D6D6D6;
     .reply_input {
       margin-top: 0.5rem;
       margin-left: 0.4rem;

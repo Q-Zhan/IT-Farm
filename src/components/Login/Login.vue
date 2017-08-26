@@ -54,10 +54,10 @@ export default {
         this.$store.commit('loginToasted')
         switch(this.loginReply) {
           case 'failed':
-            this.passMessage('账号或密码错误')
+            this.showToast('账号或密码错误')
             break
           case 'success':
-            this.passMessage('登录成功')
+            this.showToast('登录成功')
             setTimeout(() => {
               this.$router.push('/app/home')
             }, 800)
@@ -70,7 +70,7 @@ export default {
     verifyInfo() {
       // 检测账号密码
       if (this.account == '' || this.password == '') {
-        this.passMessage('请输入正确的账号密码')
+        this.showToast('请输入正确的账号密码')
         return 0
       }
       this.$store.dispatch('login', {
@@ -78,7 +78,7 @@ export default {
         passwd: this.password
       })
     },
-    passMessage(message) {
+    showToast(message) {
       if (this.toast.timer != '') {
         clearTimeout(this.toast.timer)
       }

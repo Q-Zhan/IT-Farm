@@ -10,7 +10,9 @@
       </div>
     </header>
     <div class="register">
-      <router-link to="/register">立即注册</router-link>
+      <div class="register_button">
+        <router-link to="/register">立即注册</router-link>
+      </div>
     </div>
     <div class="login">
       <router-link to="/login">已有账号? 点此登录</router-link>
@@ -36,6 +38,7 @@ export default {
   background: url('./timg.jpg') no-repeat;
   background-size: cover;
   display: inline-block;
+  position: relative;
   header {
     margin-top: 3.5rem;
     width: 100%;
@@ -66,23 +69,29 @@ export default {
     }
   }
   .register {
-    width: 68%;
+    width: 100%;
     height: 1.1rem;
-    margin: 0 auto;
-    margin-top: 7.2rem;
-    line-height: 1.1rem;
-    font-size: 0.45rem;
-    letter-spacing: 1px;
-    text-align: center;
-    background: #007ACC;
-    border-radius: 0.12rem;
+    position: absolute;
+    bottom: 1.5rem;
+    .register_button {
+      width: 68%;
+      margin: 0 auto;
+      height: 1.1rem;
+      line-height: 1.1rem;
+      font-size: 0.45rem;
+      letter-spacing: 1px;
+      text-align: center;
+      background: #007ACC;
+      border-radius: 0.12rem;
+    }
     a {
       color: white;
     }
   }
   .login {
     width: 100%;
-    margin-top: 0.5rem;
+    position: absolute;
+    bottom: 0.6rem;
     text-align: center;
     font-size: 0.35rem;
     letter-spacing: 2px;

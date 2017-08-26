@@ -34,7 +34,7 @@ export default {
         commit('stopLoading')
       })
   },
-  login({ commit, state}, { uname, passwd}) {
+  login({ commit, state }, { uname, passwd }) {
     commit('startLoading')
     Vue.axios.post(api + 'api/user/login', {}, {
         data: {
@@ -54,6 +54,31 @@ export default {
       .catch(err => {
         console.log(err)
         commit('stopLoading')
+      })
+  },
+  getMessageList({ commit, state }, { page }) {
+    commit('startLoading')
+    Vue.axios.get(api + 'api/message/page/' + page)
+      .then(res => {
+        let data = res.data 
+        // console.log(data)
+        commit('saveMessageList', { messageList: data.content.messageList })
+        commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        commit('stopLoading')
+      })
+  },
+  getLocationList({ commit, state }) {
+    Vue.axios.get(api + 'api/locale/list')
+      .then(res => {
+        let data = res.data 
+        // console.log(data)
+        commit('saveLocationList', { locationList: data.content.locationList })
+      })
+      .catch(err => {
+        console.log(err)
       })
   }
 }

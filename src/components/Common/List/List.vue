@@ -5,7 +5,7 @@
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
-            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
+            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{ item.name }}</span><br/>
             <span>{{ item.area }}</span>
           </div>
         </div>
@@ -61,6 +61,7 @@ export default {
 <style lang="scss" scoped>
 #list {
   width: 100%;
+  padding-bottom: 1.5rem;
   .item {
     .header {
       width: 90%;

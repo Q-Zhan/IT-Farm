@@ -1,5 +1,5 @@
 <template>
-  <div id="Navigation">
+  <div id="navigation">
     <router-view class="router"></router-view>
     <VFooter />
   </div>
@@ -7,7 +7,6 @@
 
 <script>
 import VFooter from '../Common/Footer/Footer.vue'
-import { mapState } from 'vuex'
 export default {
   components: {
     VFooter
@@ -19,15 +18,15 @@ export default {
   },
   mounted() {
     
-  },
-  computed: mapState([
-    'count'
-  ])
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+#navigation {
+  height: calc(100% - 1.5rem);
+}
 .router {
-  padding-bottom: 1.5rem;
+  
 }
 </style>

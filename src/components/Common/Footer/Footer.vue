@@ -66,15 +66,18 @@ export default {
   background: white;
   position: fixed;
   bottom: 0;
-  border-top: 1px solid whitesmoke;
+  border-top: 1px solid #D6D6D6;
   display: flex;
   justify-content: space-around;
-  align-items: center;
   .button {
     a {
       display: inline-block;
-      width: 0.7rem;
-      text-align: center;
+      width: 2rem;
+      height: 1.5rem;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       font-size: 0.35rem;
       img {
         display: block;

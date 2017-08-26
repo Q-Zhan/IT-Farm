@@ -30,5 +30,11 @@ export default {
     user.uid = content.user.uid 
     user.uname = content.user.uname 
     user.nname = content.user.nname 
+  },
+  saveMessageList(state, { messageList }) {
+    state.messageList = messageList
+  },
+  saveLocationList(state, { locationList }) {
+    state.locationList = locationList
   }
 }

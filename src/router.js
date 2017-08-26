@@ -8,6 +8,7 @@ import Detail from './components/Detail/Detail.vue'
 import Logo from './components/Logo/Logo.vue'
 import Register from './components/Register/Register.vue'
 import Login from './components/Login/Login.vue'
+import CreateMessage from './components/CreateMessage/CreateMessage.vue'
 
 // 异步载入
 // const Bar = resolve => require(['./components/Bar.vue'], resolve)
@@ -44,6 +45,11 @@ export default new Router({
     {
       path: '/login',
       component: Login
+    },
+    {
+      path: '/createMessage/:area',
+      name: 'createMessage',
+      component: CreateMessage
     }
   ],
   scrollBehavior (to, from, savedPosition) {

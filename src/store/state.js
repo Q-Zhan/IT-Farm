@@ -13,5 +13,7 @@ export default {
     uid: '',
     uname: '',
     nname: ''
-  }
+  },
+  messageList: [],
+  locationList: []
 }

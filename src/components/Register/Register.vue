@@ -69,11 +69,11 @@ export default {
         this.$store.commit('registerToasted')
         switch(this.registerReply) {
           case 'user name repeat':
-            this.passMessage('账号名已被注册')
+            this.showToast('账号名已被注册')
             this.account = ''
             break
           case 'nick name repeat':
-            this.passMessage('昵称已被注册')
+            this.showToast('昵称已被注册')
             this.name = ''
             break
           case 'success':
@@ -87,7 +87,7 @@ export default {
     },
     loginToast: function(newToast) {
       if (newToast == true) {
-        this.passMessage('注册成功')
+        this.showToast('注册成功')
         setTimeout(() => {
           this.$router.push('/app/home')
         }, 800)
@@ -100,17 +100,17 @@ export default {
       // 检测账号名
       let patt = new RegExp('^[A-Za-z0-9]+$')
       if (!patt.test(this.account) || this.account.length < 6 || this.account.length > 12) {
-        this.passMessage('账号名不符合要求')
+        this.showToast('账号名不符合要求')
         return 0
       }
       // 检测密码
       if (this.password.length < 6) {
-        this.passMessage('密码位数过少')
+        this.showToast('密码位数过少')
         return 0
       }
       // 检测密码重复
       if (this.password != this.password_again ) {
-        this.passMessage('两次密码输入不一致')
+        this.showToast('两次密码输入不一致')
         return 0
       }
       this.$store.dispatch('register', {
@@ -120,7 +120,7 @@ export default {
         rpasswd: this.password_again
       })
     },
-    passMessage(message) {
+    showToast(message) {
       if (this.toast.timer != '') {
         clearTimeout(this.toast.timer)
       }

@@ -2,68 +2,84 @@
   <div id="home">
     <header>
       <div class="name">匿密</div>
-      <div class="add"><img :src="add_img"/></div>
+      <div class="add"><img :src="add_img" @click="openAreaOption"/></div>
       <div class="clear"></div>
     </header>
-    <List :items="items"/>
+    <div class="area_option" v-if="isAreaOptionOpend" @click="closeAreaOption">
+      <div class="area_list">
+        <div v-for="(item, index) in locationList" :key="item.lid" class="area_item" >
+          <router-link :to="{name: 'createMessage', params: { area : item.lid }}">
+            <div :style="{ borderBottom: index == locationList.length-1 ? '0' : '1px solid black'}">
+              {{ item.locale }}
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </div>
+    <List :items="messages"/>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
 import List from '../Common/List/List.vue'
+import Loading from '../Common/Loading/Loading.vue'
 import add_img from './add.svg'
+
 export default {
   components: {
-    List
+    List,
+    Loading
   },
   data () {
     return {
       add_img,
-      items: [
-        {
-          id: '0',
-          area: '五山区',
-          content: '今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊今天校巴好慢啊啊',
-          comment_num: '13',
-          praise_num: '3'
-        },
-        {
-          id: '1',
-          area: '启林区',
-          content: '卢萨卡活动啊是广东哈市到时候偶的好似活动按时偶的好似以后大神哦等会奥豪斯',
-          comment_num: '1',
-          praise_num: '2'
-        },
-        {
-          id: '2',
-          area: '华山区',
-          content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-          comment_num: '12',
-          praise_num: '0'
-        },
-        {
-          id: '3',
-          area: '其他宿舍区',
-          content: '哈哈哈哈哈哈撒大声地哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-          comment_num: '2',
-          praise_num: '0'
-        },
-        {
-          id: '4',
-          area: '嵩山区',
-          content: '哈哈哈阿达哈哈哈哈哈哈哈哈规范与而他哈哈哈哈哈哈哈哈',
-          comment_num: '122',
-          praise_num: '0'
-        },
-        {
-          id: '5',
-          area: '嵩山区',
-          content: '哈哈哈阿达哈哈哈哈哈哈哈哈规范与而他哈哈哈哈哈哈哈哈',
-          comment_num: '12',
-          praise_num: '0'
+      isAreaOptionOpend: false
+    }
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading
+    },
+    messageList() {
+      return this.$store.state.messageList
+    },
+    locationList() {
+      return this.$store.state.locationList
+    },
+    messages() {
+      let arr = []
+      let messageList = this.messageList
+      for (let i = 0, len = messageList.length; i < len; i++) {
+        arr[i] = {
+          id: messageList[i].mid,
+          name: messageList[i].isFake ? '楼主' : messageList[i].user.nname,
+          area: messageList[i].location.locale,
+          content: messageList[i].content,
+          comment_num: messageList[i].commentCount,
+          praise_num: messageList[i].likeCount
         }
-
-      ]
+      }
+      return arr
+    }
+  },
+  mounted() {
+    if (this.messageList.length == 0) { // 第一次进入
+      this.$store.dispatch('getMessageList', { page: 0 })
+      this.$store.dispatch('getLocationList')
+    }
+    
+  },
+  methods: {
+    openAreaOption() {
+      this.isAreaOptionOpend = true
+      // 屏蔽滚动
+      document.getElementsByTagName('body')[0].style.overflow = 'hidden'
+    },
+    closeAreaOption() {
+      this.isAreaOptionOpend = false
+      // 恢复滚动
+      document.getElementsByTagName('body')[0].style.overflow = 'auto'
     }
   }
 }
@@ -72,12 +88,13 @@ export default {
 <style lang="scss" scoped>
 #home {
   width: 100%;
+  height: 100%;
   header {
     position: fixed;
     top: 0;
     width: 100%;
     height: 1.4rem;
-    border-bottom: 1px solid #F2F2F2;
+    border-bottom: 1px solid #D6D6D6;
     background: white;
     .name {
       float: left;
@@ -96,6 +113,34 @@ export default {
       img {
         width: 0.6rem;
         height: 0.6rem;
+      }
+    }
+  }
+  .area_option {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    .area_list {
+      width: 2.6rem;
+      position: fixed;
+      z-index: 91;
+      right: 0.9rem;
+      top: 0.8rem;
+      background: white;
+      border: 1px solid gray;
+      box-shadow: 0.05rem 0.05rem 0.05rem 2px gray;
+      .area_item div {
+        width: 80%;
+        margin: 0 auto;
+        height: 1.2rem;
+        border-bottom: 1px solid black;
+        color: #252526;
+        line-height: 1.2rem;
+        text-align: center;
+        font-size: 0.5rem;
       }
     }
   }
