@@ -11,7 +11,7 @@
         <div class="triangle"></div>
       </div>
       <div class="fakename">匿名</div>
-      <div class="send_arrow"><img :src="send_arrow" @click="sendMessage"/></div>
+      <div class="send_arrow"><img :src="send_arrow" @click="sendImg"/></div>
     </header>
     <div class="hint">发秘密到朋友圈...</div>
     <div class="message_content">
@@ -30,6 +30,7 @@
       <img :src="picture" class="add_img"/>
     </footer>
     <Toast :message="toast.message" v-show="toast.isShowed"/>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 
@@ -38,6 +39,7 @@ import { api } from '../../api'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
+import Loading from '../Common/Loading/Loading.vue'
 import back_arrow from './back_arrow.svg'
 import avatar from './avatar.svg'
 import send_arrow from './send_arrow.svg'
@@ -47,7 +49,8 @@ import delete_button from './delete_button.svg'
 
 export default {
   components: {
-    Toast
+    Toast,
+    Loading
   },
   data () {
     return {
@@ -63,7 +66,8 @@ export default {
       delete_img,
       delete_button,
       message_content: '',
-      img_list: []
+      img_list: [],
+      send_message_params: ''
     }
   },
   computed: mapState({
@@ -101,29 +105,75 @@ export default {
       }
     },
     sendMessage() {
-      this.sendImg()
+      let params = this.send_message_params
+      if (params == '') {
+        params += ('lid=' + this.$route.params.area + '&content=' + this.message_content)
+      } else {
+        params += ('&lid=' + this.$route.params.area + '&content=' + this.message_content)
+      }
+      fetch(api + 'api/message/create', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.secret
+        },
+        body: params
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log(data)
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+        this.showToast('上传失败')
+      })
     },
     sendImg() {
+      // 检测信息完整性
+      if (this.message_content == '') {
+        this.showToast('消息内容不能为空')
+        return 0
+      }
+      this.$store.commit('startLoading')
       if (this.img_list.length > 0) {
-        this.$store.commit('startLoading')
-        for (let i = 0, len = this.img_list.length; i < len; i++) {
-          Vue.axios.post(api + 'api/image/create',{},{
-            data: {
-              image: this.img_list[i]
-            },
-            header: {
+        let fetchs = []
+        let len = this.img_list.length
+        for (let i = 0; i < len; i++) {
+          fetchs[i] = fetch(api + 'api/image/create', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
               'janke-authorization': this.secret
-            }
+            },
+            body: 'image=' + this.img_list[i]
           })
-          .then(res => {
-            console.log(res.data)
-            let data = res.data
+        }
+        Promise.all(fetchs)
+          .then((data) => {
+            let data_arr = []
+            for (let i = 0; i<len; i++) {
+              data_arr[i] = data[i].json()
+            }
+            Promise.all(data_arr)
+              .then((data) => {
+                data.map((item, index) => {
+                  if (this.send_message_params == '') {
+                    this.send_message_params += ('imageidList=' + item.content.imageid)
+                  } else {
+                    this.send_message_params += ('&imageidList=' + item.content.imageid)
+                  }
+                })
+                this.sendMessage()
+              })
           })
           .catch(err => {
             console.log(err)
-            this.showToast('图片上传失败')
+            this.showToast('上传失败')
           })
-        }
+      } else {
+        this.sendMessage()
       }
     },
     showToast(message) {

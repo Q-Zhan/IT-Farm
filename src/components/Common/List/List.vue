@@ -12,6 +12,9 @@
         <div class="content">
           {{ item.content }}
         </div>
+        <div class="images">
+          <img v-for="(image, image_index) in item.images" :key="image_index" :src="getImageSrc(image.webPath)"/>
+        </div>
       </router-link>
       <div class="footer">
         <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.comment_num }}</div>
@@ -23,6 +26,7 @@
 </template>
 
 <script>
+import api from '../../../api'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
@@ -30,6 +34,9 @@ export default {
   props: [
     'items'
   ],
+  components: {
+    
+  },
   data () {
     return {
       avatar_img,
@@ -42,10 +49,9 @@ export default {
     }
   },
   computed: {
-    
   },
   methods: {
-    getBackground: function(index) {
+    getBackground(index) {
       if (index % 2 == 0) {
         this.background_array[index] = true
         return this.colors[index % 5]
@@ -53,6 +59,9 @@ export default {
         this.background_array[index] = false
         return 'white'
       }
+    },
+    getImageSrc(webPath) {
+      return api + webPath
     }
   }
 }
@@ -91,13 +100,13 @@ export default {
       width: 90%;
       margin: 0 auto;
       margin-top: 0.2rem;
-      margin-bottom: 0.4rem;
       font-size: 0.5rem;
       letter-spacing: 3px;
     }
     .footer {
       width: 90%;
       margin: 0 auto;
+      margin-top: 0.4rem;
       padding-bottom: 0.4rem;
       .comment {
         float: left;

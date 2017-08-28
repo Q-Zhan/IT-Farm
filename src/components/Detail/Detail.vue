@@ -45,6 +45,10 @@
         <input type="text" placeholder="匿名评论"/>
         <div class="underline"></div>
       </div>
+      <div class="send_arrow">
+        <img :src="send_arrow"/>
+      </div>
+      <div class="clear"></div>
     </div>
   </div>
 </template>
@@ -54,12 +58,14 @@ import back_arrow from './back_arrow.svg'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
+import send_arrow from './send_arrow.svg'
 export default {
   data () {
     return {
       back_arrow,
       praise,
       avatar_img,
+      send_arrow,
       comment_list: [
         {
           avatar: avatar_img,
@@ -252,10 +258,12 @@ export default {
     background: white;
     border-top: 1px solid #D6D6D6;
     .reply_input {
+      width: 8rem;
+      float: left;
       margin-top: 0.5rem;
       margin-left: 0.4rem;
       input {
-        width: 4rem;
+        width: 8rem;
         height: 0.5rem;
         margin-left: 0.1rem;
         font-size: 0.4rem;
@@ -263,11 +271,22 @@ export default {
         border: 0;
       }
       .underline {
-        width: 4.2rem;
+        width: 8.2rem;
         height: 0.12rem;
         margin-top: -0.05rem;
         border: 1px solid black;
         border-top: 0;
+      }
+    }
+    .send_arrow {
+      float: right;
+      width: 0.75rem;
+      height: 0.75rem;
+      margin-right: 0.3rem;
+      margin-top: 0.5rem;
+      img {
+        width: 100%;
+        height: 100%;
       }
     }
   }

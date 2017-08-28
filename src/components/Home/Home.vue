@@ -57,7 +57,8 @@ export default {
           area: messageList[i].location.locale,
           content: messageList[i].content,
           comment_num: messageList[i].commentCount,
-          praise_num: messageList[i].likeCount
+          praise_num: messageList[i].likeCount,
+          images: messageList[i].messageImageSet
         }
       }
       return arr
@@ -65,8 +66,7 @@ export default {
   },
   mounted() {
     if (this.messageList.length == 0) { // 第一次进入
-      this.$store.dispatch('getMessageList', { page: 0 })
-      this.$store.dispatch('getLocationList')
+      this.$store.dispatch('getMessageAndLocationList', { page: 0 })
     }
     
   },
