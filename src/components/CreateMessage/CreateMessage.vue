@@ -26,7 +26,7 @@
     </div>
     <footer>
       <img :src="delete_img" @click="deleteContent" class="delete"/>
-      <input type="file" @change="upload" accept=""/>
+      <input type="file" @change="encodeImg" accept=""/>
       <img :src="picture" class="add_img"/>
     </footer>
     <Toast :message="toast.message" v-show="toast.isShowed"/>
@@ -67,6 +67,7 @@ export default {
       delete_button,
       message_content: '',
       img_list: [],
+      img_list_encoded: [],
       send_message_params: ''
     }
   },
@@ -85,23 +86,71 @@ export default {
     },
     deleteImg(index){
       this.img_list.splice(index, 1)
+      this.img_list_encoded.splice(index, 1)
     },
-    upload(e) {
-      // console.log(e.target.files[0])
+    encodeImg(e) {
       if (e.target.files[0]) {
+        this.$store.commit('startLoading')
         let reader = new FileReader()
-        let rFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i
+        let imgFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)/i
+        let prefixReg = /^data:image\/(bmp|cis\-cod|gif|ief|jpeg|png|tiff);base64,/gi
         let self = this
         reader.onload = function() {
-          // console.log(this.result)
-          self.img_list.push(this.result)
+          let result = this.result
+          self.img_list.push(result)
+          // 去除base64前缀
+          let new_result = result.replace(prefixReg, '')
+          // 编码
+          self.img_list_encoded.push(encodeURIComponent(new_result))
+          self.$store.commit('stopLoading')
         }
         // 检测是否为图片类型
-        if (rFilter.test(e.target.files[0].type)) {
+        if (imgFilter.test(e.target.files[0].type)) {
           reader.readAsDataURL(e.target.files[0])
         } else {
+          this.$store.commit('stopLoading')
           this.showToast('请上传图片类型')
         }
+      }
+    },
+    sendImg() {
+      // 检测信息完整性
+      if (this.message_content == '') {
+        this.showToast('消息内容不能为空')
+        return 0
+      }
+      this.$store.commit('startLoading')
+      if (this.img_list_encoded.length > 0) {
+        let fetchs = []
+        let len = this.img_list_encoded.length
+        for (let i = 0; i < len; i++) {
+          fetchs[i] = fetch(api + '/api/image/create', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'janke-authorization': this.secret
+            },
+            body: 'image=' + this.img_list_encoded[i]
+          })
+        }
+        Promise.all(fetchs)
+          .then(async (data) => {
+            for (let i = 0; i<len; i++) {
+              let item = await data[i].json()
+              if (this.send_message_params == '') {
+                this.send_message_params += ('imageidList=' + item.content.imageid)
+              } else {
+                this.send_message_params += ('&imageidList=' + item.content.imageid)
+              }
+            }
+            this.sendMessage()
+          })
+          .catch(err => {
+            console.log(err)
+            this.showToast('图片上传失败')
+          })
+      } else {
+        this.sendMessage()
       }
     },
     sendMessage() {
@@ -111,7 +160,7 @@ export default {
       } else {
         params += ('&lid=' + this.$route.params.area + '&content=' + this.message_content)
       }
-      fetch(api + 'api/message/create', {
+      fetch(api + '/api/message/create', {
         method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -123,58 +172,13 @@ export default {
       .then((data) => {
         // console.log(data)
         this.$store.commit('stopLoading')
+        this.$router.push('/app/home')
       })
       .catch(err => {
         console.log(err)
         this.$store.commit('stopLoading')
         this.showToast('上传失败')
       })
-    },
-    sendImg() {
-      // 检测信息完整性
-      if (this.message_content == '') {
-        this.showToast('消息内容不能为空')
-        return 0
-      }
-      this.$store.commit('startLoading')
-      if (this.img_list.length > 0) {
-        let fetchs = []
-        let len = this.img_list.length
-        for (let i = 0; i < len; i++) {
-          fetchs[i] = fetch(api + 'api/image/create', {
-            method: 'post',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'janke-authorization': this.secret
-            },
-            body: 'image=' + this.img_list[i]
-          })
-        }
-        Promise.all(fetchs)
-          .then((data) => {
-            let data_arr = []
-            for (let i = 0; i<len; i++) {
-              data_arr[i] = data[i].json()
-            }
-            Promise.all(data_arr)
-              .then((data) => {
-                data.map((item, index) => {
-                  if (this.send_message_params == '') {
-                    this.send_message_params += ('imageidList=' + item.content.imageid)
-                  } else {
-                    this.send_message_params += ('&imageidList=' + item.content.imageid)
-                  }
-                })
-                this.sendMessage()
-              })
-          })
-          .catch(err => {
-            console.log(err)
-            this.showToast('上传失败')
-          })
-      } else {
-        this.sendMessage()
-      }
     },
     showToast(message) {
       if (this.toast.timer != '') {
@@ -235,6 +239,7 @@ export default {
       position: absolute;
       width: 0.75rem;
       height: 0.75rem;
+      top: 0.32rem;
       right: 0.3rem;
       img {
         width: 100%;

@@ -5,7 +5,7 @@
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
-            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{ item.name }}</span><br/>
+            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
             <span>{{ item.area }}</span>
           </div>
         </div>
@@ -13,7 +13,12 @@
           {{ item.content }}
         </div>
         <div class="images">
-          <img v-for="(image, image_index) in item.images" :key="image_index" :src="getImageSrc(image.webPath)"/>
+          <img 
+            v-for="(image, image_index) in item.images"
+            :key="image_index" 
+            :src="getImageSrc(image.webPath)"
+            @error="setErrorImg"
+          />
         </div>
       </router-link>
       <div class="footer">
@@ -26,10 +31,11 @@
 </template>
 
 <script>
-import api from '../../../api'
+import { api } from '../../../api'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
+import error_img from './error_img.jpg'
 export default {
   props: [
     'items'
@@ -40,6 +46,7 @@ export default {
   data () {
     return {
       avatar_img,
+      error_img,
       praise,
       praise_chose,
       colors: [
@@ -49,6 +56,7 @@ export default {
     }
   },
   computed: {
+    
   },
   methods: {
     getBackground(index) {
@@ -62,6 +70,15 @@ export default {
     },
     getImageSrc(webPath) {
       return api + webPath
+    },
+    setErrorImg(e) {
+      e.target.src = this.error_img
+    },
+    refresh() {
+      console.log('refresh')
+    },
+    infinite() {
+      console.log('infinite')
     }
   }
 }
@@ -100,8 +117,19 @@ export default {
       width: 90%;
       margin: 0 auto;
       margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
       font-size: 0.5rem;
       letter-spacing: 3px;
+    }
+    .images {
+      width: 9rem;
+      margin: 0 auto;
+      display: flex;
+      img {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-right: 0.1rem;
+      }
     }
     .footer {
       width: 90%;

@@ -1,7 +1,7 @@
 <template>
   <div id="navigation">
     <router-view class="router"></router-view>
-    <VFooter />
+    
   </div>
 </template>
 
@@ -24,9 +24,9 @@ export default {
 
 <style lang="scss" scoped>
 #navigation {
-  height: calc(100% - 1.5rem);
+  height: 100%;
 }
 .router {
-  
+  height: calc(100% - 1.5rem);
 }
 </style>

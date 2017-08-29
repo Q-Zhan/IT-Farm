@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 export default {
   register({ commit, state }, { uname, nname, passwd, rpasswd }) {
     commit('startLoading')
-    fetch(api + 'api/user/create', {
+    fetch(api + '/api/user/create', {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -34,7 +34,7 @@ export default {
   },
   login({ commit, state }, { uname, passwd }) {
     commit('startLoading')
-    fetch(api + 'api/user/login', {
+    fetch(api + '/api/user/login', {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -57,29 +57,25 @@ export default {
   },
   getMessageAndLocationList({ commit, state }, { page }) {
     commit('startLoading')
-    let getMessage = fetch(api + 'api/message/page/' + page + '?page=' + page, {
+    let getMessage = fetch(api + '/api/message/page/' + page + '?page=' + page, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-    let getLocation = fetch(api + 'api/locale/list', {
+    let getLocation = fetch(api + '/api/locale/list', {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
     Promise.all([getMessage, getLocation])
-      .then((data) => {
-        data[0].json().then((message_data) => {
-          console.log(message_data)
-          commit('saveMessageList', { messageList: message_data.content.messageList })
-          commit('stopLoading')
-        })
-        data[1].json().then((location_data) => {
-          commit('saveLocationList', { locationList: location_data.content.locationList })
-          commit('stopLoading')
-        })
+      .then(async (data) => {
+        let message_data = await data[0].json();
+        let location_data = await data[1].json();
+        commit('saveMessageList', { messageList: message_data.content.messageList })
+        commit('saveLocationList', { locationList: location_data.content.locationList })
+        commit('stopLoading')
       })
       .catch(err => {
         console.log(err)

@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import './utils/device' // 动态计算rem font-size
 
+
 new Vue({
   el: '#app',
   store,
