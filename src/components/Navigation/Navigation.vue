@@ -1,7 +1,7 @@
 <template>
   <div id="navigation">
     <router-view class="router"></router-view>
-    
+    <VFooter />
   </div>
 </template>
 

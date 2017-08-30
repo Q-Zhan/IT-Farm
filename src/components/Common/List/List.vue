@@ -1,5 +1,5 @@
 <template>
-  <div id="list">
+  <div id="list" ref="list">
     <div v-for="(item, index) in items" :key="item.id" class="item" :style="{ background: getBackground(index)}">
       <router-link :to="{name: 'detail', params: { id : item.id}}">
         <div class="header">
@@ -58,6 +58,21 @@ export default {
   computed: {
     
   },
+  mounted(){
+    this.addScrollListener()
+    // setTimeout(() => {
+    //   console.log(this.message_list)
+    //   this.message_list.push({
+    //     id: '1231',
+    //     area: '五山',
+    //     content: 'hahahah',
+    //     images: [],
+    //     comment_num: 0,
+    //     name: 'qzhan',
+    //     praise_num: 0
+    //   })
+    // }, 5000)
+  },
   methods: {
     getBackground(index) {
       if (index % 2 == 0) {
@@ -74,6 +89,67 @@ export default {
     setErrorImg(e) {
       e.target.src = this.error_img
     },
+    addScrollListener() {
+      let list = document.getElementById('list')
+      let self = this
+      let dragger = new DragLoader(list, {
+        dragDownRegionCls: 'latest',
+        dragUpRegionCls: 'more',
+        dragDownHelper: function(status) {
+          if (status == 'default') {
+            return '<div>下拉刷新</div>';
+          } else if (status == 'prepare') {
+            return '<div>释放刷新</div>';
+          } else if (status == 'load') {
+            return '<div>刷新中...</div>';
+          }
+        },
+        dragUpHelper: function(status) {
+          if (status == 'default') {
+            return '<div>上拉加载更多</div>';
+          } else if (status == 'prepare') {
+            return '<div>释放加载</div>';
+          } else if (status == 'load') {
+            return '<div>加载中...</div>';
+          }
+        }
+      });
+      dragger.on('dragDownLoad', function() {
+        document.getElementsByClassName('latest')[0].style.height = '1rem'
+        setTimeout(function() {
+          dragger.reset();
+        }, 2000);
+      });
+      dragger.on('dragUpLoad', () => {
+        document.getElementsByClassName('more')[0].style.height = '1rem'
+        setTimeout(() => {
+          this.$store.commit('loadMoreMessage', {
+            messages: [
+              {
+                id: '1231',
+                location: {
+                  lid: 3,
+                  locale: '图书馆'
+                },
+                mid: '301',
+                area: '五山',
+                content: 'hahahah',
+                images: [],
+                comment_num: 0,
+                name: 'qzhan',
+                praise_num: 0,
+                user: {
+                  nname: 'qzhan',
+                  uid: 7,
+                  uname: 'test'
+                }
+              }
+            ]
+          })
+          dragger.reset();
+        }, 2000);
+      });
+    },
     refresh() {
       console.log('refresh')
     },
@@ -84,10 +160,18 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #list {
   width: 100%;
+  height: calc(100% - 1.4rem);
   padding-bottom: 1.5rem;
+  overflow-y: scroll;
+  .latest, .more {
+    
+    font-size: 0.5rem;
+    text-align: center;
+    line-height: 1rem;
+  }
   .item {
     .header {
       width: 90%;

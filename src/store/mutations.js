@@ -36,5 +36,8 @@ export default {
   },
   saveLocationList(state, { locationList }) {
     state.locationList = locationList
+  },
+  loadMoreMessage(state, { messages }) {
+    state.messageList = state.messageList.concat(messages)
   }
 }

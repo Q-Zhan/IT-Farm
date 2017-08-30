@@ -88,7 +88,6 @@ export default {
 <style lang="scss" scoped>
 #home {
   width: 100%;
-  
   header {
     position: fixed;
     top: 0;
