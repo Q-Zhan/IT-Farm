@@ -15,7 +15,7 @@
     <div class="button" @click="verifyInfo">
       <button>登录</button>
     </div>
-    <Toast :message="toast.message" v-show="toast.isShowed"/>
+    <Toast  ref="toast"/>
     <Loading v-show="isLoading"/>
   </div>
 </template>
@@ -32,11 +32,6 @@ export default {
   },
   data () {
     return {
-      toast: {
-        timer: '',
-        message: '',
-        isShowed: ''
-      },
       back_arrow,
       account: '',
       password: ''
@@ -70,23 +65,13 @@ export default {
     verifyInfo() {
       // 检测账号密码
       if (this.account == '' || this.password == '') {
-        this.showToast('请输入正确的账号密码')
+        this.$refs.toast.showToast('请输入账号密码')
         return 0
       }
       this.$store.dispatch('login', {
         uname: this.account,
         passwd: this.password
       })
-    },
-    showToast(message) {
-      if (this.toast.timer != '') {
-        clearTimeout(this.toast.timer)
-      }
-      this.toast.isShowed = true
-      this.toast.message = message
-      this.toast.timer = setTimeout(() => {
-        this.toast.isShowed = false
-      }, 1200)
     },
     turnBack() {
       this.$router.go(-1)

@@ -29,7 +29,7 @@
       <input type="file" @change="encodeImg" accept=""/>
       <img :src="picture" class="add_img"/>
     </footer>
-    <Toast :message="toast.message" v-show="toast.isShowed"/>
+    <Toast ref="toast"/>
     <Loading v-show="isLoading"/>
   </div>
 </template>
@@ -54,11 +54,6 @@ export default {
   },
   data () {
     return {
-      toast: {
-        timer: '',
-        message: '',
-        isShowed: ''
-      },
       back_arrow,
       avatar,
       send_arrow,
@@ -125,14 +120,14 @@ export default {
           reader.readAsDataURL(e.target.files[0])
         } else {
           this.$store.commit('stopLoading')
-          this.showToast('请上传图片类型')
+          this.$refs.toast.showToast('请上传图片类型')
         }
       }
     },
     sendImg() {
       // 检测信息完整性
       if (this.message_content == '') {
-        this.showToast('消息内容不能为空')
+        this.$refs.toast.showToast('消息内容不能为空')
         return 0
       }
       this.$store.commit('startLoading')
@@ -163,7 +158,7 @@ export default {
           })
           .catch(err => {
             console.log(err)
-            this.showToast('图片上传失败')
+            this.$refs.toast.showToast('图片上传失败')
           })
       } else {
         this.sendMessage()
@@ -193,18 +188,8 @@ export default {
       .catch(err => {
         console.log(err)
         this.$store.commit('stopLoading')
-        this.showToast('上传失败')
+        this.$refs.toast.showToast('上传失败')
       })
-    },
-    showToast(message) {
-      if (this.toast.timer != '') {
-        clearTimeout(this.toast.timer)
-      }
-      this.toast.isShowed = true
-      this.toast.message = message
-      this.toast.timer = setTimeout(() => {
-        this.toast.isShowed = false
-      }, 1200)
     }
   }
 }

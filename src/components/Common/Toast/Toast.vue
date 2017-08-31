@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div id="toast">
+    <div id="toast" v-show="isShowed">
       <div class="message">
         {{ message }}
       </div>
@@ -10,10 +10,19 @@
 
 <script>
 export default {
-  props: ['message'],
   data () {
     return {
-      
+      message: '',
+      isShowed: false
+    }
+  },
+  methods: {
+    showToast(message) {
+      this.message = message
+      this.isShowed = true
+      setTimeout(() => {
+        this.isShowed = false
+      }, 1400)
     }
   }
 }
@@ -21,7 +30,7 @@ export default {
 
 <style lang="scss" scoped>
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 1s
+  transition: opacity 1.4s
 }
 .fade-enter, .fade-leave-to {
   opacity: 0
