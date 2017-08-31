@@ -91,18 +91,34 @@ export default {
     encodeImg(e) {
       if (e.target.files[0]) {
         this.$store.commit('startLoading')
+        let img_size = e.target.files[0].size / 1024
         let reader = new FileReader()
         let imgFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)/i
         let prefixReg = /^data:image\/(bmp|cis\-cod|gif|ief|jpeg|png|tiff);base64,/gi
         let self = this
         reader.onload = function() {
           let result = this.result
-          self.img_list.push(result)
-          // 去除base64前缀
-          let new_result = result.replace(prefixReg, '')
-          // 编码
-          self.img_list_encoded.push(encodeURIComponent(new_result))
-          self.$store.commit('stopLoading')
+          // 压缩图片
+          let cvs = document.createElement('canvas')
+          let ctx = cvs.getContext('2d')
+          let img = new Image()
+          img.onload = () => {
+            // 如果图片大小大于300k
+            if (img_size >= 300) {
+              let compress_proportion = 300 / img_size
+              cvs.width = img.width
+              cvs.height = img.height
+              ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
+              result = cvs.toDataURL('image/jpeg', compress_proportion)
+            }
+            self.img_list.push(result)
+            // 去除base64前缀
+            let new_result = result.replace(prefixReg, '')
+            // 编码
+            self.img_list_encoded.push(encodeURIComponent(new_result))
+            self.$store.commit('stopLoading')
+          }
+          img.src = result
         }
         // 检测是否为图片类型
         if (imgFilter.test(e.target.files[0].type)) {
