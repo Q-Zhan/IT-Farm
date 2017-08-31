@@ -1,10 +1,7 @@
 <template>
   <div id="loading">
     <div class="loading_effect">
-      <div><span></span></div>
-      <div><span></span></div>
-      <div><span></span></div>
-      <div><span></span></div>
+      <div></div>
     </div>
   </div>
 </template>
@@ -19,7 +16,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #loading {
   position: absolute;
   left: 0;
@@ -40,57 +37,20 @@ export default {
     align-items: center;
     div {
       width: 1rem;
-      height: 0.6rem;
-      position: absolute;
-      animation: load 1.8s linear infinite;
-      span {
-        display: inline-block;
-        width: 0.25rem;
-        height: 0.25rem;
-        border-radius: 50%;
-        background: white;
-        position: absolute;
-        left: 50%;
-        margin-top: -0.3rem;
-        margin-left: -0.4rem;
-      }
-    }
-    div:nth-child(1) {
-      animation-delay: 0.2s;
-    }
-    div:nth-child(2) {
-      animation-delay: 0.4s;
-    }
-    div:nth-child(3) {
-      animation-delay: 0.6s;
-    }
-    div:nth-child(4) {
-      animation-delay: 0.8s;
+      height: 1rem;
+      border-radius: 50%;
+      border: 0.1rem solid;
+      border-color: white white transparent transparent;
+      animation: load 1.5s linear infinite;
     }
   }
 }
+
 @keyframes load {
-  0%{
+  0% {
     transform: rotate(0deg);
   }
-  10%{
-    transform: rotate(36deg);
-  }
-  50%{
-    opacity: 1;
-    transform: rotate(180deg);
-  }
-  62%{
-    opacity: 0;
-  }
-  65%{
-    opacity: 0;
-    transform: rotate(200deg);
-  }
-  90%{
-    transform: rotate(340deg);
-  }
-  100%{
+  100% {
     transform: rotate(360deg);
   }
 }
