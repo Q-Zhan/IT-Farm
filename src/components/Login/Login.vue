@@ -49,10 +49,10 @@ export default {
         this.$store.commit('loginToasted')
         switch(this.loginReply) {
           case 'failed':
-            this.showToast('账号或密码错误')
+            this.$refs.toast.showToast('账号或密码错误')
             break
           case 'success':
-            this.showToast('登录成功')
+            this.$refs.toast.showToast('登录成功')
             setTimeout(() => {
               this.$router.push('/app/home')
             }, 800)

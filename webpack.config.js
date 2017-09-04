@@ -33,11 +33,8 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
+        test: /\.(jpeg|jpg|png|gif|svg)$/i,
+        loader: "url-loader?limit=8192&name=./[name].[ext]?[hash]"
       }
     ]
   },
@@ -66,7 +63,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
+      sourceMap: false,
       compress: {
         warnings: false
       }

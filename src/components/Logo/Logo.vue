@@ -35,7 +35,7 @@ export default {
 #logo {
   width: 100%;
   height: 100%;
-  background: url('./timg.jpg') no-repeat;
+  background: url('./bg.jpg') no-repeat;
   background-size: cover;
   display: inline-block;
   position: relative;

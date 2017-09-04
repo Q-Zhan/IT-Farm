@@ -148,11 +148,7 @@ export default {
           .then(async (data) => {
             for (let i = 0; i<len; i++) {
               let item = await data[i].json()
-              if (this.send_message_params == '') {
-                this.send_message_params += ('imageidList=' + item.content.imageid)
-              } else {
-                this.send_message_params += ('&imageidList=' + item.content.imageid)
-              }
+              this.send_message_params += ('imageidList=' + item.content.imageid + '&')
             }
             this.sendMessage()
           })
@@ -166,11 +162,7 @@ export default {
     },
     sendMessage() {
       let params = this.send_message_params
-      if (params == '') {
-        params += ('lid=' + this.$route.params.area + '&content=' + this.message_content)
-      } else {
-        params += ('&lid=' + this.$route.params.area + '&content=' + this.message_content)
-      }
+      params += ('lid=' + this.$route.params.area + '&content=' + this.message_content)
       fetch(api + '/api/message/create', {
         method: 'post',
         headers: {
