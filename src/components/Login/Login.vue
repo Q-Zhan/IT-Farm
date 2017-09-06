@@ -47,16 +47,11 @@ export default {
     loginToast: function(newToast) {
       if (newToast == true) {
         this.$store.commit('loginToasted')
-        switch(this.loginReply) {
-          case 'failed':
-            this.$refs.toast.showToast('账号或密码错误')
-            break
-          case 'success':
-            this.$refs.toast.showToast('登录成功')
-            setTimeout(() => {
-              this.$router.push('/app/home')
-            }, 800)
-            break
+        this.$refs.toast.showToast(this.loginReply)
+        if (this.loginReply == '登录成功') {
+          setTimeout(() => {
+            this.$router.push('/app/home')
+          }, 800)
         }
       }
     }

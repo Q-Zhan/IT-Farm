@@ -13,7 +13,7 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      // console.log(data)
+      // 用户名重复
       if (data.message.substring(0,4) == 'User') {
         commit('register', { message: 'user name repeat'})
       }
@@ -81,5 +81,50 @@ export default {
         console.log(err)
         commit('stopLoading')
       })
+  },
+  getNewMessage({ commit, state }) {
+    commit('startLoading')
+    let time = state.messageList[0].tmCreated + 1
+    fetch(api + '/api/message/tmafter/' + time, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data)
+      if (data.content.messageList.length > 0) {
+        commit('addNewMessage', { newMessage: data.content.messageList })
+      }
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  getOldMessage({ commit, state }) {
+    commit('startLoading')
+    let messageList = state.messageList
+    let time = messageList[messageList.length - 1].tmCreated - 1
+    fetch(api + '/api/message/tmbefore/' + time, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data)
+      if (data.content.messageList.length > 0) {
+        commit('addOldMessage', { oldMessage: data.content.messageList })
+      }
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
   }
 }

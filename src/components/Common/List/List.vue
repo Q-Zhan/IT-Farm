@@ -60,18 +60,6 @@ export default {
   },
   mounted(){
     this.addScrollListener()
-    // setTimeout(() => {
-    //   console.log(this.message_list)
-    //   this.message_list.push({
-    //     id: '1231',
-    //     area: '五山',
-    //     content: 'hahahah',
-    //     images: [],
-    //     comment_num: 0,
-    //     name: 'qzhan',
-    //     praise_num: 0
-    //   })
-    // }, 5000)
   },
   methods: {
     getBackground(index) {
@@ -114,47 +102,16 @@ export default {
           }
         }
       });
-      dragger.on('dragDownLoad', function() {
+      dragger.on('dragDownLoad', () => {
         document.getElementsByClassName('latest')[0].style.height = '1rem'
-        setTimeout(function() {
-          dragger.reset();
-        }, 2000);
+        this.$store.dispatch('getNewMessage')
+        dragger.reset();
       });
       dragger.on('dragUpLoad', () => {
         document.getElementsByClassName('more')[0].style.height = '1rem'
-        setTimeout(() => {
-          this.$store.commit('loadMoreMessage', {
-            messages: [
-              {
-                id: '1231',
-                location: {
-                  lid: 3,
-                  locale: '图书馆'
-                },
-                mid: '301',
-                area: '五山',
-                content: 'hahahah',
-                images: [],
-                comment_num: 0,
-                name: 'qzhan',
-                praise_num: 0,
-                user: {
-                  nname: 'qzhan',
-                  uid: 7,
-                  uname: 'test'
-                }
-              }
-            ]
-          })
-          dragger.reset();
-        }, 2000);
+        this.$store.dispatch('getOldMessage')
+        dragger.reset();
       });
-    },
-    refresh() {
-      console.log('refresh')
-    },
-    infinite() {
-      console.log('infinite')
     }
   }
 }
@@ -167,10 +124,10 @@ export default {
   padding-bottom: 1.5rem;
   overflow-y: scroll;
   .latest, .more {
-    
     font-size: 0.5rem;
     text-align: center;
     line-height: 1rem;
+    background: #D6D6D6;
   }
   .item {
     .header {

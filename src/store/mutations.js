@@ -14,10 +14,10 @@ export default {
   },
   login(state, { code }) {
     if (code == '-500') {
-      state.login.loginReply = 'failed'
+      state.login.loginReply = '账号或密码错误'
     }
     if (code == '200') {
-      state.login.loginReply = 'success'
+      state.login.loginReply = '登录成功'
     }
     state.login.loginToast = true
   },
@@ -37,7 +37,10 @@ export default {
   saveLocationList(state, { locationList }) {
     state.locationList = locationList
   },
-  loadMoreMessage(state, { messages }) {
-    state.messageList = state.messageList.concat(messages)
+  addNewMessage(state, { newMessage }) {
+    state.messageList = newMessage.concat(state.messageList)
+  },
+  addOldMessage(state, { oldMessage }) {
+    state.messageList = state.messageList.concat(oldMessage)
   }
 }
