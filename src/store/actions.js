@@ -55,7 +55,7 @@ export default {
       commit('stopLoading')
     })
   },
-  getMessageAndLocationList({ commit, state }, { page }) {
+  getInitializedMessageAndLocationList({ commit, state }, { page }) {
     commit('startLoading')
     let getMessage = fetch(api + '/api/message/page/' + page + '?page=' + page, {
       method: 'get',
@@ -120,6 +120,43 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addOldMessage', { oldMessage: data.content.messageList })
       }
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  getInitializedComment({ commit, state }, { mid }) {
+    commit('startLoading')
+    fetch(api + `/api/comment/message/${mid}/page/0`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data)
+      commit('saveCommentList', { comments: data.content.commentList })
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  getNewComment({ commit, state }, { mid, time}) {
+    commit('startLoading')
+    fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
       commit('stopLoading')
     })
     .catch(err => {

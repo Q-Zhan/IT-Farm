@@ -25,6 +25,8 @@ import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
 import back_arrow from './back_arrow.svg'
+import Stomp from 'stompjs'
+
 export default {
   components: {
     Toast,
@@ -55,6 +57,9 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    
   },
   methods: {
     verifyInfo() {

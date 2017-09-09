@@ -10,29 +10,29 @@
           <img :src="avatar_img"/>
           <div class="text">
             <span>楼主</span><br/>
-            <span>五山区</span>
+            <span>{{message.location.locale}}</span>
           </div>
         </div>
         <div class="word">
-          今天校巴又迟到了。。
+          {{message.content}}
         </div>
         <div class="footer">
-          <div class="comment_num" >评论 4</div>
-          <div class="praise"><img :src="praise"/><span>2</span></div>
+          <div class="comment_num" >评论 {{message.commentCount}}</div>
+          <div class="praise"><img :src="praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
       </div>
-      <div class="comment_list">
-        <div v-for="(item, index) in comment_list" :key="item.content">
+      <div class="comment_list" id="comment_list">
+        <div v-for="(item, index) in commentList" :key="item.cid">
           <div class="list_left">
-            <img :src="item.avatar"/>
+            <img :src="avatar_img"/>
           </div>
           <div class="list_right">
-            <div class="list_right_title">{{ item.name }} ▪ {{ item.area }}</div>
+            <div class="list_right_title">{{ item.user.nname }}</div>
             <div class="list_right_content">{{ item.content }}</div>
             <div class="list_right_bottom">
-              <div class="time">{{ item.time }}</div>
-              <div class="praise"><img :src="praise"/>0</div>
+              <div class="time">{{ changeTime(item.tmCreated) }}</div>
+              <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
               <div class="clear"></div>
             </div>
           </div>
@@ -42,78 +42,141 @@
     </div>
     <div class="reply">
       <div class="reply_input">
-        <input type="text" placeholder="匿名评论"/>
+        <input type="text" placeholder="匿名评论" v-model="newComment"/>
         <div class="underline"></div>
       </div>
-      <div class="send_arrow">
+      <div class="send_arrow" @click="createComment">
         <img :src="send_arrow"/>
       </div>
       <div class="clear"></div>
     </div>
+    <Loading v-show="isLoading"/>
+    <Toast  ref="toast"/>
   </div>
 </template>
 
 <script>
+import { api } from '../../api'
+import Loading from '../Common/Loading/Loading.vue'
+import Toast from '../Common/Toast/Toast.vue'
 import back_arrow from './back_arrow.svg'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import send_arrow from './send_arrow.svg'
 export default {
+  components: {
+    Loading,
+    Toast
+  },
   data () {
     return {
       back_arrow,
       praise,
       avatar_img,
       send_arrow,
-      comment_list: [
-        {
-          avatar: avatar_img,
-          name: '古猜',
-          area: '华山区',
-          content: 'hhhhhh',
-          time: '3月前'
+      newComment: ''
+    }
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading
+    },
+    message() {
+      return this.$store.state.messageList[this.$route.params.index]
+    },
+    commentList() {
+      return this.$store.state.commentList
+    },
+    secret() {
+      return this.$store.state.user.secret
+    }
+  },
+  mounted() {
+    // 修正评论list高度
+    this.calculateListHeight()
+    // 添加滚动事件
+    this.addScrollListener()
+    // 获取最新评论
+    this.$store.dispatch('getInitializedComment', { mid:this.message.mid })
+  },
+  methods: {
+    createComment() {
+      this.$store.commit('startLoading')
+      let params = `content=${this.newComment}&mid=${this.message.mid}`
+      fetch(`${api}/api/comment/create`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.secret
         },
-        {
-          avatar: avatar_img,
-          name: '朱可夫',
-          area: '五山区',
-          content: '什么什么什么',
-          time: '3月前'
-        },
-        {
-          avatar: avatar_img,
-          name: '阿伯拉尔',
-          area: '启林区',
-          content: '正常的啦',
-          time: '3月前'
-        },
-        {
-          avatar: avatar_img,
-          name: '乔治',
-          area: '五山区',
-          content: '啦啦啦拉拉啦啦啦',
-          time: '3月前'
-        },
-        {
-          avatar: avatar_img,
-          name: '乔治',
-          area: '五山区',
-          content: '啦啦啦拉拉啦啦啦1',
-          time: '3月前'
+        body: params
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+        this.$refs.toast.showToast('发送评论失败')
+      })
+    },
+    changeTime(time) {
+      let date = new Date(time)
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let dealt_month = month > 10 ? month : '0' + month
+      let day = date.getDate()
+      let dealt_day = day > 10 ? day : '0' + day
+      return `${year}/${dealt_month}/${dealt_day}`
+    },
+    calculateListHeight() {
+      let list = document.getElementById('comment_list')
+      let content = document.getElementsByClassName('content')[0]
+      let detail = document.getElementsByClassName('detail')[0]
+      let content_height = getComputedStyle(content).height
+      let detail_height = getComputedStyle(detail).height
+      list.style.height =  content_height.substr(0, content_height.length - 2) - detail_height.substr(0, detail_height.length - 2) + 'px'
+    },
+    addScrollListener() {
+      let list = document.getElementById('comment_list')
+      let self = this
+      let dragger = new DragLoader(list, {
+        dragDownRegionCls: 'latest',
+        dragUpRegionCls: 'more',
+        disableDragDown: true,
+        dragUpHelper: function(status) {
+          if (status == 'default') {
+            return '<div>上拉加载更多</div>';
+          } else if (status == 'prepare') {
+            return '<div>释放加载</div>';
+          } else if (status == 'load') {
+            return '<div>加载中...</div>';
+          }
         }
-      ]
+      });
+      dragger.on('dragUpLoad', () => {
+        document.getElementsByClassName('more')[0].style.height = '1rem'
+        this.$store.dispatch('getNewComment', {mid: this.message.mid, time: this.commentList[this.commentList.length - 1].tmCreated + 1})
+        dragger.reset();
+      });
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #detail {
   width: 100%;
-  min-height: calc(100% - 1.5rem);
+  height: 100%;
   background: #EFEFEF;
-  padding-bottom: 1.5rem;
+  .latest, .more {
+    font-size: 0.5rem;
+    text-align: center;
+    line-height: 1rem;
+    background: #D6D6D6;
+  }
   header {
     position: fixed;
     top: 0;
@@ -136,8 +199,11 @@ export default {
   }
   .content {
     width: 100%;
+    height: calc(100% - 2.9rem);
+    overflow: hidden;
     background: #EFEFEF;
     padding-top: 1.4rem;
+    padding-bottom: 1.5rem;
     .detail {
       background: white;
       .header {
@@ -200,7 +266,10 @@ export default {
     .comment_list {
       margin-top: 0.4rem;
       width: 100%;
+      height: 5rem;
       background: white;
+      overflow: auto;
+      
       .list_left {
         width: 20%;
         float: left;

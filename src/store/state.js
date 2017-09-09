@@ -15,5 +15,6 @@ export default {
     nname: ''
   },
   messageList: [],
-  locationList: []
+  locationList: [],
+  commentList: []
 }

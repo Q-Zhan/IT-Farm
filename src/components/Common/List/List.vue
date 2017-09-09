@@ -1,7 +1,7 @@
 <template>
   <div id="list" ref="list">
     <div v-for="(item, index) in items" :key="item.id" class="item" :style="{ background: getBackground(index)}">
-      <router-link :to="{name: 'detail', params: { id : item.id}}">
+      <router-link :to="{name: 'detail', params: { index : index}}">
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">

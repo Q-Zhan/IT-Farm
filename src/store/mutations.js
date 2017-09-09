@@ -31,16 +31,19 @@ export default {
     user.uname = content.user.uname 
     user.nname = content.user.nname 
   },
-  saveMessageList(state, { messageList }) {
-    state.messageList = messageList
-  },
   saveLocationList(state, { locationList }) {
     state.locationList = locationList
+  },
+  saveMessageList(state, { messageList }) {
+    state.messageList = messageList
   },
   addNewMessage(state, { newMessage }) {
     state.messageList = newMessage.concat(state.messageList)
   },
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)
+  },
+  saveCommentList(state, { comments }) {
+    state.commentList = comments
   }
 }
