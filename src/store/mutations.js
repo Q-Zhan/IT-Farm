@@ -42,8 +42,5 @@ export default {
   },
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)
-  },
-  saveCommentList(state, { comments }) {
-    state.commentList = comments
   }
 }

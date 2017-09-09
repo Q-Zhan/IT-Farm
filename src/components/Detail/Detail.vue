@@ -21,23 +21,29 @@
           <div class="praise"><img :src="praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
+        <div class="block"></div>
       </div>
       <div class="comment_list" id="comment_list">
-        <div v-for="(item, index) in commentList" :key="item.cid">
-          <div class="list_left">
-            <img :src="avatar_img"/>
+          <div v-for="(item, index) in commentList" :key="item.cid">
+            <div class="list_left">
+              <img :src="avatar_img"/>
+            </div>
+            <div class="list_right">
+              <div class="list_right_title">{{ item.user.nname }}</div>
+              <div class="list_right_content">{{ item.content }}</div>
+              <div class="list_right_bottom">
+                <div class="time">{{ formatTime(item.tmCreated) }}</div>
+                <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
+                <div class="clear"></div>
+              </div>
+            </div>
+            <div class="clear"></div>
           </div>
-          <div class="list_right">
-            <div class="list_right_title">{{ item.user.nname }}</div>
-            <div class="list_right_content">{{ item.content }}</div>
-            <div class="list_right_bottom">
-              <div class="time">{{ changeTime(item.tmCreated) }}</div>
-              <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
-              <div class="clear"></div>
+          <div class="comment_loading" v-show="commentIsLoading">
+            <div>
             </div>
           </div>
-          <div class="clear"></div>
-        </div>
+          <div class="nomore" v-if="noMoreComment">没有更多内容</div>
       </div>
     </div>
     <div class="reply">
@@ -51,7 +57,7 @@
       <div class="clear"></div>
     </div>
     <Loading v-show="isLoading"/>
-    <Toast  ref="toast"/>
+    <Toast ref="toast"/>
   </div>
 </template>
 
@@ -75,7 +81,10 @@ export default {
       praise,
       avatar_img,
       send_arrow,
-      newComment: ''
+      newComment: '',
+      commentList: [],
+      noMoreComment: false,
+      commentIsLoading: false
     }
   },
   computed: {
@@ -84,9 +93,6 @@ export default {
     },
     message() {
       return this.$store.state.messageList[this.$route.params.index]
-    },
-    commentList() {
-      return this.$store.state.commentList
     },
     secret() {
       return this.$store.state.user.secret
@@ -98,9 +104,30 @@ export default {
     // 添加滚动事件
     this.addScrollListener()
     // 获取最新评论
-    this.$store.dispatch('getInitializedComment', { mid:this.message.mid })
+    this.getInitializedComment()
   },
   methods: {
+    getInitializedComment() {
+      this.$store.commit('startLoading')
+      let mid = this.message.mid
+      fetch(api + `/api/comment/message/${mid}/page/0`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data)
+          this.commentList = data.content.commentList
+          this.$store.commit('stopLoading')
+        })
+        .catch(err => {
+          console.log(err)
+          this.$store.commit('stopLoading')
+          this.$refs.toast.showToast('获取评论失败')
+        })
+    },
     createComment() {
       this.$store.commit('startLoading')
       let params = `content=${this.newComment}&mid=${this.message.mid}`
@@ -112,17 +139,17 @@ export default {
         },
         body: params
       })
-      .then((res) => res.json())
-      .then((data) => {
-        this.$store.commit('stopLoading')
-      })
-      .catch(err => {
-        console.log(err)
-        this.$store.commit('stopLoading')
-        this.$refs.toast.showToast('发送评论失败')
-      })
+        .then((res) => res.json())
+        .then((data) => {
+          this.$store.commit('stopLoading')
+        })
+        .catch(err => {
+          console.log(err)
+          this.$store.commit('stopLoading')
+          this.$refs.toast.showToast('发送评论失败')
+        })
     },
-    changeTime(time) {
+    formatTime(time) {
       let date = new Date(time)
       let year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -137,30 +164,65 @@ export default {
       let detail = document.getElementsByClassName('detail')[0]
       let content_height = getComputedStyle(content).height
       let detail_height = getComputedStyle(detail).height
-      list.style.height =  content_height.substr(0, content_height.length - 2) - detail_height.substr(0, detail_height.length - 2) + 'px'
+      list.style.height = content_height.substr(0, content_height.length - 2) - detail_height.substr(0, detail_height.length - 2) + 'px'
     },
     addScrollListener() {
-      let list = document.getElementById('comment_list')
       let self = this
-      let dragger = new DragLoader(list, {
-        dragDownRegionCls: 'latest',
-        dragUpRegionCls: 'more',
-        disableDragDown: true,
-        dragUpHelper: function(status) {
-          if (status == 'default') {
-            return '<div>上拉加载更多</div>';
-          } else if (status == 'prepare') {
-            return '<div>释放加载</div>';
-          } else if (status == 'load') {
-            return '<div>加载中...</div>';
+      let comment_list = document.getElementById('comment_list')
+      comment_list.addEventListener('scroll', throttle(scrollHandle, 100))
+      function scrollHandle() {
+        if (self.noMoreComment == true || self.commentIsLoading == true) {
+          return
+        }
+        if (comment_list.scrollTop + comment_list.clientHeight >= comment_list.scrollHeight - 200) {
+          self.getNewComment()
+        }
+      }
+      function throttle(func, wait = 100) {
+        let context, args;
+        let previous = 0;
+        return function() {
+          let now = +new Date();
+          context = this;
+          args = arguments;
+          if (now - previous > wait) {
+            func.apply(context, args);
+            previous = now;
           }
         }
-      });
-      dragger.on('dragUpLoad', () => {
-        document.getElementsByClassName('more')[0].style.height = '1rem'
-        this.$store.dispatch('getNewComment', {mid: this.message.mid, time: this.commentList[this.commentList.length - 1].tmCreated + 1})
-        dragger.reset();
-      });
+      }
+    },
+    getNewComment() {
+      this.commentIsLoading = true
+      console.log('fetch')
+      let mid = this.message.mid
+      let time = this.commentList[this.commentList.length - 1].tmCreated + 1
+      fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log(data)
+        let comments = data.content.commentList
+        let len = comments.length
+        if (len > 0) {
+          for (let i = len - 1; i >= 0; i--) {
+            this.commentList.push(comments[i])
+          }
+        } else {
+          console.log('nomore')
+          this.noMoreComment = true
+        }
+        this.commentIsLoading = false
+      })
+      .catch(err => {
+        console.log(err)
+        this.commentIsLoading = false
+        this.$refs.toast.showToast('获取新评论失败')
+      })
     }
   }
 }
@@ -262,14 +324,43 @@ export default {
           }
         }
       }
+      .block {
+        height: 0.4rem;
+        width: 100%;
+        background: #EFEFEF;
+      }
     } 
     .comment_list {
-      margin-top: 0.4rem;
       width: 100%;
       height: 5rem;
       background: white;
       overflow: auto;
-      
+      .nomore {
+        width: 100%;
+        height: 1.2rem;
+        background: #EFEFEF;
+        text-align: center;
+        font-size: 0.4rem;
+        color: gray;
+        line-height: 1.2rem;
+        letter-spacing: 1px;
+      }
+      .comment_loading {
+        width: 100%;
+        height: 1.5rem;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        div {
+          width: 0.5rem;
+          height: 0.5rem;
+          border-radius: 50%;
+          border: 0.1rem solid;
+          border-color: #38BAF8 #38BAF8 transparent transparent;
+          animation: load 1.5s linear infinite;
+        }
+      }
       .list_left {
         width: 20%;
         float: left;
@@ -360,5 +451,13 @@ export default {
     }
   }
   
+}
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
