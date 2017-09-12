@@ -16,25 +16,29 @@
         </div>
       </div>
     </div>
-    <List :items="messages"/>
+    <List :items="messages" @saveImgSrc="openImgToast"/>
     <Loading v-show="isLoading"/>
+    <img-toast :src="img_toast_src" ref="img_toast"/>
   </div>
 </template>
 
 <script>
 import List from '../Common/List/List.vue'
 import Loading from '../Common/Loading/Loading.vue'
+import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import add_img from './add.svg'
 
 export default {
   components: {
     List,
-    Loading
+    Loading,
+    ImgToast
   },
   data () {
     return {
       add_img,
-      isAreaOptionOpend: false
+      isAreaOptionOpend: false,
+      img_toast_src: ''
     }
   },
   computed: {
@@ -67,8 +71,6 @@ export default {
   mounted() {
     if (this.messageList.length == 0) { // 第一次进入
       this.$store.dispatch('getInitializedMessageAndLocationList', { page: 0 })
-    } else {
-      
     }
   },
   methods: {
@@ -81,6 +83,10 @@ export default {
       this.isAreaOptionOpend = false
       // 恢复滚动
       document.getElementsByTagName('body')[0].style.overflow = 'auto'
+    },
+    openImgToast(src) {
+      this.$refs.img_toast.open()
+      this.img_toast_src = src
     }
   }
 }

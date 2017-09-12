@@ -1,8 +1,9 @@
 <template>
   <div id="list" ref="list">
-    <div id="container">
-    <div v-for="(item, index) in items" :key="item.id" class="item" :style="{ background: getBackground(index)}">
-      <router-link :to="{name: 'detail', params: { index : index}}">
+    <div v-for="(item, index) in items" 
+         :key="item.id" class="item" 
+         :style="{ background: getBackground(index)}"
+         @click="turnToDetail(index)">
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
@@ -19,15 +20,14 @@
             :key="image_index" 
             :src="getImageSrc(image.webPath)"
             @error="setErrorImg"
+            @click.stop="openImgToast"
           />
         </div>
-      </router-link>
       <div class="footer">
         <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.comment_num }}</div>
         <div class="praise"><img :src="praise"/><span>{{ item.praise_num }}</span></div>
         <div class="clear"></div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -143,6 +143,12 @@ export default {
         this.$store.dispatch('getOldMessage')
         dragger.reset();
       });
+    },
+    turnToDetail(index) {
+      this.$router.push({name: 'detail', params: { index : index}})
+    },
+    openImgToast(e) {
+      this.$emit('saveImgSrc', e.target.src)
     }
   }
 }

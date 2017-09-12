@@ -23,6 +23,7 @@
             :key="image_index" 
             :src="getImageSrc(image.webPath)"
             @error="setErrorImg"
+            @click="openImgToast"
           />
         </div>
         <div class="footer">
@@ -74,6 +75,7 @@
     </div>
     <Loading v-show="isLoading"/>
     <Toast ref="toast"/>
+    <img-toast :src="img_toast_src" ref="img_toast"/>
   </div>
 </template>
 
@@ -81,6 +83,7 @@
 import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
+import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import back_arrow from './back_arrow.svg'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
@@ -91,7 +94,8 @@ import error_img from './error_img.jpg'
 export default {
   components: {
     Loading,
-    Toast
+    Toast,
+    ImgToast
   },
   data () {
     return {
@@ -102,6 +106,7 @@ export default {
       error_img,
       newComment: '',
       commentList: [],
+      img_toast_src: '',
       noMoreComment: false,
       commentIsLoading: false,
       isMaskShowed: false,
@@ -136,7 +141,6 @@ export default {
     this.addScrollListener()
     // 获取最新评论
     this.getInitializedComment()
-    
   },
   methods: {
     getInitializedComment() {
@@ -152,7 +156,6 @@ export default {
         .then((data) => {
           // console.log(data)
           this.commentList = data.content.commentList
-          console.log(this.commentList)
           this.$store.commit('stopLoading')
         })
         .catch(err => {
@@ -298,6 +301,10 @@ export default {
     },
     turnBack() {
       this.$router.go(-1)
+    },
+    openImgToast(e) {
+      this.$refs.img_toast.open()
+      this.img_toast_src = e.target.src
     }
   }
 }
