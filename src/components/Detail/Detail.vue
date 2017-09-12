@@ -1,8 +1,9 @@
 <template>
   <div id="detail">
     <header>
-      <router-link to="/app/home"><img :src="back_arrow"/></router-link>
+      <img :src="back_arrow" @click="turnBack"/>
       <span class="title">无秘</span>
+      <span class="delete_reply" @click="deleteReply">取消回复</span>
     </header>
     <div class="content">
       <div class="detail">
@@ -16,6 +17,14 @@
         <div class="word">
           {{message.content}}
         </div>
+        <div class="img_list">
+          <img 
+            v-for="(image, image_index) in imgList"
+            :key="image_index" 
+            :src="getImageSrc(image.webPath)"
+            @error="setErrorImg"
+          />
+        </div>
         <div class="footer">
           <div class="comment_num" >评论 {{message.commentCount}}</div>
           <div class="praise"><img :src="praise"/><span>{{message.likeCount}}</span></div>
@@ -24,12 +33,12 @@
         <div class="block"></div>
       </div>
       <div class="comment_list" id="comment_list">
-          <div v-for="(item, index) in commentList" :key="item.cid">
-            <div class="list_left">
+          <div v-for="(item, index) in commentList" :key="index">
+            <div class="list_left" @click="openMask(index)">
               <img :src="avatar_img"/>
             </div>
             <div class="list_right">
-              <div class="list_right_title">{{ item.user.nname }}</div>
+              <div class="list_right_title" @click="openMask(index)">匿名的{{ item.user.uid }}</div>
               <div class="list_right_content">{{ item.content }}</div>
               <div class="list_right_bottom">
                 <div class="time">{{ formatTime(item.tmCreated) }}</div>
@@ -48,13 +57,20 @@
     </div>
     <div class="reply">
       <div class="reply_input">
-        <input type="text" placeholder="匿名评论" v-model="newComment"/>
+        <input type="text" :placeholder="placeholder" v-model="newComment"/>
         <div class="underline"></div>
       </div>
       <div class="send_arrow" @click="createComment">
         <img :src="send_arrow"/>
       </div>
       <div class="clear"></div>
+    </div>
+    <div class="mask_layer" v-show="isMaskShowed">
+      <ul>
+        <li @click="turnToChat">私聊</li>
+        <li @click="replyComment">评论他</li>
+        <li @click="closeMask">取消</li>
+      </ul>
     </div>
     <Loading v-show="isLoading"/>
     <Toast ref="toast"/>
@@ -70,6 +86,8 @@ import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import send_arrow from './send_arrow.svg'
+import error_img from './error_img.jpg'
+
 export default {
   components: {
     Loading,
@@ -81,10 +99,17 @@ export default {
       praise,
       avatar_img,
       send_arrow,
+      error_img,
       newComment: '',
       commentList: [],
       noMoreComment: false,
-      commentIsLoading: false
+      commentIsLoading: false,
+      isMaskShowed: false,
+      receiverId: '',
+      receiverName: '',
+      receiverIndex: '',
+      rcid: '',
+      placeholder: '匿名评论'
     }
   },
   computed: {
@@ -96,6 +121,12 @@ export default {
     },
     secret() {
       return this.$store.state.user.secret
+    },
+    imgList() {
+      return this.message.messageImageSet
+    },
+    uid() {
+      return this.$store.state.user.uid
     }
   },
   mounted() {
@@ -105,6 +136,7 @@ export default {
     this.addScrollListener()
     // 获取最新评论
     this.getInitializedComment()
+    
   },
   methods: {
     getInitializedComment() {
@@ -120,6 +152,7 @@ export default {
         .then((data) => {
           // console.log(data)
           this.commentList = data.content.commentList
+          console.log(this.commentList)
           this.$store.commit('stopLoading')
         })
         .catch(err => {
@@ -131,6 +164,10 @@ export default {
     createComment() {
       this.$store.commit('startLoading')
       let params = `content=${this.newComment}&mid=${this.message.mid}`
+      if (this.rcid != '') {
+        params = params + '&rcid=' + this.rcid
+      }
+      this.newComment = ''
       fetch(`${api}/api/comment/create`, {
         method: 'post',
         headers: {
@@ -142,6 +179,8 @@ export default {
         .then((res) => res.json())
         .then((data) => {
           this.$store.commit('stopLoading')
+          this.$store.commit('addCommentCount', {index: this.$route.params.index})
+          this.getNewComment()
         })
         .catch(err => {
           console.log(err)
@@ -169,7 +208,7 @@ export default {
     addScrollListener() {
       let self = this
       let comment_list = document.getElementById('comment_list')
-      comment_list.addEventListener('scroll', throttle(scrollHandle, 100))
+      comment_list.addEventListener('scroll', throttle(scrollHandle, 50))
       function scrollHandle() {
         if (self.noMoreComment == true || self.commentIsLoading == true) {
           return
@@ -194,7 +233,6 @@ export default {
     },
     getNewComment() {
       this.commentIsLoading = true
-      console.log('fetch')
       let mid = this.message.mid
       let time = this.commentList[this.commentList.length - 1].tmCreated + 1
       fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
@@ -213,7 +251,6 @@ export default {
             this.commentList.push(comments[i])
           }
         } else {
-          console.log('nomore')
           this.noMoreComment = true
         }
         this.commentIsLoading = false
@@ -223,6 +260,44 @@ export default {
         this.commentIsLoading = false
         this.$refs.toast.showToast('获取新评论失败')
       })
+    },
+    getImageSrc(webPath) {
+      return api + webPath
+    },
+    setErrorImg(e) {
+      e.target.src = this.error_img
+    },
+    openMask(index) {
+      let receiverId = this.commentList[index].user.uid
+      this.receiverId = receiverId
+      this.receiverName = '匿名的' + receiverId
+      this.receiverIndex = index
+      if (receiverId == this.uid) {
+        this.$refs.toast.showToast('不能回复自己')
+        return 0
+      }
+      this.isMaskShowed = true
+    },
+    closeMask() {
+      this.isMaskShowed = false
+    },
+    turnToChat() {
+      let receiverId = this.receiverId
+      let receiverName = this.receiverName
+      this.$store.commit('addChatInfo', { receiverId, receiverName })
+      this.$router.push('/chat')
+    },
+    replyComment() {
+      this.rcid = this.commentList[this.receiverIndex].cid
+      this.placeholder = `回复 ${this.receiverName} 的评论：`
+      this.isMaskShowed = false
+    },
+    deleteReply() {
+      this.rcid = ''
+      this.placeholder = '匿名评论'
+    },
+    turnBack() {
+      this.$router.go(-1)
     }
   }
 }
@@ -233,6 +308,39 @@ export default {
   width: 100%;
   height: 100%;
   background: #EFEFEF;
+  .mask_layer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ul {
+      padding: 0;
+      list-style: none;
+      width: 4rem;
+      background: #F8F8F8;
+      border-radius: 0.15rem;
+      li {
+        display: block;
+        width: 90%;
+        margin: 0 auto;
+        height: 1.2rem;
+        font-size: 0.5rem;
+        text-align: center;
+        letter-spacing: 1px;
+        line-height: 1.2rem;
+        border-bottom: 1px solid gray;
+      }
+      li:nth-of-type(3) {
+        border: 0;
+      }
+    }
+  }
   .latest, .more {
     font-size: 0.5rem;
     text-align: center;
@@ -257,6 +365,12 @@ export default {
       display: inline-block;
       margin-left: 0.4rem;
       font-size: 0.45rem;
+    }
+    .delete_reply {
+      font-size: 0.45rem;
+      position: absolute;
+      right: 0.2rem;
+      letter-spacing: 1px;
     }
   }
   .content {
@@ -302,6 +416,15 @@ export default {
         font-size: 0.5rem;
         letter-spacing: 3px;
         background: white;
+      }
+      .img_list {
+        width: 90%;
+        margin: 0 auto;
+        img {
+          height: 2.5rem;
+          width: 2.5rem;
+          margin-right: 0.1rem;
+        }
       }
       .footer {
         width: 90%;

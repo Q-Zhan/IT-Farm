@@ -57,8 +57,5 @@ export default new Router({
       name: 'chat',
       component: Chat
     }
-  ],
-  scrollBehavior (to, from, savedPosition) {
-    return savedPosition
-  }
+  ]
 })

@@ -14,7 +14,12 @@ export default {
     uname: '',
     nname: ''
   },
+  chat: {
+    chat_list: {},
+    receiverId: '',
+    receiverName: ''
+  },
   messageList: [],
-  locationList: [],
-  commentList: []
+  locationList: []
+
 }

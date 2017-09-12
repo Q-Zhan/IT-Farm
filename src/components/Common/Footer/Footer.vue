@@ -13,7 +13,7 @@
       </router-link>
     </div>
     <div class="button"  @click="switchTo('message')">
-      <router-link to="/app/message">
+      <router-link to="/chat">
         <img :src="chosen=='message' ? message_chose : message"/>
         <span :style="{color: chosen=='message' ? '#282D33':'#A1A5A8'}">消息</span>
       </router-link>

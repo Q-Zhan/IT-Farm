@@ -1,5 +1,6 @@
 <template>
   <div id="list" ref="list">
+    <div id="container">
     <div v-for="(item, index) in items" :key="item.id" class="item" :style="{ background: getBackground(index)}">
       <router-link :to="{name: 'detail', params: { index : index}}">
         <div class="header">
@@ -27,6 +28,7 @@
         <div class="clear"></div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -52,14 +54,22 @@ export default {
       colors: [
         '#669ACA', '#61CA92', '#F2BE73', '#E897BD', '#81C467'
       ],
-      background_array: [] // true表示有颜色，false表示白色
+      background_array: [], // true表示有颜色，false表示白色
+      scrollPosition: ''
     }
   },
   computed: {
     
   },
   mounted(){
+    if (sessionStorage.scauwumi_scrollPosition) {
+      document.getElementById('list').scrollTop = sessionStorage.scauwumi_scrollPosition
+    }
     this.addScrollListener()
+    this.saveScrollPosition()
+  },
+  beforeDestroy() {
+    sessionStorage.setItem('scauwumi_scrollPosition', this.scrollPosition)
   },
   methods: {
     getBackground(index) {
@@ -76,6 +86,27 @@ export default {
     },
     setErrorImg(e) {
       e.target.src = this.error_img
+    },
+    saveScrollPosition() {
+      let self = this
+      let list = this.$refs.list
+      list.addEventListener('scroll', throttle(scrollHandle, 100))
+      function scrollHandle() {
+        self.scrollPosition = list.scrollTop
+      }
+      function throttle(func, wait = 100) {
+        let context, args;
+        let previous = 0;
+        return function() {
+          let now = +new Date();
+          context = this;
+          args = arguments;
+          if (now - previous > wait) {
+            func.apply(context, args);
+            previous = now;
+          }
+        }
+      }
     },
     addScrollListener() {
       let list = document.getElementById('list')

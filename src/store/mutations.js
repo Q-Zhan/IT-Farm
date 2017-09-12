@@ -42,5 +42,12 @@ export default {
   },
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)
+  },
+  addChatInfo(state, { receiverId, receiverName }) {
+    state.chat.receiverId = receiverId
+    state.chat.receiverName = receiverName
+  },
+  addCommentCount(state, { index}) {
+    state.messageList[index].commentCount++
   }
 }

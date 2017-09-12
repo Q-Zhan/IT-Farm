@@ -67,8 +67,9 @@ export default {
   mounted() {
     if (this.messageList.length == 0) { // 第一次进入
       this.$store.dispatch('getInitializedMessageAndLocationList', { page: 0 })
+    } else {
+      
     }
-    
   },
   methods: {
     openAreaOption() {
