@@ -1,1 +1,1 @@
-export const api = 'http://104.224.174.146:8080/Mimi-2.0'
+export const api = 'http://104.224.174.146:8080/Mimi-3.0'

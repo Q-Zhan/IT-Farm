@@ -2,7 +2,7 @@
   <div id="Chat">
     <header>
       <div class="img" @click="turnBack"><img :src="back_arrow"/></div>
-      <span>{{receiverName}}</span>
+      <span>{{chat.chatName}}</span>
     </header>
     <div class="chat_list">
       <div v-for="(item, index) in message_list"
@@ -40,11 +40,7 @@ export default {
       back_arrow,
       send_arrow,
       avatar,
-      message_list: [
-        
-      ],
       message: '',
-      stomp: ''
     }
   },
   computed: {
@@ -54,82 +50,30 @@ export default {
     uid() {
       return this.$store.state.user.uid
     },
-    receiverId() {
-      return this.$store.state.chat.receiverId
+    chatList() {
+      return this.$store.state.chat.chatList
     },
-    receiverName() {
-      return this.$store.state.chat.receiverName
+    chat() {
+      return this.chatList[this.$route.params.chatIndex]
+    },
+    message_list() {
+      return this.chat.message
+    },
+    stomp() {
+      return this.$store.state.socket.stomp
     }
   },
   mounted() {
-    this.connect()
+    
   },
   methods: {
-    connect() {
-      let sock = ''
-      let stomp = ''
-      if (window.WebSocket) {
-        this.$store.commit('startLoading')
-        sock = new SockJS("http://104.224.174.146:8080/Mimi-2.0/socketServer?srect=" + this.secret)
-
-        stomp = this.stomp =  Stomp.over(sock)
-        stomp.connect(
-          { "src": "iamaheader" },
-          (frame) => {
-            // console.info("Connected: " + frame)
-            // 成功发送消息后会在此端点接收到来自服务器的推送(2)
-            stomp.subscribe("/user/queue/send/status", (message) => {
-              // console.info("send status: " + message)
-            })
-            // 在此端点接收该用户收到的聊天信息(3)
-            stomp.subscribe("/user/" + this.uid + "/recive", (message) => {
-              let chatMsg = JSON.parse(message.body)
-              // console.warn(chatMsg.content)
-              this.message_list.push({
-                position: 'left',
-                content: chatMsg.content
-              })
-              this.reciveMsg(chatMsg.chatID)
-            })
-            // 成功发送确认接收消息后会在此端点接收到来自服务器的推送(5)
-            stomp.subscribe("/user/queue/recive/status", (message) => {
-              // console.info("recive status: " + message)
-            })
-            // 订阅用户的错误通知
-            stomp.subscribe("/user/queue/status", (message) => {
-              // console.info("exception: " + message)
-            })
-            this.$store.commit('stopLoading')
-            this.sendInit()
-          }
-        )
-      } else {
-        alert("您的浏览器不支持websocket")
-        this.$router.go(-1)
-      }
-    },
-    sendInit() {
-      // 建立socket连接之后发送此初始化信息,获取还未接收的聊天消息
-      this.stomp.send("/socket/chat/init", {}, null)
-    },
-    reciveMsg(chatId) {
-      // 成功接收消息后要推送以确认接收(4)
-      this.stomp.send("/socket/chat/recive", {},
-				JSON.stringify({
-          'msgID': chatId
-        })
-      )
-    },
     sendMsg() {
       let data = {
-				"reciverId": this.receiverId,
+				"reciverId": this.chat.chatId,
 				"message": this.message
 			}
       data.msgID = sha1.hex(data + (new Date()).getTime())
-      this.message_list.push({
-        position: 'right',
-        content: this.message
-      })
+      this.$store.commit('addChatMessage', {chatIndex: this.$route.params.chatIndex, content: this.message})
       this.stomp.send("/socket/chat/send", {}, JSON.stringify(data))
       this.message = ''
     },

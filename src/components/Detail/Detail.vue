@@ -3,7 +3,7 @@
     <header>
       <img :src="back_arrow" @click="turnBack"/>
       <span class="title">无秘</span>
-      <span class="delete_reply" @click="deleteReply">取消回复</span>
+      <span class="delete_reply" @click="deleteReply" v-show="rcid">取消回复</span>
     </header>
     <div class="content">
       <div class="detail">
@@ -27,33 +27,36 @@
           />
         </div>
         <div class="footer">
-          <div class="comment_num" >评论 {{message.commentCount}}</div>
+          <div class="comment_num" >评论 {{commentList.length}}</div>
           <div class="praise"><img :src="praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
         <div class="block"></div>
       </div>
       <div class="comment_list" id="comment_list">
-          <div v-for="(item, index) in commentList" :key="index">
-            <div class="list_left" @click="openMask(index)">
-              <img :src="avatar_img"/>
-            </div>
-            <div class="list_right">
-              <div class="list_right_title" @click="openMask(index)">匿名的{{ item.user.uid }}</div>
-              <div class="list_right_content">{{ item.content }}</div>
-              <div class="list_right_bottom">
-                <div class="time">{{ formatTime(item.tmCreated) }}</div>
-                <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
-                <div class="clear"></div>
-              </div>
-            </div>
-            <div class="clear"></div>
+        <div v-for="(item, index) in commentList" :key="index">
+          <div class="list_left" @click="openMask(index)">
+            <img :src="avatar_img"/>
           </div>
-          <div class="comment_loading" v-show="commentIsLoading">
-            <div>
+          <div class="list_right" @click="openMask(index)">
+            <div class="list_right_title" >{{ item.user.uname }}</div>
+            <div class="list_right_content">
+              <span v-if="item.rcUname" class="at">@{{ item.rcUname }}: </span>
+              <span>{{ item.content }}</span>
+            </div>
+            <div class="list_right_bottom">
+              <div class="time">{{ formatTime(item.tmCreated) }}</div>
+              <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
+              <div class="clear"></div>
             </div>
           </div>
-          <div class="nomore" v-if="noMoreComment">没有更多内容</div>
+          <div class="clear"></div>
+        </div>
+        <div class="comment_loading" v-show="commentIsLoading">
+          <div>
+          </div>
+        </div>
+        <div class="nomore" v-if="noMoreComment">没有更多内容</div>
       </div>
     </div>
     <div class="reply">
@@ -105,6 +108,7 @@ export default {
       send_arrow,
       error_img,
       newComment: '',
+      messageIndex: '',
       commentList: [],
       img_toast_src: '',
       noMoreComment: false,
@@ -114,7 +118,7 @@ export default {
       receiverName: '',
       receiverIndex: '',
       rcid: '',
-      placeholder: '匿名评论'
+      placeholder: '发表评论'
     }
   },
   computed: {
@@ -132,6 +136,9 @@ export default {
     },
     uid() {
       return this.$store.state.user.uid
+    },
+    chatList() {
+      return this.$store.state.chat.chatList
     }
   },
   mounted() {
@@ -141,6 +148,11 @@ export default {
     this.addScrollListener()
     // 获取最新评论
     this.getInitializedComment()
+    this.messageIndex = this.$route.params.index
+  },
+  beforeDestroy() {
+    let len = this.commentList.length
+    this.$store.commit('addCommentCount', {index: this.messageIndex, count: len})
   },
   methods: {
     getInitializedComment() {
@@ -154,7 +166,7 @@ export default {
       })
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data)
+          console.log(data.content.commentList)
           this.commentList = data.content.commentList
           this.$store.commit('stopLoading')
         })
@@ -182,7 +194,6 @@ export default {
         .then((res) => res.json())
         .then((data) => {
           this.$store.commit('stopLoading')
-          this.$store.commit('addCommentCount', {index: this.$route.params.index})
           this.getNewComment()
         })
         .catch(err => {
@@ -272,8 +283,9 @@ export default {
     },
     openMask(index) {
       let receiverId = this.commentList[index].user.uid
+      let receiverName = this.commentList[index].user.uname
       this.receiverId = receiverId
-      this.receiverName = '匿名的' + receiverId
+      this.receiverName = receiverName
       this.receiverIndex = index
       if (receiverId == this.uid) {
         this.$refs.toast.showToast('不能回复自己')
@@ -287,8 +299,22 @@ export default {
     turnToChat() {
       let receiverId = this.receiverId
       let receiverName = this.receiverName
-      this.$store.commit('addChatInfo', { receiverId, receiverName })
-      this.$router.push('/chat')
+      let flag = 0
+      let len = this.chatList.length
+      let i = 0
+      for (i = 0; i < len; i++) {
+        if (receiverId == this.chatList[i].chatId) {
+          flag = 1
+          break
+        }
+      }
+      if (flag == 0) {
+        this.$store.commit('addChat', { receiverId, receiverName })
+        this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
+      }
+      else {
+        this.$router.push({ name: 'chat', params: { chatIndex: i}})
+      }
     },
     replyComment() {
       this.rcid = this.commentList[this.receiverIndex].cid
@@ -297,7 +323,7 @@ export default {
     },
     deleteReply() {
       this.rcid = ''
-      this.placeholder = '匿名评论'
+      this.placeholder = '发表评论'
     },
     turnBack() {
       this.$router.go(-1)
@@ -515,6 +541,9 @@ export default {
         .list_right_content {
           margin: 0.3rem 0;
           font-size: 0.4rem;
+          .at {
+            color: #007ACC;
+          }
         }
         .list_right_bottom {
           width: 100%;

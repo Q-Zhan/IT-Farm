@@ -30,7 +30,6 @@ export default {
 <style lang="scss" scoped>
 #user {
   width: 100%;
-  height: 100%;
   header {
     width: 100%;
     height: 1.4rem;

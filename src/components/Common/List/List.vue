@@ -115,22 +115,10 @@ export default {
         dragDownRegionCls: 'latest',
         dragUpRegionCls: 'more',
         dragDownHelper: function(status) {
-          if (status == 'default') {
-            return '<div>下拉刷新</div>';
-          } else if (status == 'prepare') {
-            return '<div>释放刷新</div>';
-          } else if (status == 'load') {
-            return '<div>刷新中...</div>';
-          }
+          return '<div class="down_loading"><div></div></div>'
         },
         dragUpHelper: function(status) {
-          if (status == 'default') {
-            return '<div>上拉加载更多</div>';
-          } else if (status == 'prepare') {
-            return '<div>释放加载</div>';
-          } else if (status == 'load') {
-            return '<div>加载中...</div>';
-          }
+          return '<div class="down_loading"><div></div></div>'
         }
       });
       dragger.on('dragDownLoad', () => {
@@ -160,11 +148,20 @@ export default {
   height: calc(100% - 1.4rem);
   padding-bottom: 1.5rem;
   overflow-y: scroll;
-  .latest, .more {
-    font-size: 0.5rem;
-    text-align: center;
-    line-height: 1rem;
-    background: #D6D6D6;
+  .down_loading {
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    div {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      border: 0.1rem solid;
+      border-color: #38BAF8 #38BAF8 transparent transparent;
+      animation: load 1.5s linear infinite;
+    }
   }
   .item {
     .header {
@@ -230,6 +227,14 @@ export default {
         }
       }
     }
+  }
+}
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

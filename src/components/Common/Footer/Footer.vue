@@ -13,7 +13,7 @@
       </router-link>
     </div>
     <div class="button"  @click="switchTo('message')">
-      <router-link to="/chat">
+      <router-link to="/app/chatList">
         <img :src="chosen=='message' ? message_chose : message"/>
         <span :style="{color: chosen=='message' ? '#282D33':'#A1A5A8'}">消息</span>
       </router-link>
@@ -50,6 +50,8 @@ export default {
       user_chose,
       chosen: 'home'
     }
+  },
+  computed: {
   },
   methods: {
     switchTo(value) {

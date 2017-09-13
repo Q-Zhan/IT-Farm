@@ -15,11 +15,12 @@ export default {
     nname: ''
   },
   chat: {
-    chat_list: {},
-    receiverId: '',
-    receiverName: ''
+    chatList: [],
+    chatIndex: ''
+  },
+  socket: {
+    stomp: ''
   },
   messageList: [],
   locationList: []
-
 }

@@ -27,6 +27,7 @@ import List from '../Common/List/List.vue'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import add_img from './add.svg'
+import { api } from '../../api'
 
 export default {
   components: {
@@ -51,6 +52,15 @@ export default {
     locationList() {
       return this.$store.state.locationList
     },
+    stomp() {
+      return this.$store.state.socket.stomp
+    },
+    uid() {
+      return this.$store.state.user.uid
+    },
+    secret() {
+      return this.$store.state.user.secret
+    },
     messages() {
       let arr = []
       let messageList = this.messageList
@@ -71,9 +81,40 @@ export default {
   mounted() {
     if (this.messageList.length == 0) { // 第一次进入
       this.$store.dispatch('getInitializedMessageAndLocationList', { page: 0 })
+      this.connect() // 连接socket开始监听消息
     }
   },
   methods: {
+    connect() {
+      let sock = ''
+      let stomp = ''
+      if (window.WebSocket) {
+        sock = new SockJS(api + "/socketServer?srect=" + this.secret)
+        stomp = Stomp.over(sock)
+        stomp.connect(
+          { "src": "iamaheader" },
+          (frame) => {
+            // 在此端点接收该用户收到的聊天信息(3)
+            stomp.subscribe("/user/" + this.uid + "/recive", (message) => {
+              let chatMsg = JSON.parse(message.body)
+              console.warn(chatMsg)
+              this.$store.commit('receiveChatMessage', { chatMsg })
+              // 成功接收消息后要推送以确认接收(4)
+              stomp.send("/socket/chat/recive", {},
+                JSON.stringify({
+                  'msgID': chatMsg.chatID
+                })
+              )
+            })
+            // 建立socket连接之后发送此初始化信息,获取还未接收的聊天消息
+            stomp.send("/socket/chat/init", {}, null)
+            this.$store.commit('connectSocket', { stomp})
+          }
+        )
+      } else {
+        alert("不支持websocket,无法使用聊天功能")
+      }
+    },
     openAreaOption() {
       this.isAreaOptionOpend = true
       // 屏蔽滚动
