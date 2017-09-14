@@ -15,7 +15,16 @@ export default {
     nname: ''
   },
   chat: {
-    chatList: [],
+    chatList: [
+      // {
+      //   chatId: '',
+      //   chatName: '',
+      //   isRead: false,
+      //   message: [
+      //     { position: 'left', content: '123', time: '1231231432'}
+      //   ]
+      // }
+    ],
     chatIndex: ''
   },
   socket: {

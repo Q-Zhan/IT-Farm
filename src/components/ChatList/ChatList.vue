@@ -5,10 +5,16 @@
     </header>
     <div class="chat_list">
       <div v-for="(item, index) in chatList" :key="index" class="chat_item" @click="turnToChat(index)">
-        <div class="avatar"><img :src="avatar"/></div>
+        <div class="avatar">
+          <img :src="avatar"/>
+          <div class="dot" v-show="!item.isRead"></div>
+        </div>
         <div class="word">
           <div class="name">{{ item.chatName }}</div>
           <div class="last_message">{{ item.message[item.message.length-1].content }}</div>
+        </div>
+        <div class="time">
+          {{ formatTime(item.message[item.message.length-1].time) }}
         </div>
       </div>
     </div>
@@ -32,6 +38,19 @@ export default {
   methods: {
     turnToChat(index) {
       this.$router.push({ name: 'chat', params: { chatIndex: index}})
+    },
+    formatTime(time) {
+      let timeStamp = new Date(time)
+      let hour = timeStamp.getHours()
+      let minute = timeStamp.getMinutes()
+      if (hour > 18) {
+        hour = '晚上' + (hour - 12)
+      } else if (hour > 12) {
+        hour = '下午' + (hour - 12)
+      } else {
+        hour = '上午' + hour
+      }
+      return hour + ':' + minute
     }
   }
 }
@@ -64,13 +83,24 @@ export default {
       border-right: 0;
       display: flex;
       align-items: center;
+      position: relative;
       .avatar {
         width: 1.5rem;
         height: 1.5rem;
         margin-left: 0.5rem;
+        position: relative;
         img {
           width: 100%;
           height: 100%;
+        }
+        .dot {
+          position: absolute;
+          top: -0.15rem;
+          right: -0.15rem;
+          width: 0.3rem;
+          height: 0.3rem;
+          background: red;
+          border-radius: 50%;
         }
       }
       .word {
@@ -90,6 +120,14 @@ export default {
           font-size: 0.4rem;
           color: gray;
         }
+      }
+      .time {
+        height: 1.5rem;
+        position: absolute;
+        top: 0.35rem;
+        right: 0.25rem;
+        font-size: 0.4rem;
+        color: gray;
       }
     }
   }

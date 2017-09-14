@@ -97,7 +97,6 @@ export default {
             // 在此端点接收该用户收到的聊天信息(3)
             stomp.subscribe("/user/" + this.uid + "/recive", (message) => {
               let chatMsg = JSON.parse(message.body)
-              console.warn(chatMsg)
               this.$store.commit('receiveChatMessage', { chatMsg })
               // 成功接收消息后要推送以确认接收(4)
               stomp.send("/socket/chat/recive", {},

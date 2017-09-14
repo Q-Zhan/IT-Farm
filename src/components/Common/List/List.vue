@@ -137,6 +137,9 @@ export default {
     },
     openImgToast(e) {
       this.$emit('saveImgSrc', e.target.src)
+    },
+    tailorContent(content) {
+      
     }
   }
 }
@@ -195,6 +198,10 @@ export default {
       margin-bottom: 0.2rem;
       font-size: 0.5rem;
       letter-spacing: 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .images {
       width: 9rem;

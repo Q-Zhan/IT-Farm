@@ -41,6 +41,7 @@ export default {
       send_arrow,
       avatar,
       message: '',
+      chatIndex: ''
     }
   },
   computed: {
@@ -64,7 +65,10 @@ export default {
     }
   },
   mounted() {
-    
+    this.chatIndex = this.$route.params.chatIndex
+  },
+  beforeDestroy() {
+    this.$store.commit('changeChatRead', { chatIndex: this.chatIndex})
   },
   methods: {
     sendMsg() {

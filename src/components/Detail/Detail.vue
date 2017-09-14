@@ -5,7 +5,7 @@
       <span class="title">无秘</span>
       <span class="delete_reply" @click="deleteReply" v-show="rcid">取消回复</span>
     </header>
-    <div class="content">
+    <div class="content" id="content">
       <div class="detail">
         <div class="header">
           <img :src="avatar_img"/>
@@ -142,8 +142,6 @@ export default {
     }
   },
   mounted() {
-    // 修正评论list高度
-    this.calculateListHeight()
     // 添加滚动事件
     this.addScrollListener()
     // 获取最新评论
@@ -166,7 +164,7 @@ export default {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data.content.commentList)
+          // console.log(data.content.commentList)
           this.commentList = data.content.commentList
           this.$store.commit('stopLoading')
         })
@@ -211,19 +209,17 @@ export default {
       let dealt_day = day > 10 ? day : '0' + day
       return `${year}/${dealt_month}/${dealt_day}`
     },
-    calculateListHeight() {
-      let list = document.getElementById('comment_list')
-      let content = document.getElementsByClassName('content')[0]
-      let detail = document.getElementsByClassName('detail')[0]
-      let content_height = getComputedStyle(content).height
-      let detail_height = getComputedStyle(detail).height
-      list.style.height = content_height.substr(0, content_height.length - 2) - detail_height.substr(0, detail_height.length - 2) + 'px'
-    },
     addScrollListener() {
       let self = this
       let comment_list = document.getElementById('comment_list')
+      let content = document.getElementById('content')
+      let detail = document.getElementById('detail')
       comment_list.addEventListener('scroll', throttle(scrollHandle, 50))
+      content.addEventListener('scroll', scrollHandle)
+      window.addEventListener('scroll', scrollHandle)
+      detail.addEventListener('scroll', scrollHandle)
       function scrollHandle() {
+        console.log('123')
         if (self.noMoreComment == true || self.commentIsLoading == true) {
           return
         }
@@ -409,7 +405,6 @@ export default {
   .content {
     width: 100%;
     height: calc(100% - 2.9rem);
-    overflow: hidden;
     background: #EFEFEF;
     padding-top: 1.4rem;
     padding-bottom: 1.5rem;
@@ -488,9 +483,8 @@ export default {
     } 
     .comment_list {
       width: 100%;
-      height: 5rem;
       background: white;
-      overflow: auto;
+      margin-bottom: 1.5rem;
       .nomore {
         width: 100%;
         height: 1.2rem;

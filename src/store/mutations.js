@@ -53,6 +53,7 @@ export default {
     state.chat.chatList.push({
       chatId: receiverId,
       chatName: receiverName,
+      isRead: false,
       message: []
     })
   },
@@ -61,7 +62,8 @@ export default {
     let flag = 0
     for (let i = 0; i < len; i++) {
       if (state.chat.chatList[i].chatId == chatMsg.senderId) {
-        state.chat.chatList[i].message.push({position: 'left', content: chatMsg.content})
+        state.chat.chatList[i].message.push({position: 'left', content: chatMsg.content, time: chatMsg.time})
+        state.chat.chatList[i].isRead = false
         flag = 1
         break
       }
@@ -70,8 +72,9 @@ export default {
       state.chat.chatList.push({
         chatId: chatMsg.senderId,
         chatName: chatMsg.sender,
+        isRead: false,
         message: [
-          {position: 'left', content: chatMsg.content}
+          {position: 'left', content: chatMsg.content, time: chatMsg.time}
         ]
       })
     }
@@ -79,7 +82,11 @@ export default {
   addChatMessage(state, { chatIndex, content}) {
     state.chat.chatList[chatIndex].message.push({
       position: 'right',
-      content: content
+      content: content,
+      time: new Date().getTime()
     })
+  },
+  changeChatRead(state, { chatIndex }) {
+    state.chat.chatList[chatIndex].isRead = true
   }
 }

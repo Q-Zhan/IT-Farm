@@ -12,10 +12,13 @@
         <span :style="{color: chosen=='find' ? '#282D33':'#A1A5A8'}">发现</span>
       </router-link>
     </div>
-    <div class="button"  @click="switchTo('message')">
+    <div class="button"  @click="switchTo('chatList')">
       <router-link to="/app/chatList">
-        <img :src="chosen=='message' ? message_chose : message"/>
-        <span :style="{color: chosen=='message' ? '#282D33':'#A1A5A8'}">消息</span>
+        <div class="chatList">
+          <img :src="chosen=='chatList' ? chat_chose : chat" />
+          <span :style="{color: chosen=='chatList' ? '#282D33':'#A1A5A8'}">消息</span>
+          <div class="dot" v-show="!isAllChatRead"></div>
+        </div>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('user')">
@@ -32,8 +35,8 @@ import home from './home.svg'
 import home_chose from './home_chose.svg'
 import find from './find.svg'
 import find_chose from './find_chose.svg'
-import message from './message.svg'
-import message_chose from './message_chose.svg'
+import chat from './message.svg'
+import chat_chose from './message_chose.svg'
 import user from './user.svg'
 import user_chose from './user_chose.svg'
 
@@ -44,14 +47,30 @@ export default {
       home_chose,
       find,
       find_chose,
-      message,
-      message_chose,
+      chat,
+      chat_chose,
       user,
       user_chose,
-      chosen: 'home'
+      chosen: ''
     }
   },
   computed: {
+    chatList() {
+      return this.$store.state.chat.chatList
+    },
+    isAllChatRead() {
+      let chatList = this.chatList
+      let len = chatList.length
+      for (let i = 0; i < len; i++) {
+        if(chatList[i].isRead == false) {
+          return false
+        }
+      }
+      return true
+    }
+  },
+  mounted() {
+    this.chosen = this.$route.path.slice(5)
   },
   methods: {
     switchTo(value) {
@@ -86,9 +105,19 @@ export default {
         width: 0.7rem;
         height: 0.7rem;
       }
+      .chatList {
+        position: relative;
+      }
+      .dot {
+        position: absolute;
+        top: -0.1rem;
+        right: -0.1rem;
+        width: 0.3rem;
+        height: 0.3rem;
+        background: red;
+        border-radius: 50%;
+      }
     }
-    
-    
   }
 }
 </style>
