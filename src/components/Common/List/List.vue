@@ -1,14 +1,14 @@
 <template>
   <div id="list" ref="list">
-    <div v-for="(item, index) in items" 
-         :key="item.id" class="item" 
+    <div v-for="(item, index) in messageList" 
+         :key="item.mid" class="item" 
          :style="{ background: getBackground(index)}"
          @click="turnToDetail(index)">
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
             <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
-            <span>{{ item.area }}</span>
+            <span>{{ item.location.locale }}</span>
           </div>
         </div>
         <div class="content">
@@ -16,7 +16,7 @@
         </div>
         <div class="images">
           <img 
-            v-for="(image, image_index) in item.images"
+            v-for="(image, image_index) in item.messageImageSet"
             :key="image_index" 
             :src="getImageSrc(image.webPath)"
             @error="setErrorImg"
@@ -24,8 +24,8 @@
           />
         </div>
       <div class="footer">
-        <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.comment_num }}</div>
-        <div class="praise"><img :src="praise"/><span>{{ item.praise_num }}</span></div>
+        <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.commentCount }}</div>
+        <div class="praise" @click.stop="changePraiseNum(index)"><img :src="praise"/><span>{{ item.likeCount }}</span></div>
         <div class="clear"></div>
       </div>
     </div>
@@ -39,12 +39,6 @@ import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import error_img from './error_img.jpg'
 export default {
-  props: [
-    'items'
-  ],
-  components: {
-    
-  },
   data () {
     return {
       avatar_img,
@@ -59,7 +53,9 @@ export default {
     }
   },
   computed: {
-    
+    messageList() {
+      return this.$store.state.messageList
+    }
   },
   mounted(){
     if (sessionStorage.scauwumi_scrollPosition) {
@@ -122,12 +118,12 @@ export default {
         }
       });
       dragger.on('dragDownLoad', () => {
-        document.getElementsByClassName('latest')[0].style.height = '1rem'
+        document.getElementsByClassName('latest')[0].style.display = 'none'
         this.$store.dispatch('getNewMessage')
         dragger.reset();
       });
       dragger.on('dragUpLoad', () => {
-        document.getElementsByClassName('more')[0].style.height = '1rem'
+        document.getElementsByClassName('more')[0].style.display = 'none'
         this.$store.dispatch('getOldMessage')
         dragger.reset();
       });
@@ -138,8 +134,8 @@ export default {
     openImgToast(e) {
       this.$emit('saveImgSrc', e.target.src)
     },
-    tailorContent(content) {
-      
+    changePraiseNum(index) {
+      this.$store.dispatch('changeMessagePraiseNum', {index})
     }
   }
 }
