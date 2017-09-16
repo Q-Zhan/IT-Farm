@@ -1,4 +1,5 @@
 <template>
+
   <div id="modifyUser">
     <header>
       <img :src="back_arrow" @click="turnToBack"/>
@@ -12,6 +13,7 @@
       {{ 30 - input_content.length}}
     </div>
   </div>
+
 </template>
 
 <script>
@@ -55,7 +57,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
 #modifyUser {
   header {
     width: 100%;

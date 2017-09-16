@@ -1,6 +1,8 @@
 <template>
   <div id="app">
+    <transition name="fade">
     <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -16,6 +18,17 @@ export default {
 </script>
 
 <style lang="scss">
+.fade-enter-active {
+  transition: all 0.2s linear;
+}
+.fade-enter {
+   opacity: 0;
+   transform:translateX(500px);
+}
+.fade-enter-to {
+  opacity: 1;
+  transform: translateX(0px);
+}
 html, body {
   margin: 0;
   padding: 0;
