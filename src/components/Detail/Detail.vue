@@ -27,8 +27,8 @@
           />
         </div>
         <div class="footer">
-          <div class="comment_num" >评论 {{commentList.length}}</div>
-          <div class="praise"><img :src="praise"/><span>{{message.likeCount}}</span></div>
+          <div class="comment_num" >评论 {{message.commentCount}}</div>
+          <div class="praise" @click.stop="changePraiseNum"><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
         <div class="block"></div>
@@ -46,7 +46,7 @@
             </div>
             <div class="list_right_bottom">
               <div class="time">{{ formatTime(item.tmCreated) }}</div>
-              <div class="praise"><img :src="praise"/>{{ item.likeCount }}</div>
+              <div class="praise" ><img :src="praise"/>{{ item.likeCount }}</div>
               <div class="clear"></div>
             </div>
           </div>
@@ -69,7 +69,7 @@
       </div>
       <div class="clear"></div>
     </div>
-    <div class="mask_layer" v-show="isMaskShowed">
+    <div class="mask_layer" v-show="isMaskShowed" @click="closeMask">
       <ul>
         <li @click="turnToChat">私聊</li>
         <li @click="replyComment">评论他</li>
@@ -104,11 +104,11 @@ export default {
     return {
       back_arrow,
       praise,
+      praise_chose,
       avatar_img,
       send_arrow,
       error_img,
       newComment: '',
-      messageIndex: '',
       commentList: [],
       img_toast_src: '',
       noMoreComment: false,
@@ -146,17 +146,13 @@ export default {
     this.addScrollListener()
     // 获取最新评论
     this.getInitializedComment()
-    this.messageIndex = this.$route.params.index
-  },
-  beforeDestroy() {
-    let len = this.commentList.length
-    this.$store.commit('addCommentCount', {index: this.messageIndex, count: len})
   },
   methods: {
     getInitializedComment() {
       this.$store.commit('startLoading')
       let mid = this.message.mid
-      fetch(api + `/api/comment/message/${mid}/page/0`, {
+      let time = 1451581261000 // 时间是16年
+      fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
         method: 'get',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -165,7 +161,11 @@ export default {
         .then((res) => res.json())
         .then((data) => {
           // console.log(data.content.commentList)
-          this.commentList = data.content.commentList
+          let comments = data.content.commentList
+          let len = comments.length
+          for (let i = len - 1; i >= 0; i--) {
+            this.commentList.push(comments[i])
+          }
           this.$store.commit('stopLoading')
         })
         .catch(err => {
@@ -191,6 +191,7 @@ export default {
       })
         .then((res) => res.json())
         .then((data) => {
+          this.$store.commit('addCommentCount', {index: this.$route.params.index, num: 1})
           this.$store.commit('stopLoading')
           this.getNewComment()
         })
@@ -211,19 +212,13 @@ export default {
     },
     addScrollListener() {
       let self = this
-      let comment_list = document.getElementById('comment_list')
       let content = document.getElementById('content')
-      let detail = document.getElementById('detail')
-      comment_list.addEventListener('scroll', throttle(scrollHandle, 50))
-      content.addEventListener('scroll', scrollHandle)
-      window.addEventListener('scroll', scrollHandle)
-      detail.addEventListener('scroll', scrollHandle)
+      content.addEventListener('scroll', throttle(scrollHandle, 50))
       function scrollHandle() {
-        console.log('123')
         if (self.noMoreComment == true || self.commentIsLoading == true) {
           return
         }
-        if (comment_list.scrollTop + comment_list.clientHeight >= comment_list.scrollHeight - 200) {
+        if (content.scrollTop + content.clientHeight >= content.scrollHeight - 300) {
           self.getNewComment()
         }
       }
@@ -242,34 +237,59 @@ export default {
       }
     },
     getNewComment() {
+      console.log('fetcg')
       this.commentIsLoading = true
       let mid = this.message.mid
-      let time = this.commentList[this.commentList.length - 1].tmCreated + 1
-      fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data)
-        let comments = data.content.commentList
-        let len = comments.length
-        if (len > 0) {
-          for (let i = len - 1; i >= 0; i--) {
-            this.commentList.push(comments[i])
+      let time = ''
+      if (this.commentList.length > 0) {
+        time = this.commentList[this.commentList.length - 1].tmCreated + 1
+        fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
           }
-        } else {
-          this.noMoreComment = true
-        }
-        this.commentIsLoading = false
-      })
-      .catch(err => {
-        console.log(err)
-        this.commentIsLoading = false
-        this.$refs.toast.showToast('获取新评论失败')
-      })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data)
+          let comments = data.content.commentList
+          let len = comments.length
+          if (len > 0) {
+            for (let i = len - 1; i >= 0; i--) {
+              this.commentList.push(comments[i])
+            }
+          } else {
+            this.noMoreComment = true
+          }
+          this.commentIsLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.commentIsLoading = false
+          this.$refs.toast.showToast('获取新评论失败')
+        })
+      } else {
+        time = new Date().getTime() + 1
+        fetch(api + `/api/comment/message/${mid}/tmbefore/${time}`, {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data)
+          let comments = data.content.commentList
+          this.commentList.push(comments[0])
+          this.commentIsLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.commentIsLoading = false
+          this.$refs.toast.showToast('获取新评论失败')
+        })
+      }
+      
     },
     getImageSrc(webPath) {
       return api + webPath
@@ -327,6 +347,9 @@ export default {
     openImgToast(e) {
       this.$refs.img_toast.open()
       this.img_toast_src = e.target.src
+    },
+    changePraiseNum() {
+      this.$store.dispatch('changeMessagePraiseNum', {index: this.$route.params.index})
     }
   }
 }
@@ -399,6 +422,7 @@ export default {
       font-size: 0.45rem;
       position: absolute;
       right: 0.2rem;
+      top: 0.4rem;
       letter-spacing: 1px;
     }
   }
@@ -408,6 +432,7 @@ export default {
     background: #EFEFEF;
     padding-top: 1.4rem;
     padding-bottom: 1.5rem;
+    overflow: scroll;
     .detail {
       background: white;
       .header {

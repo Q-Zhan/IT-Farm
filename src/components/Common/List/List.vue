@@ -25,7 +25,7 @@
         </div>
       <div class="footer">
         <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.commentCount }}</div>
-        <div class="praise" @click.stop="changePraiseNum(index)"><img :src="praise"/><span>{{ item.likeCount }}</span></div>
+        <div class="praise" @click.stop="changePraiseNum(index)"><img :src="item.isPraised ? praise_chose : praise"/><span>{{ item.likeCount }}</span></div>
         <div class="clear"></div>
       </div>
     </div>

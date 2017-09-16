@@ -55,12 +55,14 @@ export default {
       commit('stopLoading')
     })
   },
-  getInitializedMessageAndLocationList({ commit, state }, { page }) {
+  getInitializedMessageAndLocationList({ commit, state }) {
     commit('startLoading')
-    let getMessage = fetch(api + '/api/message/page/' + page + '?page=' + page, {
+    let time = new Date().getTime()
+    let getMessage = fetch(`${api}/api/message/tmbefore/${time}`, {
       method: 'get',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
       }
     })
     let getLocation = fetch(api + '/api/locale/list', {
@@ -88,7 +90,8 @@ export default {
     fetch(api + '/api/message/tmafter/' + time, {
       method: 'get',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
       }
     })
     .then((res) => res.json())
@@ -111,7 +114,8 @@ export default {
     fetch(api + '/api/message/tmbefore/' + time, {
       method: 'get',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
       }
     })
     .then((res) => res.json())
@@ -120,6 +124,47 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addOldMessage', { oldMessage: data.content.messageList })
       }
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  changeMessagePraiseNum({ commit, state }, {index}) {
+    commit('startLoading')
+    let mid = state.messageList[index].mid
+    fetch(api + '/api/message/likee/' + mid, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      commit('changeMessagePraiseNum', {index})
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  modifyUserInfo({ commit, state }, { item, value }) {
+    commit('startLoading')
+    fetch(api + '/api/user/profile/edit', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
+      },
+      body: item + '=' + value
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data)
+      commit('modifyUserInfo', {item, value})
       commit('stopLoading')
     })
     .catch(err => {

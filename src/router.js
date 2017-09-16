@@ -10,6 +10,8 @@ import Login from './components/Login/Login.vue'
 import CreateMessage from './components/CreateMessage/CreateMessage.vue'
 import Chat from './components/Chat/Chat.vue'
 import ChatList from './components/ChatList/ChatList.vue'
+import UserDetail from './components/UserDetail/UserDetail.vue'
+import ModifyUser from './components/ModifyUser/ModifyUser.vue'
 
 // 异步载入
 // const Bar = resolve => require(['./components/Bar.vue'], resolve)
@@ -56,6 +58,15 @@ export default new Router({
       path: '/chat/:chatIndex',
       name: 'chat',
       component: Chat
+    },
+    {
+      path: '/userDetail',
+      component: UserDetail
+    },
+    {
+      path: '/modifyUser/:item',
+      component: ModifyUser,
+      name: 'modifyUser'
     }
   ]
 })

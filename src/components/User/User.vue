@@ -4,11 +4,11 @@
       <span>匿密</span>
     </header>
     <div class="bg">
-      <div class="user_info">
+      <div class="user_info" @click="turnToUserDeatil">
         <img :src="avatar" class="avatar"/>
         <div class="word">
-          <span>Z.</span>
-          <span>账号：a380776762314</span>
+          <span>{{ user.nname }}</span>
+          <span>账号：{{ user.uname }}</span>
         </div>
       </div>
     </div>
@@ -23,6 +23,16 @@ export default {
     return {
       avatar
     }
+  },
+  computed: {
+    user() {
+      return this.$store.state.user
+    }
+  },
+  methods: {
+    turnToUserDeatil() {
+      this.$router.push('/userDetail')
+    }
   }
 }
 </script>
@@ -36,7 +46,8 @@ export default {
     line-height: 1.4rem;
     font-size: 0.5rem;
     border-bottom: 1px solid #D6D6D6;
-    background: white;
+    background: #3A393E;
+    color: white;
     span {
       display: inline-block;
       width: 2rem;

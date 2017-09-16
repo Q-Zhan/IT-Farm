@@ -110,10 +110,10 @@ export default {
       }
       .dot {
         position: absolute;
-        top: -0.1rem;
-        right: -0.1rem;
-        width: 0.3rem;
-        height: 0.3rem;
+        top: -0.03rem;
+        right: -0.05rem;
+        width: 0.25rem;
+        height: 0.25rem;
         background: red;
         border-radius: 50%;
       }

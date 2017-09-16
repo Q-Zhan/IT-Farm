@@ -16,7 +16,7 @@
         </div>
       </div>
     </div>
-    <List :items="messages" @saveImgSrc="openImgToast"/>
+    <List @saveImgSrc="openImgToast"/>
     <Loading v-show="isLoading"/>
     <img-toast :src="img_toast_src" ref="img_toast"/>
   </div>
@@ -60,27 +60,11 @@ export default {
     },
     secret() {
       return this.$store.state.user.secret
-    },
-    messages() {
-      let arr = []
-      let messageList = this.messageList
-      for (let i = 0, len = messageList.length; i < len; i++) {
-        arr[i] = {
-          id: messageList[i].mid,
-          name: messageList[i].isFake ? '楼主' : messageList[i].user.nname,
-          area: messageList[i].location.locale,
-          content: messageList[i].content,
-          comment_num: messageList[i].commentCount,
-          praise_num: messageList[i].likeCount,
-          images: messageList[i].messageImageSet
-        }
-      }
-      return arr
     }
   },
   mounted() {
     if (this.messageList.length == 0) { // 第一次进入
-      this.$store.dispatch('getInitializedMessageAndLocationList', { page: 0 })
+      this.$store.dispatch('getInitializedMessageAndLocationList')
       this.connect() // 连接socket开始监听消息
     }
   },

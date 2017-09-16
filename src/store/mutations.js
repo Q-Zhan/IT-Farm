@@ -25,17 +25,17 @@ export default {
     state.login.loginToast = false
   },
   saveUserInfo(state, content) {
-    let user = state.user 
-    user.secret = content.secret
-    user.uid = content.user.uid 
-    user.uname = content.user.uname 
-    user.nname = content.user.nname 
+    state.user = content.user
+    state.user.secret = content.secret
   },
   saveLocationList(state, { locationList }) {
     state.locationList = locationList
   },
   saveMessageList(state, { messageList }) {
-    state.messageList = messageList
+    state.messageList = messageList.map((item, index) => {
+      item.isPraised = item.likee == null ? false : true
+      return item
+    })
   },
   addNewMessage(state, { newMessage }) {
     state.messageList = newMessage.concat(state.messageList)
@@ -43,8 +43,8 @@ export default {
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)
   },
-  addCommentCount(state, { index, count }) {
-    state.messageList[index].commentCount = count
+  addCommentCount(state, { index, num }) {
+    state.messageList[index].commentCount += num
   },
   connectSocket(state, { stomp }) {
     state.socket.stomp = stomp
@@ -88,5 +88,16 @@ export default {
   },
   changeChatRead(state, { chatIndex }) {
     state.chat.chatList[chatIndex].isRead = true
+  },
+  changeMessagePraiseNum(state, {index}) {
+    if (state.messageList[index].isPraised) {
+      state.messageList[index].likeCount -= 1
+    } else {
+      state.messageList[index].likeCount += 1
+    }
+    state.messageList[index].isPraised = !state.messageList[index].isPraised
+  },
+  modifyUserInfo(state, {item, value}) {
+    state.user[item] = value
   }
 }

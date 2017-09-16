@@ -9,10 +9,16 @@ export default {
     loginToast: false
   },
   user: {
+    faculty: '',
+    gender: '',
+    grade: '',
+    nname: '',
     secret: '',
+    signature: '',
+    site: '',
+    tmCreated: '',
     uid: '',
-    uname: '',
-    nname: ''
+    uname: ''
   },
   chat: {
     chatList: [
