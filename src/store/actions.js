@@ -1,10 +1,11 @@
 import { api } from '../api'
+import { SECRET } from '../constant'
 import 'whatwg-fetch'
 
 export default {
   register({ commit, state }, { uname, nname, passwd, rpasswd }) {
     commit('startLoading')
-    fetch(api + '/api/user/create', {
+    return fetch(api + '/api/user/create', {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -13,19 +14,21 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
+      let message = ''
       // 用户名重复
       if (data.message.substring(0,4) == 'User') {
-        commit('register', { message: 'user name repeat'})
+        message = '账号名已被注册' 
       }
       // 昵称重复
       if (data.message.substring(0,4) == 'Nick') {
-        commit('register', { message: 'nick name repeat'})
+        message = '昵称已被注册'
       }
       // 注册成功
       if (data.message == '成功') {
-        commit('register', { message: 'success'})
+        message = '注册成功'
       }
       commit('stopLoading')
+      return message
     })
     .catch(err => {
       console.log(err)
@@ -34,7 +37,7 @@ export default {
   },
   login({ commit, state }, { uname, passwd }) {
     commit('startLoading')
-    fetch(api + '/api/user/login', {
+    return fetch(api + '/api/user/login', {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -43,11 +46,58 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      // console.log(data)
-      commit('login', { code: data.code })
+      console.log(data)
       if (data.code == '200') {
         commit('saveUserInfo', data.content)
+        commit('saveSecret', {secret: data.content.secret})
+        localStorage[SECRET] = data.content.secret
       }
+      commit('stopLoading')
+      return data.code
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  autoLogin({ commit, state }) {
+    commit('startLoading')
+    fetch(api + '/api/user/me', {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      commit('login', { code: data.code })
+      // secret未过期
+      if(data.code == 200) {
+        commit('saveUserInfo', data.content)
+      }
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  logout({ commit, state }) {
+    commit('startLoading')
+    return fetch(api + '/api/user/logout', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      localStorage.removeItem(SECRET)
+      commit('logout')
       commit('stopLoading')
     })
     .catch(err => {
@@ -85,9 +135,8 @@ export default {
       })
   },
   getNewMessage({ commit, state }) {
-    commit('startLoading')
     let time = state.messageList[0].tmCreated + 1
-    fetch(api + '/api/message/tmafter/' + time, {
+    return fetch(api + '/api/message/tmafter/' + time, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -100,7 +149,6 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addNewMessage', { newMessage: data.content.messageList })
       }
-      commit('stopLoading')
     })
     .catch(err => {
       console.log(err)
@@ -108,10 +156,9 @@ export default {
     })
   },
   getOldMessage({ commit, state }) {
-    commit('startLoading')
     let messageList = state.messageList
     let time = messageList[messageList.length - 1].tmCreated - 1
-    fetch(api + '/api/message/tmbefore/' + time, {
+    return fetch(api + '/api/message/tmbefore/' + time, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -124,7 +171,7 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addOldMessage', { oldMessage: data.content.messageList })
       }
-      commit('stopLoading')
+      return data.content.messageList.length
     })
     .catch(err => {
       console.log(err)

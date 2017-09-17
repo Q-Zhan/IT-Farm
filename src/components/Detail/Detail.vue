@@ -509,7 +509,6 @@ export default {
     .comment_list {
       width: 100%;
       background: white;
-      margin-bottom: 1.5rem;
       .nomore {
         width: 100%;
         height: 1.2rem;

@@ -52,44 +52,8 @@ export default {
     }
   },
   computed: mapState({
-    //'registerReply'
-    registerReply: state => state.register.registerReply,
-    registerToast: state => state.register.registerToast,
-    loginToast: state => state.login.loginToast,
     isLoading: state => state.isLoading
   }),
-  watch: {
-    registerToast: function(newToast) {
-      if (newToast == true) {
-        this.$store.commit('registerToasted')
-        switch(this.registerReply) {
-          case 'user name repeat':
-            this.$refs.toast.showToast('账号名已被注册')
-            this.account = ''
-            break
-          case 'nick name repeat':
-            this.$refs.toast.showToast('昵称已被注册')
-            this.name = ''
-            break
-          case 'success':
-            this.$store.dispatch('login', {
-              uname: this.account,
-              passwd: this.password
-            })
-            break
-        }
-      }
-    },
-    loginToast: function(newToast) {
-      if (newToast == true) {
-        this.$refs.toast.showToast('注册成功')
-        setTimeout(() => {
-          this.$router.push('/app/home')
-        }, 800)
-        this.$store.commit('loginToasted')
-      }
-    }
-  },
   methods: {
     verifyInfo() {
       // 检测账号名
@@ -113,6 +77,26 @@ export default {
         nname: this.name,
         passwd: this.password,
         rpasswd: this.password_again
+      })
+      .then((message) => {
+        if (message == '注册成功') {
+          this.$store.dispatch('login', {
+            uname: this.account,
+            passwd: this.password
+          })
+          .then((code) => {
+            if (code == '200') {
+              this.$refs.toast.showToast('登录成功')
+              setTimeout(() => {
+                this.$router.replace('/app/home')
+              }, 800)
+            } else {
+              this.$router.replace('/login')
+            }
+          })
+        } else {
+          this.$refs.toast.showToast(message)
+        }
       })
     },
     turnBack() {

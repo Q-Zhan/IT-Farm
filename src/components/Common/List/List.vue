@@ -29,11 +29,13 @@
         <div class="clear"></div>
       </div>
     </div>
+    <div class="nomore" v-if="noMoreMessage">没有更多信息了</div>
   </div>
 </template>
 
 <script>
 import { api } from '../../../api'
+import { SCROLL_POSITION } from '../../../constant'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
@@ -45,11 +47,12 @@ export default {
       error_img,
       praise,
       praise_chose,
-      colors: [
-        '#669ACA', '#61CA92', '#F2BE73', '#E897BD', '#81C467'
+      BgColors: [
+        '#96C4E6', '#67B5A2'
       ],
       background_array: [], // true表示有颜色，false表示白色
-      scrollPosition: ''
+      scrollPosition: '',
+      noMoreMessage: false
     }
   },
   computed: {
@@ -58,20 +61,20 @@ export default {
     }
   },
   mounted(){
-    if (sessionStorage.scauwumi_scrollPosition) {
-      document.getElementById('list').scrollTop = sessionStorage.scauwumi_scrollPosition
+    if (sessionStorage[SCROLL_POSITION]) {
+      document.getElementById('list').scrollTop = sessionStorage[SCROLL_POSITION]
     }
     this.addScrollListener()
     this.saveScrollPosition()
   },
   beforeDestroy() {
-    sessionStorage.setItem('scauwumi_scrollPosition', this.scrollPosition)
+    sessionStorage.setItem(SCROLL_POSITION, this.scrollPosition)
   },
   methods: {
     getBackground(index) {
       if (index % 2 == 0) {
         this.background_array[index] = true
-        return this.colors[index % 5]
+        return this.BgColors[index /2 % 2]
       } else {
         this.background_array[index] = false
         return 'white'
@@ -118,14 +121,29 @@ export default {
         }
       });
       dragger.on('dragDownLoad', () => {
-        document.getElementsByClassName('latest')[0].style.display = 'none'
+        console.log('下拉刷新')
+        let latest = document.getElementsByClassName('latest')[0]
+        latest.style.height = '1.2rem'
         this.$store.dispatch('getNewMessage')
-        dragger.reset();
+        .then(() => {
+          latest.style.display = 'none'
+          dragger.reset()
+        })
       });
       dragger.on('dragUpLoad', () => {
-        document.getElementsByClassName('more')[0].style.display = 'none'
+        console.log('上拉加载')
+        let more = document.getElementsByClassName('more')[0]
+        more.style.height = '1.2rem'
         this.$store.dispatch('getOldMessage')
-        dragger.reset();
+        .then((length) => {
+          if (length == 0) {
+            this.noMoreMessage = true
+            dragger.setDragUpDisabled(true)
+          }
+          more.style.display = 'none'
+          dragger.reset()
+        })
+        
       });
     },
     turnToDetail(index) {
@@ -147,13 +165,15 @@ export default {
   height: calc(100% - 1.4rem);
   padding-bottom: 1.5rem;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   .down_loading {
     width: 100%;
-    background: white;
+    background: white #669ACA #61CA92 #F2BE73 #E897BD #81C467;
     display: flex;
     justify-content: center;
     align-items: center;
     div {
+      margin-top: 0.3rem;
       width: 0.5rem;
       height: 0.5rem;
       border-radius: 50%;
@@ -161,6 +181,16 @@ export default {
       border-color: #38BAF8 #38BAF8 transparent transparent;
       animation: load 1.5s linear infinite;
     }
+  }
+  .nomore {
+    width: 100%;
+    height: 1.2rem;
+    background: #EFEFEF;
+    text-align: center;
+    font-size: 0.4rem;
+    color: gray;
+    line-height: 1.2rem;
+    letter-spacing: 1px;
   }
   .item {
     .header {
@@ -222,6 +252,7 @@ export default {
         float: right;
         display: flex;
         align-items: center;
+        margin-right: 0.2rem;
         color: #8a8a8a;
         img {
           width: 0.4rem;

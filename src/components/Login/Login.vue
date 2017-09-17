@@ -12,6 +12,7 @@
       <input type="password" placeholder="密码" v-model="password"/>
       <div class="input_bottom"></div>
     </div>
+    
     <div class="button" @click="verifyInfo">
       <button>登录</button>
     </div>
@@ -21,11 +22,11 @@
 </template>
 
 <script>
+import { SECRET } from '../../constant'
 import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
 import back_arrow from './back_arrow.svg'
-import Stomp from 'stompjs'
 
 export default {
   components: {
@@ -40,28 +41,18 @@ export default {
     }
   },
   computed: mapState({
-    //'registerReply'
-    isLoading: state => state.isLoading,
-    loginReply: state => state.login.loginReply,
-    loginToast: state => state.login.loginToast
+    isLoading: state => state.isLoading
   }),
-  watch: {
-    loginToast: function(newToast) {
-      if (newToast == true) {
-        this.$store.commit('loginToasted')
-        this.$refs.toast.showToast(this.loginReply)
-        if (this.loginReply == '登录成功') {
-          setTimeout(() => {
-            this.$router.push('/app/home')
-          }, 800)
-        }
-      }
-    }
-  },
   mounted() {
-    
+    // this.autoLogin()
   },
   methods: {
+    autoLogin() {
+      if (localStorage[SECRET]) {
+        this.$store.commit('saveSecret', { secret: localStorage[SECRET] })
+        this.$store.dispatch('autoLogin')
+      }
+    },
     verifyInfo() {
       // 检测账号密码
       if (this.account == '' || this.password == '') {
@@ -71,6 +62,20 @@ export default {
       this.$store.dispatch('login', {
         uname: this.account,
         passwd: this.password
+      })
+      .then((code) => {
+        if (code == '-500') {
+          this.$refs.toast.showToast('账号或密码错误')
+        }
+        if (code == '200') {
+          this.$refs.toast.showToast('登录成功')
+          setTimeout(() => {
+            this.$router.replace('/app/home')
+          }, 800)
+        }
+        if (code == '-202') {
+          this.$refs.toast.showToast('自动登录已过期')
+        }
       })
     },
     turnBack() {

@@ -5,28 +5,14 @@ export default {
   stopLoading(state) {
     state.isLoading = false
   },
-  register(state, { message }) {
-    state.register.registerReply = message
-    state.register.registerToast = true
-  },
-  registerToasted(state) {
-    state.register.registerToast = false
-  },
-  login(state, { code }) {
-    if (code == '-500') {
-      state.login.loginReply = '账号或密码错误'
-    }
-    if (code == '200') {
-      state.login.loginReply = '登录成功'
-    }
-    state.login.loginToast = true
-  },
-  loginToasted(state) {
-    state.login.loginToast = false
+  logout(state) {
+    state.user.secret = '注销'
   },
   saveUserInfo(state, content) {
     state.user = content.user
-    state.user.secret = content.secret
+  },
+  saveSecret(state, { secret }) {
+    state.user.secret = secret
   },
   saveLocationList(state, { locationList }) {
     state.locationList = locationList

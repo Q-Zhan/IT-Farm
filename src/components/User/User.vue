@@ -11,27 +11,50 @@
           <span>账号：{{ user.uname }}</span>
         </div>
       </div>
+      <div class="logout" @click="logout">
+        退出登录
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import avatar from './avat.svg'
+import { mapState } from 'vuex'
 
 export default {
   data () {
     return {
-      avatar
+      avatar,
+      aa: 0
     }
   },
-  computed: {
-    user() {
-      return this.$store.state.user
+  computed: mapState({
+    isLoading: state => state.isLoading,
+    user: state => state.user,
+    secret: state => state.user.secret
+  }),
+  watch: {
+    secret: function(newValue) {
+      console.log(newValue)
+      // if (newValue == '注销') {
+      //   this.$router.push('/logo')
+      // }
+    },
+    aa: function(newValue) {
+      if (newValue == '') {
+        this.$router.push('/logo')
+      }
     }
   },
   methods: {
     turnToUserDeatil() {
       this.$router.push('/userDetail')
+    },
+    logout() {
+      this.$store.dispatch('logout').then(() => {
+        this.$router.replace('/logo')
+      })
     }
   }
 }
@@ -56,6 +79,7 @@ export default {
   }
   .bg {
     height: calc(100% - 1.4rem);
+    overflow: auto;
     width: 100%;
     background: #EBEBEB;
     display: inline-block;
@@ -94,6 +118,16 @@ export default {
           color: gray;
         }
       }
+    }
+    .logout {
+      width: 100%;
+      height: 1rem;
+      margin-top: 0.5rem;
+      background: #EA2000;
+      line-height: 1rem;
+      font-size: 0.45rem;
+      color: white;
+      text-align: center;
     }
   }
 }

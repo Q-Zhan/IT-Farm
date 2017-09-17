@@ -4,10 +4,6 @@ export default {
     registerReply: '',
     registerToast: false //该项为true时说明注册信息无法通过后端检验，需弹框提示
   },
-  login: {
-    loginReply: '',
-    loginToast: false
-  },
   user: {
     faculty: '',
     gender: '',

@@ -139,7 +139,7 @@ export default {
         selectedIndex: [0]
       })
       picker.on('picker.select', (selectedVal, selectedIndex) => {
-        let value = data[selectedIndex[0]].text
+        let value = data[selectedIndex[0]-1].text
         if (value == '男') {
           value = true
         }
@@ -168,6 +168,7 @@ body .picker .picker-panel {
     }
     .confirm {
       right: 0.2rem;
+      color: #007ACC;
     }
     .cancel {
       left: 0.2rem;
@@ -175,8 +176,11 @@ body .picker .picker-panel {
   }
   .picker-content {
     height: 3rem;
-    .mask-top, .mask-bottom {
-      height: 1rem !important;
+    .mask-top {
+      height: 0.9rem !important;
+    }
+    .mask-bottom {
+      height: 1.1rem !important;
     }
     .wheel-wrapper {
       height: 3rem;
