@@ -40,6 +40,7 @@ import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import error_img from './error_img.jpg'
+
 export default {
   data () {
     return {
@@ -163,12 +164,11 @@ export default {
 #list {
   width: 100%;
   height: calc(100% - 1.4rem);
-  padding-bottom: 1.5rem;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   .down_loading {
     width: 100%;
-    background: white #669ACA #61CA92 #F2BE73 #E897BD #81C467;
+    background: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -198,16 +198,18 @@ export default {
       margin: 0 auto;
       height: 1rem;
       padding-top: 0.25rem;
+      display: flex;
+      align-items: center;
       img {
         display: inline-block;
-        width: 0.8rem;
-        height: 0.8rem;
+        width: 0.88rem;
+        height: 0.88rem;
         border-radius: 50%;
       }
       .text {
         display: inline-block;
         font-size: 0.32rem;
-        margin-left: 0.1rem;
+        margin-left: 0.2rem;
         line-height: 0.45rem;
         span:nth-of-type(1) {
           color: #AAADB1;

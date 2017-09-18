@@ -4,13 +4,29 @@
       <span>匿密</span>
     </header>
     <div class="bg">
-      <div class="user_info" @click="turnToUserDeatil">
-        <img :src="avatar" class="avatar"/>
-        <div class="word">
-          <span>{{ user.nname }}</span>
-          <span>账号：{{ user.uname }}</span>
+      <router-link to="/userDetail">
+        <div class="user_info">
+          <img :src="avatar" class="avatar"/>
+          <div class="word">
+            <span>{{ user.nname }}</span>
+            <span>账号：{{ user.uname }}</span>
+          </div>
         </div>
+      </router-link>
+      <div class="myconcern">
+        <div class="img_bg"><img :src="concern"/></div>
+        <span>我的关注</span>
       </div>
+      <div class="myfans">
+        <div class="img_bg"><img :src="fans"/></div>
+        <span>我的粉丝</span>
+      </div>
+      <router-link to="/myMessage">
+        <div class="mymessage">
+          <div class="img_bg"><img :src="message_img"/></div>
+          <span>我的消息</span>
+        </div>
+      </router-link>
       <div class="logout" @click="logout">
         退出登录
       </div>
@@ -20,40 +36,28 @@
 
 <script>
 import avatar from './avat.svg'
+import concern from './concern.svg'
+import fans from './fans.svg'
+import message_img from './message.svg'
 import { mapState } from 'vuex'
 
 export default {
   data () {
     return {
       avatar,
-      aa: 0
+      concern,
+      fans,
+      message_img
     }
   },
   computed: mapState({
     isLoading: state => state.isLoading,
-    user: state => state.user,
-    secret: state => state.user.secret
+    user: state => state.user
   }),
-  watch: {
-    secret: function(newValue) {
-      console.log(newValue)
-      // if (newValue == '注销') {
-      //   this.$router.push('/logo')
-      // }
-    },
-    aa: function(newValue) {
-      if (newValue == '') {
-        this.$router.push('/logo')
-      }
-    }
-  },
   methods: {
-    turnToUserDeatil() {
-      this.$router.push('/userDetail')
-    },
     logout() {
       this.$store.dispatch('logout').then(() => {
-        this.$router.replace('/logo')
+        this.$router.push('/logo')
       })
     }
   }
@@ -69,8 +73,6 @@ export default {
     line-height: 1.4rem;
     font-size: 0.5rem;
     border-bottom: 1px solid #D6D6D6;
-    background: #3A393E;
-    color: white;
     span {
       display: inline-block;
       width: 2rem;
@@ -87,12 +89,12 @@ export default {
       height: 2rem;
       background: white;
       margin-top: 0.5rem;
+      padding: 0 0.5rem;
       display: flex;
       align-items: center;
       .avatar {
         width: 1.6rem;
         height: 1.6rem;
-        margin-left: 0.45rem;
       }
       .word {
         width: 4rem;
@@ -119,9 +121,47 @@ export default {
         }
       }
     }
+    .myconcern, .myfans, .mymessage {
+      height: 1.2rem;
+      margin-top: 0.4rem;
+      background: white;
+      padding: 0 0.5rem;
+      display: flex;
+      align-items: center;
+      .img_bg {
+        width: 0.7rem;
+        height: 0.7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+      }
+      span {
+        font-size: 0.5rem;
+        margin-left: 0.3rem;
+      }
+    }
+    .myconcern {
+      .img_bg {
+        background: #FEA006;
+      }
+    }
+    .myfans {
+      .img_bg {
+        background: #FB6A5C;
+      }
+    }
+    .mymessage {
+      .img_bg {
+        background: #6292EC;
+      }
+    }
     .logout {
       width: 100%;
-      height: 1rem;
+      height: 1.2rem;
       margin-top: 0.5rem;
       background: #EA2000;
       line-height: 1rem;

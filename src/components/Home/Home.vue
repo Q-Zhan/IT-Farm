@@ -175,7 +175,8 @@ export default {
     }
   }
   #list {
-    padding-top: 1.4rem; 
+    padding-top: 1.4rem;
+    padding-bottom: 1.5rem; 
   }
 }
 </style>
