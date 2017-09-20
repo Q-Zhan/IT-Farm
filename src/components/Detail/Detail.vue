@@ -10,7 +10,7 @@
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
-            <span>楼主</span><br/>
+            <span>{{message.fake ? message.fakeName : message.user.nname}}</span><br/>
             <span>{{message.location.locale}}</span>
           </div>
         </div>
@@ -33,13 +33,13 @@
         </div>
         <div class="block"></div>
       </div>
-      <div class="comment_list" id="comment_list">
+      <div :class="['comment_list', commentList.length == 0 ? 'hint' : '']" id="comment_list">
         <div v-for="(item, index) in commentList" :key="index">
-          <div class="list_left" @click="openMask(index)">
+          <div class="list_left" @click="turnToPersonPage(index)">
             <img :src="avatar_img"/>
           </div>
           <div class="list_right" @click="openMask(index)">
-            <div class="list_right_title" >{{ item.user.uname }}</div>
+            <div class="list_right_title" >{{ item.user.nname }}</div>
             <div class="list_right_content">
               <span v-if="item.rcUname" class="at">@{{ item.rcUname }}: </span>
               <span>{{ item.content }}</span>
@@ -150,6 +150,7 @@ export default {
   methods: {
     getInitializedComment() {
       this.$store.commit('startLoading')
+      document.getElementById('comment_list').style.display = 'none'
       let mid = this.message.mid
       let time = 1451581261000 // 时间是16年
       fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
@@ -165,6 +166,15 @@ export default {
           let len = comments.length
           for (let i = len - 1; i >= 0; i--) {
             this.commentList.push(comments[i])
+          }
+          if (this.commentList.length == 0) {
+            let contentHeight = getComputedStyle(document.getElementById('content')).height
+            let detailHeight = getComputedStyle(document.getElementsByClassName('detail')[0]).height
+            let hint = document.getElementsByClassName('hint')[0]
+            hint.style.height = contentHeight.substr(0, contentHeight.length -2) - detailHeight.substr(0, detailHeight.length - 2) + 'px'
+            hint.style.display = 'flex'
+          } else {
+            document.getElementById('comment_list').style.display = 'block'
           }
           this.$store.commit('stopLoading')
         })
@@ -311,6 +321,10 @@ export default {
     },
     closeMask() {
       this.isMaskShowed = false
+    },
+    turnToPersonPage(index) {
+      let uname = this.commentList[index].user.uname
+      this.$router.push({ name: 'personPage', params: { uname }})
     },
     turnToChat() {
       let receiverId = this.receiverId
@@ -482,6 +496,7 @@ export default {
       .footer {
         width: 90%;
         margin: 0 auto;
+        margin-top: 0.1rem;
         padding-bottom: 0.5rem;
         background: white;
         .comment_num {
@@ -506,6 +521,18 @@ export default {
         background: #EFEFEF;
       }
     } 
+    .hint {
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hint::after {
+      content: '来抢沙发吧 ~';
+      font-size: 0.45rem;
+      color: gray;
+      letter-spacing: 1px;
+    }
     .comment_list {
       width: 100%;
       background: white;

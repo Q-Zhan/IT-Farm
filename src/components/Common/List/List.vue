@@ -7,7 +7,7 @@
         <div class="header">
           <img :src="avatar_img"/>
           <div class="text">
-            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
+            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{item.fake ? item.fakeName : item.user.nname}}</span><br/>
             <span>{{ item.location.locale }}</span>
           </div>
         </div>

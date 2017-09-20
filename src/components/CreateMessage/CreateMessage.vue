@@ -25,9 +25,14 @@
       </div>
     </div>
     <footer>
-      <img :src="delete_img" @click="deleteContent" class="delete"/>
-      <input type="file" @change="encodeImg" accept=""/>
-      <img :src="picture" class="add_img"/>
+      <div :class="['fake_button', isFake ? 'faked' : '']" @click="changeIsFake" >
+        匿名
+      </div>
+      <div class="button">
+        <input type="file" @change="encodeImg" accept=""/>
+        <img :src="picture" class="add_img"/>
+        <img :src="delete_img" class="delete"/>
+      </div>
     </footer>
     <Toast ref="toast"/>
     <Loading v-show="isLoading"/>
@@ -63,7 +68,8 @@ export default {
       message_content: '',
       img_list: [],
       img_list_encoded: [],
-      send_message_params: ''
+      send_message_params: '',
+      isFake: false
     }
   },
   computed: mapState({
@@ -163,6 +169,9 @@ export default {
     sendMessage() {
       let params = this.send_message_params
       params += ('lid=' + this.$route.params.area + '&content=' + this.message_content)
+      if (this.isFake) {
+        params += ('&isFake=' + this.isFake)
+      }
       fetch(api + '/api/message/create', {
         method: 'post',
         headers: {
@@ -182,6 +191,10 @@ export default {
         this.$store.commit('stopLoading')
         this.$refs.toast.showToast('上传失败')
       })
+    },
+    changeIsFake() {
+      this.isFake = !this.isFake
+      console.log(this.isFake)
     }
   }
 }
@@ -277,22 +290,41 @@ export default {
     border-top: 1px solid #D6D6D6;
     display: flex;
     align-items: center;
-    flex-direction: row-reverse;
-    img {
-      float: right;
-      width: 0.5rem;
-      height: 0.5rem;
-      margin-right: 0.7rem;
+    justify-content: space-between;
+    .fake_button {
+      font-size: 0.53rem;
+      margin-left: 0.5rem;
+      letter-spacing: 0.05rem;
     }
-    .add_img {
-      margin-right: -0.5rem;
+    .faked {
+      font-size: 0.55rem;
+      color: #007ACC;
     }
-    input {
-      opacity: 0;
-      width: 0.5rem;
-      height: 0.5rem;
-      margin-right: 0.7rem;
+    .button {
+      position: relative;
+      margin-right: 0.5rem;
+      .add_img {
+        display: inline-block;
+        width: 0.6rem;
+        height: 0.6rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      input {
+        opacity: 0;
+        width: 0.6rem;
+        height: 0.6rem;
+        margin-right: 0.7rem;
+        vertical-align: middle;
+      }
+      .delete {
+        width: 0.6rem;
+        height: 0.6rem;
+        vertical-align: middle;
+      }
     }
+    
   }
   .img_list {
     position: absolute;

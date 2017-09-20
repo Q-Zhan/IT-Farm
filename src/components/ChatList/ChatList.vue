@@ -17,6 +17,7 @@
           {{ formatTime(item.message[item.message.length-1].time) }}
         </div>
       </div>
+      <div class="hint" v-show="chatList.length == 0">暂时没有私聊消息 ~</div>
     </div>
   </div>
 </template>
@@ -58,6 +59,7 @@ export default {
 
 <style lang="scss" scoped>
 #ChatList {
+  position: relative;
   header {
     height: 1.4rem;
     background: #3A393E;
@@ -75,6 +77,7 @@ export default {
   .chat_list {
     height: calc(100% - 1.4rem);
     overflow: auto;
+    position: relative;
     .chat_item {
       width: 100%;
       height: 2rem;
@@ -130,6 +133,15 @@ export default {
         color: gray;
       }
     }
+  }
+  .hint {
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.45rem;
+    color: gray;
+    letter-spacing: 2px;
   }
 }
 </style>

@@ -14,6 +14,7 @@ import ChatList from './components/ChatList/ChatList.vue'
 import UserDetail from './components/UserDetail/UserDetail.vue'
 import ModifyUser from './components/ModifyUser/ModifyUser.vue'
 import MyMessage from './components/MyMessage/MyMessage.vue'
+import PersonPage from './components/PersonPage/PersonPage.vue'
 
 // 异步载入
 // const Bar = resolve => require(['./components/Bar.vue'], resolve)
@@ -73,6 +74,11 @@ let router = new Router({
     {
       path: '/myMessage',
       component: MyMessage
+    },
+    {
+      path: '/personPage/:uname',
+      component: PersonPage,
+      name: 'personPage'
     }
   ]
 })
