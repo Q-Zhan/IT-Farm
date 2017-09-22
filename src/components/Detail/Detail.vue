@@ -8,7 +8,7 @@
     <div class="content" id="content">
       <div class="detail">
         <div class="header">
-          <img :src="avatar_img"/>
+          <img :src="avatar_img" @click="turnToPersonPage(message.user ? message.user.uname : 'fake')"/>
           <div class="text">
             <span>{{message.fake ? message.fakeName : message.user.nname}}</span><br/>
             <span>{{message.location.locale}}</span>
@@ -34,14 +34,14 @@
         <div class="block"></div>
       </div>
       <div :class="['comment_list', commentList.length == 0 ? 'hint' : '']" id="comment_list">
-        <div v-for="(item, index) in commentList" :key="index">
-          <div class="list_left" @click="turnToPersonPage(index)">
+        <div v-for="(item, index) in commentList" :key="index" class="list_item">
+          <div class="list_left" @click="turnToPersonPage(commentList[index].user.uname)">
             <img :src="avatar_img"/>
           </div>
           <div class="list_right" @click="openMask(index)">
             <div class="list_right_title" >{{ item.user.nname }}</div>
             <div class="list_right_content">
-              <span v-if="item.rcUname" class="at">@{{ item.rcUname }}: </span>
+              <span v-if="item.rcNname" class="at">@{{ item.rcNname }}: </span>
               <span>{{ item.content }}</span>
             </div>
             <div class="list_right_bottom">
@@ -87,7 +87,7 @@ import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
-import back_arrow from './back_arrow.svg'
+import back_arrow from './back_arrow_white.svg'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
@@ -127,6 +127,9 @@ export default {
     },
     message() {
       return this.$store.state.messageList[this.$route.params.index]
+    },
+    user() {
+      return this.$store.state.user
     },
     secret() {
       return this.$store.state.user.secret
@@ -309,7 +312,7 @@ export default {
     },
     openMask(index) {
       let receiverId = this.commentList[index].user.uid
-      let receiverName = this.commentList[index].user.uname
+      let receiverName = this.commentList[index].user.nname
       this.receiverId = receiverId
       this.receiverName = receiverName
       this.receiverIndex = index
@@ -322,8 +325,10 @@ export default {
     closeMask() {
       this.isMaskShowed = false
     },
-    turnToPersonPage(index) {
-      let uname = this.commentList[index].user.uname
+    turnToPersonPage(uname) {
+      if (uname == 'fake' || uname == this.user.uname) {
+        return 0
+      }
       this.$router.push({ name: 'personPage', params: { uname }})
     },
     turnToChat() {
@@ -338,6 +343,7 @@ export default {
           break
         }
       }
+      // chatList中不存在与此人的聊天
       if (flag == 0) {
         this.$store.commit('addChat', { receiverId, receiverName })
         this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
@@ -418,8 +424,8 @@ export default {
     top: 0;
     height: 1.4rem;
     width: 100%;
-    border-bottom: 1px solid #D6D6D6;
-    background: white;
+    color: white;
+    background: #3A393E;
     display: flex;
     align-items: center;
     img {
@@ -438,6 +444,7 @@ export default {
       right: 0.2rem;
       top: 0.4rem;
       letter-spacing: 1px;
+      color: #007ACC;
     }
   }
   .content {
@@ -562,8 +569,11 @@ export default {
           animation: load 1.5s linear infinite;
         }
       }
+      .list_item {
+        width: 100%;
+      }
       .list_left {
-        width: 20%;
+        width: 18%;
         float: left;
         display: flex;
         justify-content: center;
@@ -576,7 +586,7 @@ export default {
         }
       }
       .list_right {
-        width: 80%;
+        width: 82%;
         float: right;
         .list_right_title {
           margin-top: 0.5rem;

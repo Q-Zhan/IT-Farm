@@ -13,14 +13,18 @@
           </div>
         </div>
       </router-link>
-      <div class="myconcern">
-        <div class="img_bg"><img :src="concern"/></div>
-        <span>我的关注</span>
-      </div>
-      <div class="myfans">
-        <div class="img_bg"><img :src="fans"/></div>
-        <span>我的粉丝</span>
-      </div>
+      <router-link to="/myConcern">
+        <div class="myconcern">
+          <div class="img_bg"><img :src="concern"/></div>
+          <span>我的关注</span>
+        </div>
+      </router-link>
+      <router-link to="/myFans">
+        <div class="myfans">
+          <div class="img_bg"><img :src="fans"/></div>
+          <span>我的粉丝</span>
+        </div>
+      </router-link>
       <router-link to="/myMessage">
         <div class="mymessage">
           <div class="img_bg"><img :src="message_img"/></div>
@@ -73,6 +77,8 @@ export default {
     line-height: 1.4rem;
     font-size: 0.5rem;
     border-bottom: 1px solid #D6D6D6;
+    background: #3A393E;
+    color: white;
     span {
       display: inline-block;
       width: 2rem;

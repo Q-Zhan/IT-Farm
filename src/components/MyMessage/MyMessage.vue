@@ -66,8 +66,7 @@ export default {
       ],
       background_array: [], // true表示有颜色，false表示白色
       img_toast_src: '',
-      noMoreMessage: false,
-      messageIsLoading: false
+      noMoreMessage: false
     }
   },
   computed: mapState({

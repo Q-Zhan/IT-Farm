@@ -124,8 +124,8 @@ export default {
     top: 0;
     width: 100%;
     height: 1.4rem;
-    border-bottom: 1px solid #D6D6D6;
-    background: white;
+    background: #3A393E;
+    color: white;
     .name {
       float: left;
       height: 1.4rem;

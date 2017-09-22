@@ -13,8 +13,11 @@ import Chat from './components/Chat/Chat.vue'
 import ChatList from './components/ChatList/ChatList.vue'
 import UserDetail from './components/UserDetail/UserDetail.vue'
 import ModifyUser from './components/ModifyUser/ModifyUser.vue'
-import MyMessage from './components/MyMessage/MyMessage.vue'
 import PersonPage from './components/PersonPage/PersonPage.vue'
+import MyMessage from './components/MyMessage/MyMessage.vue'
+import MyFans from './components/MyFans/MyFans.vue'
+import MyConcern from './components/MyConcern/MyConcern.vue'
+
 
 // 异步载入
 // const Bar = resolve => require(['./components/Bar.vue'], resolve)
@@ -72,13 +75,21 @@ let router = new Router({
       name: 'modifyUser'
     },
     {
-      path: '/myMessage',
-      component: MyMessage
-    },
-    {
       path: '/personPage/:uname',
       component: PersonPage,
       name: 'personPage'
+    },
+    {
+      path: '/myConcern',
+      component: MyConcern
+    },
+    {
+      path: '/myFans',
+      component: MyFans
+    },
+    {
+      path: '/myMessage',
+      component: MyMessage
     }
   ]
 })

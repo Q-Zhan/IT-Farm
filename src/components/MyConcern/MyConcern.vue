@@ -1,0 +1,198 @@
+<template>
+  <div id="myConcern">
+    <header>
+      <span>我的关注</span>
+      <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
+    </header>
+    <ul class="list" id="list">
+      <li v-for="(item, index) in concernedList" :key="index" class="item">
+        <div class="avatar"><img :src="avatar_img"/></div>
+        <div class="text">
+          <div class="name">{{item.nname}}</div>
+          <div class="signature">这是一条个人介绍这是一条个人介绍这是一条个人介绍这是一条个人介绍</div>
+        </div>
+      </li>
+    </ul>
+    <Loading v-show="isLoading"/>
+  </div>
+</template>
+
+<script>
+import { api } from '../../api'
+import { mapState } from 'vuex'
+import Loading from '../Common/Loading/Loading.vue'
+import back_arrow from './back_arrow.svg'
+import avatar_img from './avatar.svg'
+
+export default {
+  components: {
+    Loading
+  },
+  data () {
+    return {
+      back_arrow,
+      avatar_img,
+      concernedList: [],
+      noMoreConcerned: false
+    }
+  },
+  computed: mapState({
+    isLoading: state => state.isLoading,
+    user: state => state.user
+  }),
+  mounted() {
+    this.getMyConcern()
+    this.addScrollListener()
+  },
+  methods: {
+    getMyConcern() {
+      this.$store.commit('startLoading')
+      let time = new Date().getTime()
+      return fetch(api + '/api/user/relationship/asmain/' + time, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.user.secret
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        this.concernedList = data.content.mainUserList
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+      })
+    },
+    addScrollListener() {
+      let self = this
+      let list = document.getElementById('list')
+      list.addEventListener('scroll', throttle(scrollHandle, 50))
+      function scrollHandle() {
+        if (self.noMoreConcerned == true || self.isLoading == true) {
+          return
+        }
+        if (list.scrollTop + list.clientHeight >= list.scrollHeight - 300) {
+          self.getOldConcerned()
+        }
+      }
+      function throttle(func, wait = 100) {
+        let context, args;
+        let previous = 0;
+        return function() {
+          let now = +new Date();
+          context = this;
+          args = arguments;
+          if (now - previous > wait) {
+            func.apply(context, args);
+            previous = now;
+          }
+        }
+      }
+    },
+    getOldConcerned() {
+      this.$store.commit('startLoading')
+      let time = this.concernedList[this.concernedList.length - 1].tmCreated -1
+      console.log(time)
+      return fetch(api + '/api/user/relationship/asmain/' + time, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.user.secret
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        if (data.content.mainUserList.length > 0) {
+          this.concernedList = this.concernedList.concat(data.content.mainUserList)
+        } else {
+          this.noMoreConcerned = true
+        }
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+      })
+    },
+    turnToBack() {
+      this.$router.go(-1)
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+#myConcern {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  header {
+    width: 100%;
+    height: 1.4rem;
+    position: fixed;
+    top: 0;
+    background: #3A393E;
+    line-height: 1.4rem;
+    font-size: 0.5rem;
+    color: white;
+    text-align: center;
+    .back_arrow {
+      display: inline-block;
+      width: 0.54rem;
+      height: 0.54rem;
+      position: absolute;
+      left: 0.45rem;
+      top: 0.42rem;
+    }
+  }
+  .list {
+    height: calc(100% - 1.4rem);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    padding-top: 1.4rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    .item {
+      width: 100%;
+      height: 2.2rem;
+      border: 1px solid #E7E7E7;
+      display: flex;
+      align-items: center;
+      .avatar {
+        width: 2rem;
+        height: 2rem;
+        flex: 0 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          width: 1.4rem;
+          height: 1.4rem;
+          border-radius: 50%;
+        }
+      }
+      .text {
+        margin-left: 0.2rem;
+        letter-spacing: 1px;
+        .name {
+          font-size: 0.5rem;
+          margin-bottom: 0.2rem;
+        }
+        .signature {
+          font-size: 0.35rem;
+          color: #A1A1A1;
+          width: 6.5rem; 
+          overflow: hidden; 
+          text-overflow: ellipsis; 
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+</style>
