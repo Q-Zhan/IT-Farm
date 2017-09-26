@@ -21,7 +21,7 @@
 import { api } from '../../api'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
-import back_arrow from './back_arrow.svg'
+import back_arrow from './back_arrow_white.svg'
 import avatar_img from './avatar.svg'
 
 export default {

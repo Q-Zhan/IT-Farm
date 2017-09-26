@@ -135,8 +135,8 @@ export default {
       })
   },
   getNewMessage({ commit, state }) {
-    let time = state.messageList[0].tmCreated + 1
-    return fetch(api + '/api/message/tmafter/' + time, {
+    let time = new Date().getTime()
+    return fetch(api + '/api/message/tmbefore/' + time, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -146,9 +146,7 @@ export default {
     .then((res) => res.json())
     .then((data) => {
       // console.log(data)
-      if (data.content.messageList.length > 0) {
-        commit('addNewMessage', { newMessage: data.content.messageList })
-      }
+      commit('getNewMessage', { newMessage: data.content.messageList })
     })
     .catch(err => {
       console.log(err)

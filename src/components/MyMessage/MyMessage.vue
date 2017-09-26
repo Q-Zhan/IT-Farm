@@ -5,7 +5,10 @@
       <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
     </header>
     <div id="list" ref="list">
-      <div v-for="(item, index) in messageList" :key="item.mid" class="item" :style="{ background: getBackground(index)}">
+      <div v-for="(item, index) in messageList"
+           :key="item.mid" class="item" 
+           :style="{ background: getBackground(index)}"
+           @click="turnToDetail(index)">
         <div class="header">
           <img :src="avatar_img" />
           <div class="text">
@@ -172,6 +175,10 @@ export default {
     },
     turnToBack() {
       this.$router.go(-1)
+    },
+    turnToDetail(index) {
+      let mid = this.messageList[index].mid
+      this.$router.push({name: 'detail', params: { mid}})
     }
   }
 }

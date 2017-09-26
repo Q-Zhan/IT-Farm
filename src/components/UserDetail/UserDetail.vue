@@ -17,21 +17,21 @@
         <span>账号名</span>
         <span>{{user.uname}}</span>
       </div>
-      <div class="grade container" @click="addPicker('grade')">
+      <div class="grade container" @click="openPicker('grade')">
         <span>入学年份</span>
         <span>{{user.grade}}</span>
       </div>
-      <div class="faculty container" @click="addPicker('faculty')">
+      <div class="faculty container" @click="openPicker('faculty')">
         <span>学院</span>
         <span>{{user.faculty}}</span>
       </div>
     </div>
     <div class="section">
-      <div class="gender container" @click="addPicker('gender')">
+      <div class="gender container" @click="openPicker('gender')">
         <span>性别</span>
         <span>{{gender}}</span>
       </div>
-      <div class="site container" @click="addPicker('site')">
+      <div class="site container" @click="openPicker('site')">
         <span>宿舍区</span>
         <span>{{user.site}}</span>
       </div>
@@ -41,13 +41,18 @@
       </div>
     </div>
     <Loading v-show="isLoading"/>
+    <picker v-model="isPickerShowed" :data-items="pickerItems" @change="changePickerValue">
+      <div class="top-content" slot="top-content" >
+        <span @click="closePicker">取消</span>
+        <span @click="changeInfo">确定</span>
+      </div>
+    </picker>
   </div>
 
 </template>
 
 <script>
 import Loading from '../Common/Loading/Loading.vue'
-import Picker from 'better-picker'
 import back_arrow from './back_arrow_white.svg'
 import avatar from './test_avatar.jpg'
 
@@ -59,44 +64,15 @@ export default {
     return {
       back_arrow,
       avatar,
-      picker: '',
       pickerData: {
         grade: [],
-        faculty: [
-          {text: '海洋学院'},
-          {text: '国际教育学院'},
-          {text: '工程学院'},
-          {text: '食品科学学院'},
-          {text: '经济管理学院'},
-          {text: '公共管理学院'},
-          {text: '资源环境学院'},
-          {text: '生命科学学院'},
-          {text: '动物科学学院'},
-          {text: '兽医学院'},
-          {text: '园艺学院'},
-          {text: '农学院'},
-          {text: '林学与风景园林学院'},
-          {text: '电子工程学院'},
-          {text: '水利与土木工程学院'},
-          {text: '人文与法学学院'},
-          {text: '材料与能源学院'},
-          {text: '数学与信息学院'},
-          {text: '软件学院'},
-          {text: '外国语学院'},
-          {text: '艺术学院'}
-        ],
-        gender: [
-          {text: '男'},
-          {text: '女'}
-        ],
-        site: [
-          {text: '五山区'},
-          {text: '华山区'},
-          {text: '启林北'},
-          {text: '启林南'},
-          {text: '其他宿舍区'}
-        ]
-      }
+        faculty: ['海洋学院', '国际教育学院', '工程学院', '食品科学学院', '经济管理学院', '公共管理学院', '资源环境学院', '生命科学学院', '动物科学学院', '兽医学院', '园艺学院', '农学院', '林学与风景园林学院', '电子工程学院', '水利与土木工程学院', '人文与法学学院', '材料与能源学院', '数学与信息学院', '软件学院', '外国语学院', '艺术学院'],
+        gender: ['男', '女'],
+        site: ['五山区', '华山区', '启林北', '启林南', '其他宿舍区']
+      },
+      isPickerShowed: false,
+      pickerItems: [],
+      choseValue: ''
     }
   },
   computed: {
@@ -115,40 +91,47 @@ export default {
     }
   },
   mounted() {
-    this.initData()
+    this.initGradeData()
   },
   methods: {
+    closePicker() {
+      this.isPickerShowed = false
+    },
+    changeInfo() {
+      this.isPickerShowed = false
+      // console.log(this.choseValue)
+      if (this.choseValue == '男') {
+        this.choseValue = true
+      }
+      if (this.choseValue == '女') {
+        this.choseValue = false
+      }
+      this.$store.dispatch('modifyUserInfo', {item: this.pickerItemName, value: this.choseValue})
+    },
+    changePickerValue(value) {
+      if (value) {
+        this.choseValue = value
+      }
+    },
+    openPicker(item) {
+      this.pickerItemName = item
+      this.pickerItems = [{
+        values: this.pickerData[item]
+      }]
+      this.choseValue = this.pickerData[item][0]
+      this.isPickerShowed = true
+    },
     turnToBack() {
       this.$router.go(-1)
     },
     turnToModifyUserInfo(item) {
       this.$router.push({ name: 'modifyUser', params: {item}})
     },
-    initData() {
+    initGradeData() {
       let self = this
       for (let i = 2005; i < 2030; i++) {
-        self.pickerData.grade.push({
-          text: i
-        })
+        self.pickerData.grade.push(i)
       }
-    },
-    addPicker(item) {
-      let data = this.pickerData[item]
-      let picker = new Picker({
-        data: [data],
-        selectedIndex: [0]
-      })
-      picker.on('picker.select', (selectedVal, selectedIndex) => {
-        let value = data[selectedIndex[0]-1].text
-        if (value == '男') {
-          value = true
-        }
-        if (value == '女') {
-          value = false
-        }
-        this.$store.dispatch('modifyUserInfo', {item, value})
-      })
-      picker.show()
     }
   }
 }
@@ -156,53 +139,28 @@ export default {
 
 <style lang="scss">
 
-
-body .picker .picker-panel {
-  height: 6rem;
-  .picker-choose {
-    height: 1rem;
-    font-size: 0.5rem;
-    .confirm, .cancel {
-      padding: 0;
-      top: 0.1rem;
-    }
-    .confirm {
-      right: 0.2rem;
-      color: #007ACC;
-    }
-    .cancel {
-      left: 0.2rem;
-    }
-  }
-  .picker-content {
-    height: 3rem;
-    .mask-top {
-      height: 0.9rem !important;
-    }
-    .mask-bottom {
-      height: 1.1rem !important;
-    }
-    .wheel-wrapper {
-      height: 3rem;
-      .wheel {
-        height: 3rem;
-        ul {
-          padding: 0;
-          list-style: none;
-          li[class='wheel-item'] {
-            height: 1rem;
-            font-size: 0.5rem;
-            line-height: 1rem;
-          }
-        }
-      }
-    }
-  }
-}
 #userDetail {
   width: 100%;
   height: 100%;
   background: #EBEBEB;
+  .top-content {
+    height: 1.3rem;
+    line-height: 1.3rem;
+    background: white;
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    display: flex;
+    justify-content: space-between;
+    span {
+      padding: 0 0.3rem;
+    }
+    span:nth-of-type(2) {
+      color: #007ACC;
+    }
+  }
+  .picker-backdrop {
+    overflow: hidden;
+  }
   header {
     width: 100%;
     height: 1.4rem;

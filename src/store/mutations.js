@@ -23,8 +23,8 @@ export default {
       return item
     })
   },
-  addNewMessage(state, { newMessage }) {
-    state.messageList = newMessage.concat(state.messageList)
+  getNewMessage(state, { newMessage }) {
+    state.messageList = newMessage
   },
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)

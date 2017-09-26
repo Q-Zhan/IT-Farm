@@ -12,6 +12,10 @@
       </div>
       <div class="fakename">匿名</div>
       <div class="send_arrow"><img :src="send_arrow" @click="sendImg"/></div>
+      <div class="location" @click="openPicker">
+        <span>{{choseValue}}</span>
+        <div class="triangle"></div>
+      </div>
     </header>
     <div class="hint">发秘密到朋友圈...</div>
     <div class="message_content">
@@ -36,12 +40,17 @@
     </footer>
     <Toast ref="toast"/>
     <Loading v-show="isLoading"/>
+    <picker v-model="isPickerShowed" :data-items="pickerItems" @change="changePickerValue">
+      <div class="top-content" slot="top-content" >
+        <span @click="closePicker">取消</span>
+        <span @click="closePicker">确定</span>
+      </div>
+    </picker>
   </div>
 </template>
 
 <script>
 import { api } from '../../api'
-import Vue from 'vue'
 import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
@@ -69,12 +78,16 @@ export default {
       img_list: [],
       img_list_encoded: [],
       send_message_params: '',
-      isFake: false
+      isFake: false,
+      isPickerShowed: false,
+      pickerItems: [],
+      choseValue: '图书馆'
     }
   },
   computed: mapState({
     secret: state => state.user.secret,
-    isLoading: state => state.isLoading
+    isLoading: state => state.isLoading,
+    locationList: state => state.locationList
   }),
   mounted() {
     // 避免高度100%被虚拟键盘顶起
@@ -168,7 +181,13 @@ export default {
     },
     sendMessage() {
       let params = this.send_message_params
-      params += ('lid=' + this.$route.params.area + '&content=' + this.message_content)
+      let lid = ''
+      for (let i = 0, len = this.locationList.length; i < len; i++) {
+        if (this.locationList[i].locale == this.choseValue) {
+          lid = this.locationList[i].lid
+        }
+      }
+      params += ('lid=' + lid + '&content=' + this.message_content)
       if (this.isFake) {
         params += ('&isFake=' + this.isFake)
       }
@@ -194,17 +213,53 @@ export default {
     },
     changeIsFake() {
       this.isFake = !this.isFake
-      console.log(this.isFake)
+    },
+    openPicker() {
+      let data = this.locationList.map((item) => {
+        return item.locale
+      })
+      this.pickerItems = [{
+        values: data
+      }]
+      this.isPickerShowed = true
+    },
+    changePickerValue(value) {
+      if (value) {
+        this.choseValue = value
+      } else {
+        this.choseValue = this.locationList[0].locale
+      }
+    },
+    closePicker() {
+      this.isPickerShowed = false
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #create_message {
   width: 100%;
   height: 100%;
   position: relative;
+  .top-content {
+    height: 1.3rem;
+    line-height: 1.3rem;
+    background: white;
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    display: flex;
+    justify-content: space-between;
+    span {
+      padding: 0 0.3rem;
+    }
+    span:nth-of-type(2) {
+      color: #007ACC;
+    }
+  }
+  .picker-backdrop {
+    overflow: hidden;
+  }
   header {
     height: 1.4rem;
     border-bottom: 1px solid #D6D6D6;
@@ -240,6 +295,23 @@ export default {
     .fakename {
       font-size: 0.45rem;
       margin-left: 0.3rem;
+    }
+    .location {
+      position: absolute;
+      right: 1.6rem;
+      top: 0.42rem;
+      font-size: 0.4rem;
+      letter-spacing: 1px;
+      .triangle {
+        display: inline-block;
+        margin-left: -0.1rem;
+        width: 0;
+        height: 0;
+        border-left: 0.15rem solid transparent;
+        border-right: 0.15rem solid transparent;
+        border-top: 0.2rem solid #007ACC;
+        vertical-align: middle;
+      }
     }
     .send_arrow {
       position: absolute;

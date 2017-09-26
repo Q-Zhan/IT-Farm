@@ -40,7 +40,10 @@
         </div>
       </div>
       <div class="message" v-show="isMessageShowed" id="list">
-        <div v-for="(item, index) in messageList" :key="item.mid" class="item" :style="{ background: getBackground(index)}">
+        <div v-for="(item, index) in messageList"
+             :key="item.mid" class="item"
+            :style="{ background: getBackground(index)}"
+            @click="turnToDetail(index)">
           <div class="header">
             <img :src="avatar_img" />
             <div class="text">
@@ -324,6 +327,10 @@ export default {
         this.$store.commit('stopLoading')
       })
     },
+    turnToDetail(index) {
+      let mid = this.messageList[index].mid
+      this.$router.push({name: 'detail', params: { mid}})
+    }
   }
 }
 </script>

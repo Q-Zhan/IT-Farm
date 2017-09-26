@@ -39,7 +39,7 @@ let router = new Router({
       ]
     },
     {
-      path: '/detail/:index',
+      path: '/detail/:mid',
       name: 'detail',
       component: Detail
     },
@@ -56,7 +56,7 @@ let router = new Router({
       component: Login
     },
     {
-      path: '/createMessage/:area',
+      path: '/createMessage',
       name: 'createMessage',
       component: CreateMessage
     },

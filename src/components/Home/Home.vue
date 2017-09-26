@@ -2,20 +2,9 @@
   <div id="home">
     <header>
       <div class="name">匿密</div>
-      <div class="add"><img :src="add_img" @click="openAreaOption"/></div>
+      <div class="add"><img :src="add_img" @click="turnToCreateMessage"/></div>
       <div class="clear"></div>
     </header>
-    <div class="area_option" v-if="isAreaOptionOpend" @click="closeAreaOption">
-      <div class="area_list">
-        <div v-for="(item, index) in locationList" :key="item.lid" class="area_item" >
-          <router-link :to="{name: 'createMessage', params: { area : item.lid }}">
-            <div :style="{ borderBottom: index == locationList.length-1 ? '0' : '1px solid black'}">
-              {{ item.locale }}
-            </div>
-          </router-link>
-        </div>
-      </div>
-    </div>
     <List @saveImgSrc="openImgToast"/>
     <Loading v-show="isLoading"/>
     <img-toast :src="img_toast_src" ref="img_toast"/>
@@ -38,7 +27,6 @@ export default {
   data () {
     return {
       add_img,
-      isAreaOptionOpend: false,
       img_toast_src: ''
     }
   },
@@ -48,9 +36,6 @@ export default {
     },
     messageList() {
       return this.$store.state.messageList
-    },
-    locationList() {
-      return this.$store.state.locationList
     },
     stomp() {
       return this.$store.state.socket.stomp
@@ -98,19 +83,12 @@ export default {
         alert("不支持websocket,无法使用聊天功能")
       }
     },
-    openAreaOption() {
-      this.isAreaOptionOpend = true
-      // 屏蔽滚动
-      document.getElementsByTagName('body')[0].style.overflow = 'hidden'
-    },
-    closeAreaOption() {
-      this.isAreaOptionOpend = false
-      // 恢复滚动
-      document.getElementsByTagName('body')[0].style.overflow = 'auto'
-    },
     openImgToast(src) {
       this.$refs.img_toast.open()
       this.img_toast_src = src
+    },
+    turnToCreateMessage() {
+      this.$router.push('/createMessage')
     }
   }
 }
@@ -143,34 +121,6 @@ export default {
       img {
         width: 0.6rem;
         height: 0.6rem;
-      }
-    }
-  }
-  .area_option {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 90;
-    .area_list {
-      width: 2.6rem;
-      position: fixed;
-      z-index: 91;
-      right: 0.9rem;
-      top: 0.8rem;
-      background: white;
-      border: 1px solid gray;
-      box-shadow: 0.05rem 0.05rem 0.05rem 2px gray;
-      .area_item div {
-        width: 80%;
-        margin: 0 auto;
-        height: 1.2rem;
-        border-bottom: 1px solid black;
-        color: #252526;
-        line-height: 1.2rem;
-        text-align: center;
-        font-size: 0.5rem;
       }
     }
   }

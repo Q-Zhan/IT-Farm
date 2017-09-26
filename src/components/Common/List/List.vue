@@ -122,7 +122,6 @@ export default {
         }
       });
       dragger.on('dragDownLoad', () => {
-        console.log('下拉刷新')
         let latest = document.getElementsByClassName('latest')[0]
         latest.style.height = '1.2rem'
         this.$store.dispatch('getNewMessage')
@@ -132,7 +131,6 @@ export default {
         })
       });
       dragger.on('dragUpLoad', () => {
-        console.log('上拉加载')
         let more = document.getElementsByClassName('more')[0]
         more.style.height = '1.2rem'
         this.$store.dispatch('getOldMessage')
@@ -148,7 +146,8 @@ export default {
       });
     },
     turnToDetail(index) {
-      this.$router.push({name: 'detail', params: { index : index}})
+      let mid = this.messageList[index].mid
+      this.$router.push({name: 'detail', params: { mid}})
     },
     openImgToast(e) {
       this.$emit('saveImgSrc', e.target.src)

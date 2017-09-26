@@ -10,8 +10,8 @@
         <div class="header">
           <img :src="avatar_img" @click="turnToPersonPage(message.user ? message.user.uname : 'fake')"/>
           <div class="text">
-            <span>{{message.fake ? message.fakeName : message.user.nname}}</span><br/>
-            <span>{{message.location.locale}}</span>
+            <span>{{ message.fake ? '匿名' : (message.user ? message.user.nname : '')}}</span><br/>
+            <span>{{message.location ? message.location.locale: ''}}</span>
           </div>
         </div>
         <div class="word">
@@ -28,7 +28,7 @@
         </div>
         <div class="footer">
           <div class="comment_num" >评论 {{message.commentCount}}</div>
-          <div class="praise" @click.stop="changePraiseNum"><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
+          <div class="praise" ><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
         <div class="block"></div>
@@ -39,7 +39,7 @@
             <img :src="avatar_img"/>
           </div>
           <div class="list_right" @click="openMask(index)">
-            <div class="list_right_title" >{{ item.user.nname }}</div>
+            <div class="list_right_title" >{{ item.user.nname}}</div>
             <div class="list_right_content">
               <span v-if="item.rcNname" class="at">@{{ item.rcNname }}: </span>
               <span>{{ item.content }}</span>
@@ -118,15 +118,13 @@ export default {
       receiverName: '',
       receiverIndex: '',
       rcid: '',
-      placeholder: '发表评论'
+      placeholder: '发表评论',
+      message: ''
     }
   },
   computed: {
     isLoading() {
       return this.$store.state.isLoading
-    },
-    message() {
-      return this.$store.state.messageList[this.$route.params.index]
     },
     user() {
       return this.$store.state.user
@@ -145,47 +143,57 @@ export default {
     }
   },
   mounted() {
+    // 获取最新评论和message信息
+    this.getInitializedInfo()
     // 添加滚动事件
     this.addScrollListener()
-    // 获取最新评论
-    this.getInitializedComment()
   },
   methods: {
-    getInitializedComment() {
+    getInitializedInfo() {
       this.$store.commit('startLoading')
       document.getElementById('comment_list').style.display = 'none'
-      let mid = this.message.mid
+      let mid = this.$route.params.mid
       let time = 1451581261000 // 时间是16年
-      fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
+      let getComment = fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
         method: 'get',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       })
-        .then((res) => res.json())
-        .then((data) => {
-          // console.log(data.content.commentList)
-          let comments = data.content.commentList
-          let len = comments.length
-          for (let i = len - 1; i >= 0; i--) {
-            this.commentList.push(comments[i])
-          }
-          if (this.commentList.length == 0) {
-            let contentHeight = getComputedStyle(document.getElementById('content')).height
-            let detailHeight = getComputedStyle(document.getElementsByClassName('detail')[0]).height
-            let hint = document.getElementsByClassName('hint')[0]
-            hint.style.height = contentHeight.substr(0, contentHeight.length -2) - detailHeight.substr(0, detailHeight.length - 2) + 'px'
-            hint.style.display = 'flex'
-          } else {
-            document.getElementById('comment_list').style.display = 'block'
-          }
-          this.$store.commit('stopLoading')
-        })
-        .catch(err => {
-          console.log(err)
-          this.$store.commit('stopLoading')
-          this.$refs.toast.showToast('获取评论失败')
-        })
+      let getMessage = fetch(api + `/api/message/get/${mid}`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+      Promise.all([getMessage, getComment])
+      .then(async (data) => {
+        let messageData = await data[0].json();
+        let commentData = await data[1].json();
+        // 处理message
+        this.message = messageData.content
+        console.log(this.message)
+        // 处理comment
+        let comments = commentData.content.commentList
+        let len = comments.length
+        for (let i = len - 1; i >= 0; i--) {
+          this.commentList.push(comments[i])
+        }
+        if (this.commentList.length == 0) {
+          let contentHeight = getComputedStyle(document.getElementById('content')).height
+          let detailHeight = getComputedStyle(document.getElementsByClassName('detail')[0]).height
+          let hint = document.getElementsByClassName('hint')[0]
+          hint.style.height = contentHeight.substr(0, contentHeight.length -2) - detailHeight.substr(0, detailHeight.length - 2) + 'px'
+          hint.style.display = 'flex'
+        } else {
+          document.getElementById('comment_list').style.display = 'block'
+        }
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        commit('stopLoading')
+      })
     },
     createComment() {
       this.$store.commit('startLoading')
@@ -367,9 +375,6 @@ export default {
     openImgToast(e) {
       this.$refs.img_toast.open()
       this.img_toast_src = e.target.src
-    },
-    changePraiseNum() {
-      this.$store.dispatch('changeMessagePraiseNum', {index: this.$route.params.index})
     }
   }
 }
