@@ -172,7 +172,6 @@ export default {
         let commentData = await data[1].json();
         // 处理message
         this.message = messageData.content
-        console.log(this.message)
         // 处理comment
         let comments = commentData.content.commentList
         let len = comments.length
@@ -210,17 +209,18 @@ export default {
         },
         body: params
       })
-        .then((res) => res.json())
-        .then((data) => {
-          this.$store.commit('addCommentCount', {index: this.$route.params.index, num: 1})
-          this.$store.commit('stopLoading')
-          this.getNewComment()
-        })
-        .catch(err => {
-          console.log(err)
-          this.$store.commit('stopLoading')
-          this.$refs.toast.showToast('发送评论失败')
-        })
+      .then((res) => res.json())
+      .then((data) => {
+        this.message.commentCount++
+        this.$store.commit('addCommentCount', {mid: this.message.mid, num: 1})
+        this.$store.commit('stopLoading')
+        this.getNewComment()
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+        this.$refs.toast.showToast('发送评论失败')
+      })
     },
     formatTime(time) {
       let date = new Date(time)
@@ -576,6 +576,7 @@ export default {
       }
       .list_item {
         width: 100%;
+        overflow-x: hidden;
       }
       .list_left {
         width: 18%;
