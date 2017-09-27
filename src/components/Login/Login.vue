@@ -12,7 +12,10 @@
       <input type="password" placeholder="密码" v-model="password"/>
       <div class="input_bottom"></div>
     </div>
-    
+    <div class="autoLogin">
+      <input type="radio" id="autoLogin" name="autoLogin" @click="chooseAutoLogin"/>
+      <label for="autoLogin">记住密码</label>
+    </div>
     <div class="button" @click="verifyInfo">
       <button>登录</button>
     </div>
@@ -37,20 +40,32 @@ export default {
     return {
       back_arrow,
       account: '',
-      password: ''
+      password: '',
+      isAutoLogin: false
     }
   },
   computed: mapState({
     isLoading: state => state.isLoading
   }),
   mounted() {
-    // this.autoLogin()
+    this.autoLogin()
   },
   methods: {
     autoLogin() {
-      if (localStorage[SECRET]) {
+      if (localStorage[SECRET] && (localStorage[SECRET] != 'noAutoLogin')) {
         this.$store.commit('saveSecret', { secret: localStorage[SECRET] })
         this.$store.dispatch('autoLogin')
+        .then((code) => {
+          if (code == '200') {
+            this.$refs.toast.showToast('登录成功')
+            setTimeout(() => {
+              this.$router.replace('/app/home')
+            }, 800)
+          } else {
+            this.$refs.toast.showToast('请重新登录')
+            localStorage.removeItem(SECRET)
+          }
+        })
       }
     },
     verifyInfo() {
@@ -61,7 +76,8 @@ export default {
       }
       this.$store.dispatch('login', {
         uname: this.account,
-        passwd: this.password
+        passwd: this.password,
+        isAutoLogin: this.isAutoLogin
       })
       .then((code) => {
         if (code == '-500') {
@@ -77,6 +93,11 @@ export default {
           this.$refs.toast.showToast('自动登录已过期')
         }
       })
+    },
+    chooseAutoLogin() {
+      let radio = document.getElementById('autoLogin')
+      this.isAutoLogin = !this.isAutoLogin
+      radio.checked = this.isAutoLogin
     },
     turnBack() {
       this.$router.go(-1)
@@ -130,13 +151,28 @@ export default {
       margin-top: -0.1rem;
     }
   }
+  .autoLogin {
+    width: 90%;
+    height: 1rem;
+    margin: 0 auto;
+    margin-top: 0.1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    #autoLogin {
+      width: 0.42rem;
+      height: 0.42rem;
+      margin-right: 0.15rem;
+    }
+  }
   .button {
     width: 90%;
     margin: 0 auto;
     button {
       width: 100%;
       height: 1.3rem;
-      margin-top: 0.7rem;
       background: #282D33;
       color: white;
       text-align: center;

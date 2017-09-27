@@ -35,7 +35,7 @@ export default {
       commit('stopLoading')
     })
   },
-  login({ commit, state }, { uname, passwd }) {
+  login({ commit, state }, { uname, passwd, isAutoLogin }) {
     commit('startLoading')
     return fetch(api + '/api/user/login', {
       method: 'post',
@@ -48,9 +48,13 @@ export default {
     .then((data) => {
       console.log(data)
       if (data.code == '200') {
-        commit('saveUserInfo', data.content)
+        commit('saveUserInfo', data.content.user)
         commit('saveSecret', {secret: data.content.secret})
-        localStorage[SECRET] = data.content.secret
+        if (isAutoLogin) {
+          localStorage[SECRET] = data.content.secret
+        } else {
+          localStorage[SECRET] = 'noAutoLogin'
+        }
       }
       commit('stopLoading')
       return data.code
@@ -62,7 +66,7 @@ export default {
   },
   autoLogin({ commit, state }) {
     commit('startLoading')
-    fetch(api + '/api/user/me', {
+    return fetch(api + '/api/user/me', {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -71,13 +75,14 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data)
-      commit('login', { code: data.code })
+      // console.log(data)
       // secret未过期
       if(data.code == 200) {
         commit('saveUserInfo', data.content)
+        commit('saveSecret', {secret: localStorage[SECRET]})
       }
       commit('stopLoading')
+      return data.code
     })
     .catch(err => {
       console.log(err)

@@ -35,10 +35,12 @@
         退出登录
       </div>
     </div>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
+import Loading from '../Common/Loading/Loading.vue'
 import avatar from './avat.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
@@ -46,6 +48,9 @@ import message_img from './message.svg'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    Loading
+  },
   data () {
     return {
       avatar,

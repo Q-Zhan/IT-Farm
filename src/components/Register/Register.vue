@@ -82,7 +82,8 @@ export default {
         if (message == '注册成功') {
           this.$store.dispatch('login', {
             uname: this.account,
-            passwd: this.password
+            passwd: this.password,
+            isAutoLogin: false
           })
           .then((code) => {
             if (code == '200') {

@@ -9,7 +9,7 @@ export default {
     state.user.secret = '注销'
   },
   saveUserInfo(state, content) {
-    state.user = content.user
+    state.user = content
   },
   saveSecret(state, { secret }) {
     state.user.secret = secret
