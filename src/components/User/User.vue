@@ -175,7 +175,7 @@ export default {
       height: 1.2rem;
       margin-top: 0.5rem;
       background: #EA2000;
-      line-height: 1rem;
+      line-height: 1.2rem;
       font-size: 0.45rem;
       color: white;
       text-align: center;

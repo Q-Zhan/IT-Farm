@@ -1,6 +1,6 @@
 <template>
   <div id="list" ref="list">
-    <div v-for="(item, index) in messageList" 
+    <div v-for="(item, index) in renderMessageList" 
          :key="item.mid" class="item" 
          :style="{ background: getBackground(index)}"
          @click="turnToDetail(index)">
@@ -42,6 +42,9 @@ import praise_chose from './praise_chose.svg'
 import error_img from './error_img.jpg'
 
 export default {
+  props: [
+    'messageCondition'
+  ],
   data () {
     return {
       avatar_img,
@@ -59,6 +62,17 @@ export default {
   computed: {
     messageList() {
       return this.$store.state.messageList
+    },
+    renderMessageList() {
+      if (this.messageCondition == '全部') {
+        return this.messageList
+      } else if (this.messageCondition == '我的关注') {
+        return 
+      } else {
+        return this.messageList.filter((item, index) => {
+          return item.location.locale == this.messageCondition
+        })
+      }
     }
   },
   mounted(){
@@ -146,7 +160,7 @@ export default {
       });
     },
     turnToDetail(index) {
-      let mid = this.messageList[index].mid
+      let mid = this.renderMessageList[index].mid
       this.$router.push({name: 'detail', params: { mid}})
     },
     openImgToast(e) {
