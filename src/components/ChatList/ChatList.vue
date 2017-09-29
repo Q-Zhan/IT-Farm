@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import avatar from './test_avatar.jpg'
+import avatar from './avatar.svg'
 
 export default {
   data () {

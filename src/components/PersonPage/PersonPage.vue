@@ -5,7 +5,7 @@
       <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
     </header>
     <div class="content">
-      <div class="avatar"><img :src="avatar_img"/></div>
+      <div class="avatar"><img :src="getAvatar()"/></div>
       <div class="name">{{ personInfo.nname }}</div>
       <div class="operation">
         <div class="concern" @click="concern" :class="{'concerned': isConcerned}">{{isConcerned ? '已关注' : '关注'}}</div>
@@ -45,7 +45,7 @@
             :style="{ background: getBackground(index)}"
             @click="turnToDetail(index)">
           <div class="header">
-            <img :src="avatar_img" />
+            <img :src="getAvatar()" />
             <div class="text">
               <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
               <span>{{ item.location.locale }}</span>
@@ -84,7 +84,7 @@ import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import back_arrow from './back_arrow.svg'
-import avatar_img from './avatar.svg'
+import avatar from './avatar.svg'
 import praise from './praise.svg'
 import error_img from './error_img.jpg'
 
@@ -96,7 +96,7 @@ export default {
   data () {
     return {
       back_arrow,
-      avatar_img,
+      avatar,
       error_img,
       praise,
       isInfoShowed: true,
@@ -330,6 +330,13 @@ export default {
     turnToDetail(index) {
       let mid = this.messageList[index].mid
       this.$router.push({name: 'detail', params: { mid}})
+    },
+    getAvatar() {
+      if (this.personInfo.userPic) {
+        return api + this.personInfo.userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }

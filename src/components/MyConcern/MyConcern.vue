@@ -6,10 +6,10 @@
     </header>
     <ul class="list" id="list">
       <li v-for="(item, index) in concernedList" :key="index" class="item">
-        <div class="avatar"><img :src="avatar_img"/></div>
+        <div class="avatar"><img :src="getAvatar(index)"/></div>
         <div class="text">
           <div class="name">{{item.nname}}</div>
-          <div class="signature">这是一条个人介绍这是一条个人介绍这是一条个人介绍这是一条个人介绍</div>
+          <div class="signature">{{item.signature || '这个人很懒，还没有自我介绍'}}</div>
         </div>
       </li>
     </ul>
@@ -22,7 +22,7 @@ import { api } from '../../api'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import back_arrow from './back_arrow_white.svg'
-import avatar_img from './avatar.svg'
+import avatar from './avatar.svg'
 
 export default {
   components: {
@@ -31,7 +31,7 @@ export default {
   data () {
     return {
       back_arrow,
-      avatar_img,
+      avatar,
       concernedList: [],
       noMoreConcerned: false
     }
@@ -120,6 +120,13 @@ export default {
     },
     turnToBack() {
       this.$router.go(-1)
+    },
+    getAvatar(index) {
+      if (this.concernedList[index].userPic) {
+        return api + this.concernedList[index].userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }

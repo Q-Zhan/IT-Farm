@@ -10,9 +10,9 @@
            :style="{ background: getBackground(index)}"
            @click="turnToDetail(index)">
         <div class="header">
-          <img :src="avatar_img" />
+          <img :src="getAvatar(index)" />
           <div class="text">
-            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
+            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{item.fake ? item.fakeName : item.user.nname}}</span><br/>
             <span>{{ item.location.locale }}</span>
           </div>
         </div>
@@ -48,7 +48,7 @@ import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import back_arrow from './back_arrow.svg'
-import avatar_img from './avatar.svg'
+import avatar from './avatar.svg'
 import praise from './praise.svg'
 import error_img from './error_img.jpg'
 
@@ -60,7 +60,7 @@ export default {
   data () {
     return {
       back_arrow,
-      avatar_img,
+      avatar,
       praise,
       error_img,
       messageList: [],
@@ -179,6 +179,13 @@ export default {
     turnToDetail(index) {
       let mid = this.messageList[index].mid
       this.$router.push({name: 'detail', params: { mid}})
+    },
+    getAvatar(index) {
+      if (this.messageList[index].user && this.messageList[index].user.userPic) {
+        return api + this.messageList[index].user.userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }

@@ -8,7 +8,7 @@
     <div class="content" id="content">
       <div class="detail">
         <div class="header">
-          <img :src="avatar_img" @click="turnToPersonPage(message.user ? message.user.uname : 'fake')"/>
+          <img :src="getMessageAvatar()" @click="turnToPersonPage(message.user ? message.user.uname : 'fake')"/>
           <div class="text">
             <span>{{ message.fake ? '匿名' : (message.user ? message.user.nname : '')}}</span><br/>
             <span>{{message.location ? message.location.locale: ''}}</span>
@@ -36,7 +36,7 @@
       <div :class="['comment_list', commentList.length == 0 ? 'hint' : '']" id="comment_list">
         <div v-for="(item, index) in commentList" :key="index" class="list_item">
           <div class="list_left" @click="turnToPersonPage(commentList[index].user.uname)">
-            <img :src="avatar_img"/>
+            <img :src="getCommentAvatar(index)"/>
           </div>
           <div class="list_right" @click="openMask(index)">
             <div class="list_right_title" >{{ item.user.nname}}</div>
@@ -88,7 +88,7 @@ import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import back_arrow from './back_arrow_white.svg'
-import avatar_img from './avatar.svg'
+import avatar from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import send_arrow from './send_arrow.svg'
@@ -105,7 +105,7 @@ export default {
       back_arrow,
       praise,
       praise_chose,
-      avatar_img,
+      avatar,
       send_arrow,
       error_img,
       newComment: '',
@@ -183,7 +183,8 @@ export default {
           let detailHeight = getComputedStyle(document.getElementsByClassName('detail')[0]).height
           let hint = document.getElementsByClassName('hint')[0]
           hint.style.height = contentHeight.substr(0, contentHeight.length -2) - detailHeight.substr(0, detailHeight.length - 2) + 'px'
-          hint.style.display = 'flex'
+          document.getElementById('content').style.overflow = 'hidden'
+          document.getElementById('comment_list').style.display = 'block'
         } else {
           document.getElementById('comment_list').style.display = 'block'
         }
@@ -375,6 +376,20 @@ export default {
     openImgToast(e) {
       this.$refs.img_toast.open()
       this.img_toast_src = e.target.src
+    },
+    getMessageAvatar() {
+      if (this.message.user && this.message.user.userPic) {
+        return api + this.message.user.userPic.webPath
+      } else {
+        return avatar
+      }
+    },
+    getCommentAvatar(index) {
+      if (this.commentList[index].user.userPic) {
+        return api + this.commentList[index].user.userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }
@@ -535,15 +550,18 @@ export default {
     } 
     .hint {
       background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      position: relative;
+      text-align: center;
     }
     .hint::after {
       content: '来抢沙发吧 ~';
       font-size: 0.45rem;
       color: gray;
       letter-spacing: 1px;
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 3.5rem;
     }
     .comment_list {
       width: 100%;
@@ -584,11 +602,10 @@ export default {
         display: flex;
         justify-content: center;
         img {
-          display: inline-block;
-          width: 0.7rem;
-          height: 0.7rem;
+          width: 0.8rem;
+          height: 0.8rem;
           border-radius: 50%;
-          padding-top: 0.5rem;
+          margin-top: 0.5rem;
         }
       }
       .list_right {

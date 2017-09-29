@@ -58,7 +58,7 @@ import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import back_arrow from './back_arrow_white.svg'
-import userAvatar from './user_avatar.svg'
+import avatar from './avatar.svg'
 
 export default {
   components: {
@@ -68,7 +68,7 @@ export default {
   data () {
     return {
       back_arrow,
-      userAvatar,
+      avatar,
       pickerData: {
         grade: [],
         faculty: ['海洋学院', '国际教育学院', '工程学院', '食品科学学院', '经济管理学院', '公共管理学院', '资源环境学院', '生命科学学院', '动物科学学院', '兽医学院', '园艺学院', '农学院', '林学与风景园林学院', '电子工程学院', '水利与土木工程学院', '人文与法学学院', '材料与能源学院', '数学与信息学院', '软件学院', '外国语学院', '艺术学院'],
@@ -200,7 +200,7 @@ export default {
       if (this.user.userPic) {
         return api + this.user.userPic.webPath
       } else {
-        return userAvatar
+        return avatar
       }
     }
   }

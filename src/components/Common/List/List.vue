@@ -11,7 +11,7 @@
           :style="{ background: getBackground(index)}"
           @click="turnToDetail(index)">
           <div class="header">
-            <img :src="avatar_img"/>
+            <img :src="getAvatar(index)"/>
             <div class="text">
               <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{item.fake ? item.fakeName : item.user.nname}}</span><br/>
               <span>{{ item.location.locale }}</span>
@@ -44,7 +44,7 @@
 import { api } from '../../../api'
 import { SCROLL_POSITION } from '../../../constant'
 import PullTo from 'vue-pull-to'
-import avatar_img from './avatar.svg'
+import avatar from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
 import error_img from './error_img.jpg'
@@ -58,7 +58,7 @@ export default {
   },
   data () {
     return {
-      avatar_img,
+      avatar,
       error_img,
       praise,
       praise_chose,
@@ -161,6 +161,13 @@ export default {
     },
     changePraiseNum(index) {
       this.$store.dispatch('changeMessagePraiseNum', {index})
+    },
+    getAvatar(index) {
+      if (this.renderMessageList[index].user && this.renderMessageList[index].user.userPic) {
+        return api + this.renderMessageList[index].user.userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }

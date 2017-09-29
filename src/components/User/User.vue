@@ -42,7 +42,7 @@
 <script>
 import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
-import userAvatar from './user_avatar.svg'
+import avatar from './avatar.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
 import message_img from './message.svg'
@@ -54,7 +54,7 @@ export default {
   },
   data () {
     return {
-      userAvatar,
+      avatar,
       concern,
       fans,
       message_img
@@ -74,7 +74,7 @@ export default {
       if (this.user.userPic) {
         return api + this.user.userPic.webPath
       } else {
-        return userAvatar
+        return avatar
       }
     }
   }

@@ -7,10 +7,10 @@
         </router-link>
       </div>
       <div class="avatar">
-        <img :src="avatar"/>
+        <img :src="getAvatar()"/>
         <div class="triangle"></div>
       </div>
-      <div class="fakename">匿名</div>
+      <div class="fakename">{{name}}</div>
       <div class="send_arrow"><img :src="send_arrow" @click="sendImg"/></div>
       <div class="location" @click="openPicker">
         <span>{{choseValue}}</span>
@@ -85,9 +85,13 @@ export default {
     }
   },
   computed: mapState({
+    user: state => state.user,
     secret: state => state.user.secret,
     isLoading: state => state.isLoading,
-    locationList: state => state.locationList
+    locationList: state => state.locationList,
+    name() {
+      return this.isFake ? '匿名' : this.user.nname
+    }
   }),
   mounted() {
     // 避免高度100%被虚拟键盘顶起
@@ -233,6 +237,13 @@ export default {
     },
     closePicker() {
       this.isPickerShowed = false
+    },
+    getAvatar() {
+      if ((!this.isFake) && this.user.userPic) {
+        return api + this.user.userPic.webPath
+      } else {
+        return avatar
+      }
     }
   }
 }
