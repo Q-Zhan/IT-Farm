@@ -6,7 +6,7 @@
     <div class="bg">
       <router-link to="/userDetail">
         <div class="user_info">
-          <img :src="avatar" class="avatar"/>
+          <img :src="getAvatar()" class="avatar"/>
           <div class="word">
             <span>{{ user.nname }}</span>
             <span>账号：{{ user.uname }}</span>
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import avatar from './avat.svg'
 import concern from './concern.svg'
@@ -68,6 +69,12 @@ export default {
       this.$store.dispatch('logout').then(() => {
         this.$router.push('/logo')
       })
+    },
+    getAvatar() {
+      console.log(api + this.user.userPic.webPath)
+      if (this.user.userPic) {
+        this.avatar = api + this.user.userPic.webPath
+      }
     }
   }
 }

@@ -56,6 +56,7 @@ export default {
         this.$store.commit('saveSecret', { secret: localStorage[SECRET] })
         this.$store.dispatch('autoLogin')
         .then((code) => {
+          console.log(code)
           if (code == '200') {
             this.$refs.toast.showToast('登录成功')
             setTimeout(() => {

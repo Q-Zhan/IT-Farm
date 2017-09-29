@@ -35,7 +35,7 @@
       <div class="button">
         <input type="file" @change="encodeImg" accept=""/>
         <img :src="picture" class="add_img"/>
-        <img :src="delete_img" class="delete"/>
+        <img :src="delete_img" class="delete" @click="deleteContent"/>
       </div>
     </footer>
     <Toast ref="toast"/>
@@ -167,6 +167,7 @@ export default {
           .then(async (data) => {
             for (let i = 0; i<len; i++) {
               let item = await data[i].json()
+              console.log(item.content.imageid)
               this.send_message_params += ('imageidList=' + item.content.imageid + '&')
             }
             this.sendMessage()
@@ -379,16 +380,17 @@ export default {
         display: inline-block;
         width: 0.6rem;
         height: 0.6rem;
-        position: absolute;
-        top: 0;
-        left: 0;
+        vertical-align: middle;
+        margin-right: 1.2rem;
       }
       input {
+        position: absolute;
         opacity: 0;
         width: 0.6rem;
         height: 0.6rem;
-        margin-right: 0.7rem;
-        vertical-align: middle;
+        padding: 0;
+        left: -0.5rem;
+        top: 0;
       }
       .delete {
         width: 0.6rem;
