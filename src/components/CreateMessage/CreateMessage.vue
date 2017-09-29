@@ -167,7 +167,6 @@ export default {
           .then(async (data) => {
             for (let i = 0; i<len; i++) {
               let item = await data[i].json()
-              console.log(item.content.imageid)
               this.send_message_params += ('imageidList=' + item.content.imageid + '&')
             }
             this.sendMessage()
@@ -192,6 +191,7 @@ export default {
       if (this.isFake) {
         params += ('&isFake=' + this.isFake)
       }
+      console.log(params)
       fetch(api + '/api/message/create', {
         method: 'post',
         headers: {

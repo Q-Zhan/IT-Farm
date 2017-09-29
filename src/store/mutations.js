@@ -89,5 +89,16 @@ export default {
   },
   modifyUserInfo(state, {item, value}) {
     state.user[item] = value
+  },
+  saveUserPic(state, { webPath, imageid }) {
+    if(state.user.userPic) {
+      state.user.userPic.webPath = webPath
+    } else {
+      state.user.userPic = {
+        delete: false,
+        imageid: imageid,
+        webPath: webPath
+      }
+    }
   }
 }

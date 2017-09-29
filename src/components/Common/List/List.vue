@@ -1,41 +1,49 @@
 <template>
   <div id="list" ref="list">
-    <div v-for="(item, index) in renderMessageList" 
-         :key="item.mid" class="item" 
-         :style="{ background: getBackground(index)}"
-         @click="turnToDetail(index)">
-        <div class="header">
-          <img :src="avatar_img"/>
-          <div class="text">
-            <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{item.fake ? item.fakeName : item.user.nname}}</span><br/>
-            <span>{{ item.location.locale }}</span>
+    <pull-to :top-load-method="refresh" @infinite-scroll="loadmore">
+      <template slot="top-block" scope="props">
+        <div class="top-load-wrapper">
+          hah
+        </div>
+      </template>
+      <div v-for="(item, index) in renderMessageList" 
+          :key="item.mid" class="item" 
+          :style="{ background: getBackground(index)}"
+          @click="turnToDetail(index)">
+          <div class="header">
+            <img :src="avatar_img"/>
+            <div class="text">
+              <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">{{item.fake ? item.fakeName : item.user.nname}}</span><br/>
+              <span>{{ item.location.locale }}</span>
+            </div>
           </div>
+          <div class="content">
+            {{ item.content }}
+          </div>
+          <div class="images">
+            <img 
+              v-for="(image, image_index) in item.messageImageSet"
+              :key="image_index" 
+              :src="getImageSrc(image.webPath)"
+              @error="setErrorImg"
+              @click.stop="openImgToast"
+            />
+          </div>
+        <div class="footer">
+          <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.commentCount }}</div>
+          <div class="praise" @click.stop="changePraiseNum(index)"><img :src="item.isPraised ? praise_chose : praise"/><span>{{ item.likeCount }}</span></div>
+          <div class="clear"></div>
         </div>
-        <div class="content">
-          {{ item.content }}
-        </div>
-        <div class="images">
-          <img 
-            v-for="(image, image_index) in item.messageImageSet"
-            :key="image_index" 
-            :src="getImageSrc(image.webPath)"
-            @error="setErrorImg"
-            @click.stop="openImgToast"
-          />
-        </div>
-      <div class="footer">
-        <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.commentCount }}</div>
-        <div class="praise" @click.stop="changePraiseNum(index)"><img :src="item.isPraised ? praise_chose : praise"/><span>{{ item.likeCount }}</span></div>
-        <div class="clear"></div>
       </div>
-    </div>
-    <div class="nomore" v-if="noMoreMessage">没有更多信息了</div>
+      <div class="nomore" v-if="noMoreMessage">没有更多信息了</div>
+    </pull-to>
   </div>
 </template>
 
 <script>
 import { api } from '../../../api'
 import { SCROLL_POSITION } from '../../../constant'
+import PullTo from 'vue-pull-to'
 import avatar_img from './avatar.svg'
 import praise from './praise.svg'
 import praise_chose from './praise_chose.svg'
@@ -45,6 +53,9 @@ export default {
   props: [
     'messageCondition'
   ],
+  components: {
+    PullTo
+  },
   data () {
     return {
       avatar_img,
@@ -77,15 +88,34 @@ export default {
   },
   mounted(){
     if (sessionStorage[SCROLL_POSITION]) {
-      document.getElementById('list').scrollTop = sessionStorage[SCROLL_POSITION]
+      document.getElementsByClassName('scroll-container')[0].scrollTop = sessionStorage[SCROLL_POSITION]
     }
-    this.addScrollListener()
+    // this.addScrollListener()
     this.saveScrollPosition()
   },
   beforeDestroy() {
     sessionStorage.setItem(SCROLL_POSITION, this.scrollPosition)
   },
   methods: {
+    refresh(loaded) {
+      this.$store.dispatch('getNewMessage')
+      .then(() => {
+        loaded('done')
+      })
+    },
+    loadmore(loaded) {
+      if (this.noMoreMessage == true) {
+        loaded('done')
+        return 0
+      }
+      this.$store.dispatch('getOldMessage')
+      .then((length) => {
+        if (length == 0) {
+          this.noMoreMessage = true
+        }
+        loaded('done')
+      })
+    },
     getBackground(index) {
       if (index % 2 == 0) {
         this.background_array[index] = true
@@ -103,10 +133,10 @@ export default {
     },
     saveScrollPosition() {
       let self = this
-      let list = this.$refs.list
-      list.addEventListener('scroll', throttle(scrollHandle, 100))
+      let container = document.getElementsByClassName('scroll-container')[0]
+      container.addEventListener('scroll', throttle(scrollHandle, 100))
       function scrollHandle() {
-        self.scrollPosition = list.scrollTop
+        self.scrollPosition = container.scrollTop
       }
       function throttle(func, wait = 100) {
         let context, args;
@@ -121,43 +151,6 @@ export default {
           }
         }
       }
-    },
-    addScrollListener() {
-      let list = document.getElementById('list')
-      let self = this
-      let dragger = new DragLoader(list, {
-        dragDownRegionCls: 'latest',
-        dragUpRegionCls: 'more',
-        dragDownHelper: function(status) {
-          return '<div class="down_loading"><div></div></div>'
-        },
-        dragUpHelper: function(status) {
-          return '<div class="down_loading"><div></div></div>'
-        }
-      });
-      dragger.on('dragDownLoad', () => {
-        let latest = document.getElementsByClassName('latest')[0]
-        latest.style.height = '1.2rem'
-        this.$store.dispatch('getNewMessage')
-        .then(() => {
-          latest.style.display = 'none'
-          dragger.reset()
-        })
-      });
-      dragger.on('dragUpLoad', () => {
-        let more = document.getElementsByClassName('more')[0]
-        more.style.height = '1.2rem'
-        this.$store.dispatch('getOldMessage')
-        .then((length) => {
-          if (length == 0) {
-            this.noMoreMessage = true
-            dragger.setDragUpDisabled(true)
-          }
-          more.style.display = 'none'
-          dragger.reset()
-        })
-        
-      });
     },
     turnToDetail(index) {
       let mid = this.renderMessageList[index].mid

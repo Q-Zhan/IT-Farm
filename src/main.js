@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import './utils/device' // 动态计算rem font-size
 import './utils/scroll' // 引入滚动监听库
+import './utils/base64'
 // 引入picker组件
 import picker from 'vue-3d-picker';
 Vue.component(picker.name, picker);

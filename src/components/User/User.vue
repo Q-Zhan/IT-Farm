@@ -42,7 +42,7 @@
 <script>
 import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
-import avatar from './avat.svg'
+import userAvatar from './user_avatar.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
 import message_img from './message.svg'
@@ -54,7 +54,7 @@ export default {
   },
   data () {
     return {
-      avatar,
+      userAvatar,
       concern,
       fans,
       message_img
@@ -71,9 +71,10 @@ export default {
       })
     },
     getAvatar() {
-      console.log(api + this.user.userPic.webPath)
       if (this.user.userPic) {
-        this.avatar = api + this.user.userPic.webPath
+        return api + this.user.userPic.webPath
+      } else {
+        return userAvatar
       }
     }
   }

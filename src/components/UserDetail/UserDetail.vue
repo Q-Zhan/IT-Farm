@@ -8,7 +8,7 @@
       <div class="avatar container">
         <input type="file" @change="encodeImg" accept=""/>
         <span>头像</span>
-        <img :src="avatar"/>
+        <img :src="getAvatar()"/>
       </div>
       <div class="nname container">
         <span>昵称</span>
@@ -58,7 +58,7 @@ import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import back_arrow from './back_arrow_white.svg'
-import avatar from './test_avatar.jpg'
+import userAvatar from './user_avatar.svg'
 
 export default {
   components: {
@@ -68,7 +68,7 @@ export default {
   data () {
     return {
       back_arrow,
-      avatar: avatar,
+      userAvatar,
       pickerData: {
         grade: [],
         faculty: ['海洋学院', '国际教育学院', '工程学院', '食品科学学院', '经济管理学院', '公共管理学院', '资源环境学院', '生命科学学院', '动物科学学院', '兽医学院', '园艺学院', '农学院', '林学与风景园林学院', '电子工程学院', '水利与土木工程学院', '人文与法学学院', '材料与能源学院', '数学与信息学院', '软件学院', '外国语学院', '艺术学院'],
@@ -77,8 +77,7 @@ export default {
       },
       isPickerShowed: false,
       pickerItems: [],
-      choseValue: '',
-      newAvatar: ''
+      choseValue: ''
     }
   },
   computed: {
@@ -162,14 +161,10 @@ export default {
               ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
               result = cvs.toDataURL('image/jpeg', compress_proportion)
             }
-            self.newAvatar = result
-            console.log(result)
             // 去除base64前缀
             let new_result = result.replace(prefixReg, '')
             // 编码以便传给后端
-            new_result = encodeURIComponent(new_result)
-            console.log(new_result)
-            self.getImgId(new_result)
+            self.sendImg(encodeURIComponent(new_result))
           }
           img.src = result
         }
@@ -182,44 +177,31 @@ export default {
         }
       }
     },
-    getImgId(Base64Encoded) {
-      this.$store.commit('startLoading')
-      fetch(api + '/api/image/create', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'janke-authorization': this.user.secret
-        },
-        body: 'image=' + Base64Encoded
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        this.sendImg(data.content.imageid)
-      })
-      .catch(err => {
-        console.log(err)
-        this.$store.commit('stopLoading')
-      })
-    },
-    sendImg(imgId) {
+    sendImg(base64) {
       fetch(api + '/api/image/user/create', {
         method: 'post',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'janke-authorization': this.user.secret
         },
-        body: 'image=' + imgId
+        body: 'image=' + base64
       })
       .then((res) => res.json())
       .then((data) => {
-        this.avatar = this.newAvatar
-        console.log(data)
+        this.$store.commit('saveUserPic', { webPath: data.content.webPath.slice(9), imageid: data.content.imageid })
         this.$store.commit('stopLoading')
       })
       .catch(err => {
         console.log(err)
         this.$store.commit('stopLoading')
       })
+    },
+    getAvatar() {
+      if (this.user.userPic) {
+        return api + this.user.userPic.webPath
+      } else {
+        return userAvatar
+      }
     }
   }
 }

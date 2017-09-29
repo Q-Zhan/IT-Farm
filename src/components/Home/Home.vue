@@ -129,6 +129,7 @@ export default {
   width: 100%;
   header {
     position: fixed;
+    z-index: 99;
     top: 0;
     width: 100%;
     height: 1.4rem;
@@ -171,6 +172,7 @@ export default {
       }
     }
     .condition_list {
+      z-index: 99;
       position: absolute;
       top: 1.4rem;
       left: 50%;

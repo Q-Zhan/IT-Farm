@@ -159,6 +159,7 @@ export default {
     })
   },
   getOldMessage({ commit, state }) {
+    commit('startLoading')
     let messageList = state.messageList
     let time = messageList[messageList.length - 1].tmCreated - 1
     return fetch(api + '/api/message/tmbefore/' + time, {
@@ -174,6 +175,7 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addOldMessage', { oldMessage: data.content.messageList })
       }
+      commit('stopLoading')
       return data.content.messageList.length
     })
     .catch(err => {
