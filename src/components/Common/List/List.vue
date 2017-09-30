@@ -1,9 +1,11 @@
 <template>
   <div id="list" ref="list">
-    <pull-to :top-load-method="refresh" @infinite-scroll="loadmore">
+    <pull-to :top-load-method="refresh" 
+             @infinite-scroll="loadmore"
+             :top-config="topConfig">
       <template slot="top-block" scope="props">
         <div class="top-load-wrapper">
-          hah
+          <div></div>
         </div>
       </template>
       <div v-for="(item, index) in renderMessageList" 
@@ -67,7 +69,10 @@ export default {
       ],
       background_array: [], // true表示有颜色，false表示白色
       scrollPosition: '',
-      noMoreMessage: false
+      noMoreMessage: false,
+      topConfig: {
+        stayDistance: 75
+      }
     }
   },
   computed: {
@@ -90,7 +95,6 @@ export default {
     if (sessionStorage[SCROLL_POSITION]) {
       document.getElementsByClassName('scroll-container')[0].scrollTop = sessionStorage[SCROLL_POSITION]
     }
-    // this.addScrollListener()
     this.saveScrollPosition()
   },
   beforeDestroy() {
@@ -98,6 +102,9 @@ export default {
   },
   methods: {
     refresh(loaded) {
+      let block = document.getElementsByClassName('action-block')[0]
+      block.style.height = '75px'
+      block.style.marginTop = '-75px'
       this.$store.dispatch('getNewMessage')
       .then(() => {
         loaded('done')
@@ -179,18 +186,18 @@ export default {
   height: calc(100% - 1.4rem);
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  .down_loading {
+  .top-load-wrapper {
     width: 100%;
+    height: 100%;
     background: white;
     display: flex;
     justify-content: center;
     align-items: center;
     div {
-      margin-top: 0.3rem;
-      width: 0.5rem;
-      height: 0.5rem;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      border: 0.1rem solid;
+      border: 4px solid;
       border-color: #38BAF8 #38BAF8 transparent transparent;
       animation: load 1.5s linear infinite;
     }
