@@ -8,8 +8,8 @@
     </div>
     <div class="button" @click="switchTo('find')">
       <router-link to="/app/find">
-        <img :src="chosen=='find' ? find_chose : find"/>
-        <span :style="{color: chosen=='find' ? '#282D33':'#A1A5A8'}">发现</span>
+        <img :src="chosen=='find' ? inform_chose : inform"/>
+        <span :style="{color: chosen=='find' ? '#282D33':'#A1A5A8'}">通知</span>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('chatList')">
@@ -33,10 +33,10 @@
 <script>
 import home from './home.svg'
 import home_chose from './home_chose.svg'
-import find from './find.svg'
-import find_chose from './find_chose.svg'
-import chat from './message.svg'
-import chat_chose from './message_chose.svg'
+import inform from './inform.svg'
+import inform_chose from './inform_chose.svg'
+import chat from './chat.svg'
+import chat_chose from './chat_chose.svg'
 import user from './user.svg'
 import user_chose from './user_chose.svg'
 
@@ -45,8 +45,8 @@ export default {
     return {
       home,
       home_chose,
-      find,
-      find_chose,
+      inform,
+      inform_chose,
       chat,
       chat_chose,
       user,

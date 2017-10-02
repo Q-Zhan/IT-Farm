@@ -5,7 +5,7 @@
       <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
     </header>
     <div class="content">
-      <div class="avatar"><img :src="getAvatar()"/></div>
+      <div class="avatar"><img :src="getAvatar()" @click.stop="openImgToast"/></div>
       <div class="name">{{ personInfo.nname }}</div>
       <div class="operation">
         <div class="concern" @click="concern" :class="{'concerned': isConcerned}">{{isConcerned ? '已关注' : '关注'}}</div>
@@ -45,7 +45,7 @@
             :style="{ background: getBackground(index)}"
             @click="turnToDetail(index)">
           <div class="header">
-            <img :src="getAvatar()" />
+            <img :src="getAvatar()"/>
             <div class="text">
               <span :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">楼主</span><br/>
               <span>{{ item.location.locale }}</span>

@@ -28,7 +28,7 @@
         </div>
         <div class="footer">
           <div class="comment_num" >评论 {{message.commentCount}}</div>
-          <div class="praise" ><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
+          <div class="praise"><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
         <div class="block"></div>
@@ -172,6 +172,7 @@ export default {
         let commentData = await data[1].json();
         // 处理message
         this.message = messageData.content
+        console.log(this.message)
         // 处理comment
         let comments = commentData.content.commentList
         let len = comments.length
@@ -561,7 +562,7 @@ export default {
       position: absolute;
       width: 100%;
       left: 0;
-      top: 3.5rem;
+      top: 2.5rem;
     }
     .comment_list {
       width: 100%;

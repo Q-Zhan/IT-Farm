@@ -1,10 +1,11 @@
 <template>
   <div id="list" ref="list">
     <pull-to :top-load-method="refresh" 
-             @infinite-scroll="loadmore"
-             :top-config="topConfig">
+             :bottom-load-method="loadmore"
+             :top-config="scrollConfig"
+             :bottom-config="scrollConfig">
       <template slot="top-block" scope="props">
-        <div class="top-load-wrapper">
+        <div class="scroll-load-wrapper">
           <div></div>
         </div>
       </template>
@@ -33,10 +34,15 @@
           </div>
         <div class="footer">
           <div class="comment" :style="{ color: background_array[index] ? 'white' : '#8a8a8a'}">评论{{ item.commentCount }}</div>
-          <div class="praise" @click.stop="changePraiseNum(index)"><img :src="item.isPraised ? praise_chose : praise"/><span>{{ item.likeCount }}</span></div>
+          <div class="praise" @click.stop="changePraiseNum(index)"><img :src="item.likee && item.likee.like ? praise_chose : praise"/><span>{{ item.likeCount }}</span></div>
           <div class="clear"></div>
         </div>
       </div>
+      <template slot="bottom-block" scope="props">
+        <div class="scroll-load-wrapper">
+          <div></div>
+        </div>
+      </template>
       <div class="nomore" v-if="noMoreMessage">没有更多信息了</div>
     </pull-to>
   </div>
@@ -70,7 +76,7 @@ export default {
       background_array: [], // true表示有颜色，false表示白色
       scrollPosition: '',
       noMoreMessage: false,
-      topConfig: {
+      scrollConfig: {
         stayDistance: 75
       }
     }
@@ -98,6 +104,7 @@ export default {
     this.saveScrollPosition()
   },
   beforeDestroy() {
+    // 保留滚动位置
     sessionStorage.setItem(SCROLL_POSITION, this.scrollPosition)
   },
   methods: {
@@ -115,6 +122,9 @@ export default {
         loaded('done')
         return 0
       }
+      let block = document.getElementsByClassName('action-block')[1]
+      block.style.height = '75px'
+      block.style.marginBottom = '-75px'
       this.$store.dispatch('getOldMessage')
       .then((length) => {
         if (length == 0) {
@@ -167,7 +177,8 @@ export default {
       this.$emit('saveImgSrc', e.target.src)
     },
     changePraiseNum(index) {
-      this.$store.dispatch('changeMessagePraiseNum', {index})
+      let mid = this.renderMessageList[index].mid
+      this.$store.dispatch('changeMessagePraiseNum', {mid})
     },
     getAvatar(index) {
       if (this.renderMessageList[index].user && this.renderMessageList[index].user.userPic) {
@@ -186,7 +197,7 @@ export default {
   height: calc(100% - 1.4rem);
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  .top-load-wrapper {
+  .scroll-load-wrapper {
     width: 100%;
     height: 100%;
     background: white;

@@ -6,7 +6,7 @@
     <div class="bg">
       <router-link to="/userDetail">
         <div class="user_info">
-          <img :src="getAvatar()" class="avatar"/>
+          <img :src="getAvatar()" class="avatar" @click.stop="openImgToast"/>
           <div class="word">
             <span>{{ user.nname }}</span>
             <span>账号：{{ user.uname }}</span>
@@ -36,12 +36,14 @@
       </div>
     </div>
     <Loading v-show="isLoading"/>
+    <img-toast :src="img_toast_src" ref="img_toast"/>
   </div>
 </template>
 
 <script>
 import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
+import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import avatar from './avatar.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
@@ -50,14 +52,16 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    Loading
+    Loading,
+    ImgToast
   },
   data () {
     return {
       avatar,
       concern,
       fans,
-      message_img
+      message_img,
+      img_toast_src: ''
     }
   },
   computed: mapState({
@@ -76,7 +80,12 @@ export default {
       } else {
         return avatar
       }
-    }
+    },
+    openImgToast(e) {
+      e.preventDefault()
+      this.$refs.img_toast.open()
+      this.img_toast_src = e.target.src
+    },
   }
 }
 </script>
