@@ -159,7 +159,6 @@ export default {
     })
   },
   getOldMessage({ commit, state }) {
-    commit('startLoading')
     let messageList = state.messageList
     let time = messageList[messageList.length - 1].tmCreated - 1
     return fetch(api + '/api/message/tmbefore/' + time, {
@@ -175,17 +174,14 @@ export default {
       if (data.content.messageList.length > 0) {
         commit('addOldMessage', { oldMessage: data.content.messageList })
       }
-      commit('stopLoading')
       return data.content.messageList.length
     })
     .catch(err => {
       console.log(err)
-      commit('stopLoading')
     })
   },
-  changeMessagePraiseNum({ commit, state }, {index}) {
+  changeMessagePraiseNum({ commit, state }, {mid}) {
     commit('startLoading')
-    let mid = state.messageList[index].mid
     fetch(api + '/api/message/likee/' + mid, {
       method: 'post',
       headers: {
@@ -195,7 +191,7 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      commit('changeMessagePraiseNum', {index})
+      commit('changeMessagePraiseNum', {mid})
       commit('stopLoading')
     })
     .catch(err => {

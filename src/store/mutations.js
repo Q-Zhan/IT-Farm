@@ -79,13 +79,24 @@ export default {
   changeChatRead(state, { chatIndex }) {
     state.chat.chatList[chatIndex].isRead = true
   },
-  changeMessagePraiseNum(state, {index}) {
-    if (state.messageList[index].isPraised) {
-      state.messageList[index].likeCount -= 1
-    } else {
-      state.messageList[index].likeCount += 1
+  changeMessagePraiseNum(state, {mid}) {
+    if (state.messageList) {
+      for (let i = 0, len = state.messageList.length; i < len; i++) {
+        if (state.messageList[i].mid == mid) { //找到需要改变点赞状态的message
+          if (state.messageList[i].likee) {
+            if (state.messageList[i].likee.like) {
+              state.messageList[i].likeCount -= 1
+            } else {
+              state.messageList[i].likeCount += 1
+            }
+            state.messageList[i].likee.like = !state.messageList[i].likee.like
+          } else {
+            state.messageList[i].likee = {like: true}
+            state.messageList[i].likeCount += 1
+          }
+        }
+      }
     }
-    state.messageList[index].isPraised = !state.messageList[index].isPraised
   },
   modifyUserInfo(state, {item, value}) {
     state.user[item] = value
