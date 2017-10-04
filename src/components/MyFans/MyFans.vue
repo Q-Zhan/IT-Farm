@@ -5,7 +5,7 @@
       <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
     </header>
     <ul class="list" id="list">
-      <li v-for="(item, index) in fansList" :key="index" class="item">
+      <li v-for="(item, index) in fansList" :key="index" class="item" @click="turnToPersonPage(item.uname)">
         <div class="avatar"><img :src="getAvatar(index)"/></div>
         <div class="text">
           <div class="name">{{item.nname}}</div>
@@ -119,6 +119,12 @@ export default {
     },
     turnToBack() {
       this.$router.go(-1)
+    },
+    turnToPersonPage(uname) {
+      if (uname == 'fake' || uname == this.user.uname) {
+        return 0
+      }
+      this.$router.push({ name: 'personPage', params: { uname }})
     },
     getAvatar(index) {
       if (this.fansList[index].userPic) {

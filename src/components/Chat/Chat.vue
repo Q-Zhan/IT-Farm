@@ -11,7 +11,7 @@
            :style="{marginBottom: index == message_list.length - 1 ? '0.35rem' : '0'}">
         <div class="avatar"><img :src="avatar"/></div>
         <div class="message_content">
-          {{item.content}}
+          {{parseEmoji(index)}}
           <div class="triangle"></div>
         </div>
         <div class="clear"></div>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { EMOJI } from '../../constant'
 import back_arrow from './back_arrow.svg'
 import send_arrow from './send_arrow.svg'
 import avatar from './avatar.svg'
@@ -83,12 +84,27 @@ export default {
     },
     turnBack() {
       this.$router.go(-1)
+    },
+    parseEmoji(index) {
+      let content = this.message_list[index].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementsByClassName('message_content')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #Chat {
   width: 100%;
   height: 100%;
@@ -143,6 +159,12 @@ export default {
         line-height: 0.75rem;
         padding: 0.15rem 0.3rem;
         margin-left: 0.25rem;
+        img {
+          width: 0.7rem;
+          height: 0.7rem;
+          margin: 0 0.05rem;
+          vertical-align: sub;
+        }
         .triangle {
           position: absolute;
           top: 0.35rem;

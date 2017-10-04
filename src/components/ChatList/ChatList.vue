@@ -11,7 +11,7 @@
         </div>
         <div class="word">
           <div class="name">{{ item.chatName }}</div>
-          <div class="last_message">{{ item.message[item.message.length-1].content }}</div>
+          <div class="last_message">{{ parseEmoji(index)}}</div>
         </div>
         <div class="time">
           {{ formatTime(item.message[item.message.length-1].time) }}
@@ -24,6 +24,7 @@
 
 <script>
 import avatar from './avatar.svg'
+import { EMOJI } from '../../constant'
 
 export default {
   data () {
@@ -52,12 +53,28 @@ export default {
         hour = '上午' + hour
       }
       return hour + ':' + minute
+    },
+    parseEmoji(index) {
+      let item = this.chatList[index]
+      let content = item.message[item.message.length-1].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementsByClassName('last_message')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #ChatList {
   position: relative;
   header {
@@ -121,7 +138,13 @@ export default {
         }
         .last_message {
           font-size: 0.4rem;
+          margin-top: 0.16rem;
           color: gray;
+          img {
+            width: 0.5rem;
+            height: 0.5rem;
+            margin: 0 0.08rem;
+          }
         }
       }
       .time {

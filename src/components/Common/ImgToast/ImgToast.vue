@@ -38,8 +38,8 @@ export default {
   align-items: center;
   background: rgba(0, 0, 0, 0.6);
   img {
-    width: 9rem;
-    height: 9rem;
+    max-width: 100%;
+    min-width: 50%;
   }
 }
 </style>

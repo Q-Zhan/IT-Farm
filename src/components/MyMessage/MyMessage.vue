@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="content">
-          {{ item.content }}
+          {{parseEmoji(index)}}
         </div>
         <div class="images">
           <img v-for="(image, image_index) in item.messageImageSet" 
@@ -44,6 +44,7 @@
 
 <script>
 import { api } from '../../api'
+import { EMOJI } from '../../constant'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
@@ -186,6 +187,21 @@ export default {
       } else {
         return avatar
       }
+    },
+    parseEmoji(index) {
+      let content = this.messageList[index].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementsByClassName('content')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
@@ -211,6 +227,13 @@ export default {
       position: absolute;
       left: 0.45rem;
       top: 0.42rem;
+    }
+  }
+  .content {
+    img {
+      width: 0.7rem;
+      height: 0.7rem;
+      margin: 0 0.1rem;
     }
   }
   #list {

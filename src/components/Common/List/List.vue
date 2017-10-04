@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="content">
-            {{ item.content }}
+            {{parseEmoji(index)}}
           </div>
           <div class="images">
             <img 
@@ -50,7 +50,7 @@
 
 <script>
 import { api } from '../../../api'
-import { SCROLL_POSITION } from '../../../constant'
+import { SCROLL_POSITION, EMOJI } from '../../../constant'
 import PullTo from 'vue-pull-to'
 import avatar from './avatar.svg'
 import praise from './praise.svg'
@@ -186,6 +186,21 @@ export default {
       } else {
         return avatar
       }
+    },
+    parseEmoji(index) {
+      let content = this.renderMessageList[index].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementsByClassName('content')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
@@ -261,6 +276,12 @@ export default {
       -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      img {
+        width: 0.7rem;
+        height: 0.7rem;
+        margin: 0 0.1rem;
+        
+      }
     }
     .images {
       width: 9rem;

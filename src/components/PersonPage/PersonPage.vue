@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="content">
-            {{ item.content }}
+            {{parseEmoji(index)}}
           </div>
           <div class="images">
             <img v-for="(image, image_index) in item.messageImageSet" 
@@ -70,7 +70,8 @@
             <div class="clear"></div>
           </div>
         </div>
-        <div class="nomore" v-if="noMoreMessage">没有更多信息了</div>
+        <div class="nomessage" v-if="isNoMessage">暂无任何信息</div>
+        <div class="nomore" v-if="noMoreMessage">没有更多信息~</div>
       </div>
     </div>
     <Loading v-show="isLoading"/>
@@ -80,6 +81,7 @@
 
 <script>
 import { api } from '../../api'
+import { EMOJI } from '../../constant'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
@@ -115,7 +117,8 @@ export default {
       isConcerned: false,
       messageList: [],
       img_toast_src: '',
-      noMoreMessage: false
+      noMoreMessage: false,
+      isNoMessage: false
     }
   },
   computed: {
@@ -144,7 +147,7 @@ export default {
       if (value == 'message') {
         this.isInfoShowed = false
         this.isMessageShowed = true
-        if (this.messageList.length == 0) {
+        if (this.messageList.length == 0 && this.isNoMessage == false) {
           this.getMessage()
           this.addScrollListener()
         }
@@ -248,7 +251,11 @@ export default {
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
-        this.messageList = data.content.messageList
+        if (data.content.messageList.length == 0) {
+          this.isNoMessage = true
+        } else {
+          this.messageList = data.content.messageList
+        }
         this.$store.commit('stopLoading')
       })
       .catch(err => {
@@ -337,6 +344,21 @@ export default {
       } else {
         return avatar
       }
+    },
+    parseEmoji(index) {
+      let content = this.messageList[index].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementById('list').getElementsByClassName('content')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
@@ -464,6 +486,18 @@ export default {
             text-align: justify;
           }
         }
+      }
+    }
+    .message {
+      position: relative;
+      .nomessage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.5rem;
+        color: #919191;
+        letter-spacing: 1px;
       }
     }
     #list {

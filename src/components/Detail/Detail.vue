@@ -15,7 +15,6 @@
           </div>
         </div>
         <div class="word">
-          {{message.content}}
         </div>
         <div class="img_list">
           <img 
@@ -42,7 +41,7 @@
             <div class="list_right_title" >{{ item.user.nname}}</div>
             <div class="list_right_content">
               <span v-if="item.rcNname" class="at">@{{ item.rcNname }}: </span>
-              <span>{{ item.content }}</span>
+              <span>{{ parseCommentEmoji(index) }}</span>
             </div>
             <div class="list_right_bottom">
               <div class="time">{{ formatTime(item.tmCreated) }}</div>
@@ -84,6 +83,7 @@
 
 <script>
 import { api } from '../../api'
+import { EMOJI } from '../../constant'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
@@ -172,7 +172,7 @@ export default {
         let commentData = await data[1].json();
         // 处理message
         this.message = messageData.content
-        console.log(this.message)
+        this.parseMessageEmoji()
         // 处理comment
         let comments = commentData.content.commentList
         let len = comments.length
@@ -193,7 +193,7 @@ export default {
       })
       .catch(err => {
         console.log(err)
-        commit('stopLoading')
+        this.$store.commit('stopLoading')
       })
     },
     createComment() {
@@ -228,9 +228,9 @@ export default {
       let date = new Date(time)
       let year = date.getFullYear()
       let month = date.getMonth() + 1
-      let dealt_month = month > 10 ? month : '0' + month
+      let dealt_month = month >= 10 ? month : '0' + month
       let day = date.getDate()
-      let dealt_day = day > 10 ? day : '0' + day
+      let dealt_day = day >= 10 ? day : '0' + day
       return `${year}/${dealt_month}/${dealt_day}`
     },
     addScrollListener() {
@@ -391,6 +391,33 @@ export default {
       } else {
         return avatar
       }
+    },
+    parseMessageEmoji() {
+      let content = this.message.content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      let wordNode = document.getElementsByClassName('word')[0]
+      wordNode.innerHTML = newStr
+    },
+    parseCommentEmoji(index) {
+      let content = this.commentList[index].content
+      let reg = /\[.*?\]/g
+      let newStr = content.replace(reg, (matchStr) => {
+        if (matchStr != '[]' && EMOJI[matchStr]) {
+          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+        }
+        return matchStr
+      })
+      // parseEmoji函数返回undefined后再插入dom节点
+      setTimeout(() => {
+        let contentNode = document.getElementsByClassName('list_right_content')[index]
+        contentNode.innerHTML = newStr
+      }, 0)
     }
   }
 }
@@ -511,6 +538,12 @@ export default {
         font-size: 0.5rem;
         letter-spacing: 3px;
         background: white;
+        img {
+          width: 0.7rem;
+          height: 0.7rem;
+          margin: 0 0.1rem;
+          
+        }
       }
       .img_list {
         width: 90%;
@@ -622,6 +655,11 @@ export default {
           font-size: 0.4rem;
           .at {
             color: #007ACC;
+          }
+          img {
+            width: 0.6rem;
+            height: 0.6rem;
+            margin: 0 0.05rem;
           }
         }
         .list_right_bottom {
