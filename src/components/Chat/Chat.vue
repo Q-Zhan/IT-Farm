@@ -2,14 +2,14 @@
   <div id="Chat">
     <header>
       <div class="img" @click="turnBack"><img :src="back_arrow"/></div>
-      <span>{{chat.chatName}}</span>
+      <span>{{chat.chatNname}}</span>
     </header>
     <div class="chat_list">
       <div v-for="(item, index) in message_list"
            :key="index" 
            :class="[item.position=='left' ? 'left' : 'right', 'chat_item']"
            :style="{marginBottom: index == message_list.length - 1 ? '0.35rem' : '0'}">
-        <div class="avatar"><img :src="avatar"/></div>
+        <div class="avatar"><img :src="getAvatar(item.position)"/></div>
         <div class="message_content">
           {{parseEmoji(index)}}
           <div class="triangle"></div>
@@ -31,6 +31,7 @@
 
 <script>
 import { EMOJI } from '../../constant'
+import { api } from '../../api'
 import back_arrow from './back_arrow.svg'
 import send_arrow from './send_arrow.svg'
 import avatar from './avatar.svg'
@@ -42,7 +43,8 @@ export default {
       send_arrow,
       avatar,
       message: '',
-      chatIndex: ''
+      chatIndex: '',
+      chatAvatar: ''
     }
   },
   computed: {
@@ -63,10 +65,14 @@ export default {
     },
     stomp() {
       return this.$store.state.socket.stomp
+    },
+    myAvatar() {
+      return this.$store.state.user.userPic ? (api + this.$store.state.user.userPic.webPath) : this.avatar
     }
   },
   mounted() {
     this.chatIndex = this.$route.params.chatIndex
+    this.getChatAvatar()
   },
   beforeDestroy() {
     this.$store.commit('changeChatRead', { chatIndex: this.chatIndex})
@@ -99,8 +105,39 @@ export default {
         let contentNode = document.getElementsByClassName('message_content')[index]
         contentNode.innerHTML = newStr
       }, 0)
+    },
+    getChatAvatar() {
+      this.$store.commit('startLoading')
+      fetch(api + '/api/user/profile/' + this.chat.chatUname, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.secret
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        if (data.content.user.userPic && data.content.user.userPic.webPath) {
+          this.chatAvatar = api + data.content.user.userPic.webPath
+        } else {
+          this.chatAvatar = this.avatar
+        }
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+      })
+    },
+    getAvatar(position) {
+      if (position == 'left') {
+        return this.chatAvatar
+      } else {
+        return this.myAvatar
+      }
     }
-  }
+  }  
 }
 </script>
 

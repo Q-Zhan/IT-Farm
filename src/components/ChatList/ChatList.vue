@@ -6,11 +6,11 @@
     <div class="chat_list">
       <div v-for="(item, index) in chatList" :key="index" class="chat_item" @click="turnToChat(index)">
         <div class="avatar">
-          <img :src="avatar"/>
+          <img :src="getAvatar(index)"/>
           <div class="dot" v-show="!item.isRead"></div>
         </div>
         <div class="word">
-          <div class="name">{{ item.chatName }}</div>
+          <div class="name">{{ item.chatNname }}</div>
           <div class="last_message">{{ parseEmoji(index)}}</div>
         </div>
         <div class="time">
@@ -19,23 +19,36 @@
       </div>
       <div class="hint" v-show="chatList.length == 0">暂时没有私聊消息 ~</div>
     </div>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 
 <script>
+import Loading from '../Common/Loading/Loading.vue'
 import avatar from './avatar.svg'
+import { api } from '../../api'
 import { EMOJI } from '../../constant'
 
 export default {
+  components: {
+    Loading
+  },
   data () {
     return {
-      avatar
+      avatar,
+      avatarList: []
     }
   },
   computed: {
     chatList() {
       return this.$store.state.chat.chatList
+    },
+    isLoading() {
+      return this.$store.state.isLoading
     }
+  },
+  mounted() {
+    this.getAvatar()
   },
   methods: {
     turnToChat(index) {
@@ -51,6 +64,9 @@ export default {
         hour = '下午' + (hour - 12)
       } else {
         hour = '上午' + hour
+      }
+      if (minute < 10) {
+        minute = '0' + minute
       }
       return hour + ':' + minute
     },
@@ -69,7 +85,30 @@ export default {
         let contentNode = document.getElementsByClassName('last_message')[index]
         contentNode.innerHTML = newStr
       }, 0)
-    }
+    },
+    getAvatar(index) {
+      if (this.chatList[index]) {
+        if (this.chatList[index].chatAvatar) {
+          return api + this.chatList[index].chatAvatar
+        } else {
+          if (this.avatarList[index]) {
+            return this.avatar
+          }
+          this.$store.dispatch('getChatAvatar', {uname: this.chatList[index].chatUname, index})
+          .then((data) => {
+            if (data != 'avatar') {
+              return api + data
+            } else {
+              return this.avatar
+            }
+          })
+          this.avatarList[index] = true   
+        }
+      } else {
+        return this.avatar
+      }
+      
+    }  
   }
 }
 </script>
@@ -93,7 +132,7 @@ export default {
   }
   .chat_list {
     height: calc(100% - 1.4rem);
-    overflow: auto;
+    overflow: scroll;
     position: relative;
     .chat_item {
       width: 100%;
