@@ -99,10 +99,8 @@ export default {
   },
   watch: {
     messageCondition(newCondition) {
-      console.log(newCondition)
-      if (newCondition == '全部') {
-        
-      }
+      this.$store.dispatch('getNewMessage', {condition: newCondition})
+      this.noMoreMessage = false
     }
   },
   mounted(){
@@ -120,10 +118,11 @@ export default {
       let block = document.getElementsByClassName('action-block')[0]
       block.style.height = '75px'
       block.style.marginTop = '-75px'
-      this.$store.dispatch('getNewMessage')
+      this.$store.dispatch('getNewMessage', {condition: this.messageCondition})
       .then(() => {
         loaded('done')
       })
+      this.noMoreMessage = false
     },
     loadmore(loaded) {
       if (this.noMoreMessage == true) {
@@ -133,9 +132,9 @@ export default {
       let block = document.getElementsByClassName('action-block')[1]
       block.style.height = '75px'
       block.style.marginBottom = '-75px'
-      this.$store.dispatch('getOldMessage')
+      this.$store.dispatch('getOldMessage', {condition: this.messageCondition})
       .then((length) => {
-        if (length == 0) {
+        if (length < 15) {
           this.noMoreMessage = true
         }
         loaded('done')

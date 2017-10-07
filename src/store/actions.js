@@ -139,9 +139,23 @@ export default {
       commit('stopLoading')
     })
   },
-  getNewMessage({ commit, state }) {
+  getNewMessage({ commit, state }, { condition }) {
+    commit('startLoading')
     let time = new Date().getTime()
-    return fetch(api + '/api/message/tmbefore/' + time, {
+    let url = ''
+    if (condition == '全部') {
+      url = '/api/message/tmbefore/'
+    } else if (condition == '我的关注') {
+      url = '/api/message/attention/tmbefore/'
+    } else {
+      for (let i = 0, len = state.locationList.length; i < len; i++) {
+        if (state.locationList[i].locale == condition) {
+          let lid = state.locationList[i].lid
+          url = `/api/message/lid/${lid}/tmbefore/`
+        }
+      }
+    }
+    return fetch(api + url + time, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -150,18 +164,31 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      // console.log(data)
       commit('getNewMessage', { newMessage: data.content.messageList })
+      commit('stopLoading')
     })
     .catch(err => {
       console.log(err)
       commit('stopLoading')
     })
   },
-  getOldMessage({ commit, state }) {
+  getOldMessage({ commit, state }, { condition }) {
     let messageList = state.messageList
     let time = messageList[messageList.length - 1].tmCreated - 1
-    return fetch(api + '/api/message/tmbefore/' + time, {
+    let url = ''
+    if (condition == '全部') {
+      url = '/api/message/tmbefore/'
+    } else if (condition == '我的关注') {
+      url = '/api/message/attention/tmbefore/'
+    } else {
+      for (let i = 0, len = state.locationList.length; i < len; i++) {
+        if (state.locationList[i].locale == condition) {
+          let lid = state.locationList[i].lid
+          url = `/api/message/lid/${lid}/tmbefore/`
+        }
+      }
+    }
+    return fetch(api + url + time, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
