@@ -8,8 +8,8 @@
       <li v-for="(item, index) in fansList" :key="index" class="item" @click="turnToPersonPage(item.uname)">
         <div class="avatar"><img :src="getAvatar(index)"/></div>
         <div class="text">
-          <div class="name">{{item.nname}}</div>
-          <div class="signature">{{item.signature || '这个人很懒，还没有自我介绍'}}</div>
+          <div class="name">{{item.user.nname}}</div>
+          <div class="signature">{{item.user.signature || '这个人很懒，还没有自我介绍'}}</div>
         </div>
       </li>
     </ul>
@@ -74,7 +74,7 @@ export default {
         if (self.noMoreFans == true || self.isLoading == true) {
           return
         }
-        if (list.scrollTop + list.clientHeight >= list.scrollHeight - 300) {
+        if (list.scrollTop + list.clientHeight >= list.scrollHeight - 200) {
           self.getOldFans()
         }
       }
@@ -94,7 +94,7 @@ export default {
     },
     getOldFans() {
       this.$store.commit('startLoading')
-      let time = this.fansList[this.fansList.length - 1].tmCreated -1
+      let time = this.fansList[this.fansList.length - 1].tmAttention -1
       return fetch(api + '/api/user/relationship/asobject/' + time, {
         method: 'get',
         headers: {
@@ -127,8 +127,8 @@ export default {
       this.$router.push({ name: 'personPage', params: { uname }})
     },
     getAvatar(index) {
-      if (this.fansList[index].userPic) {
-        return api + this.fansList[index].userPic.webPath
+      if (this.fansList[index].user.userPic) {
+        return api + this.fansList[index].user.userPic.webPath
       } else {
         return avatar
       }
