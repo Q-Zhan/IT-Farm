@@ -110,10 +110,10 @@ export default {
       commit('stopLoading')
     })
   },
-  getInitializedMessageAndLocationList({ commit, state }) {
+  getMessageListAndLocationList({ commit, state }) {
     commit('startLoading')
     let time = new Date().getTime()
-    let getMessage = fetch(`${api}/api/message/tmbefore/${time}`, {
+    let getMessage =  fetch(`${api}/api/message/tmbefore/${time}`, {
       method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -127,17 +127,17 @@ export default {
       }
     })
     Promise.all([getMessage, getLocation])
-      .then(async (data) => {
-        let message_data = await data[0].json();
-        let location_data = await data[1].json();
-        commit('saveMessageList', { messageList: message_data.content.messageList })
-        commit('saveLocationList', { locationList: location_data.content.locationList })
-        commit('stopLoading')
-      })
-      .catch(err => {
-        console.log(err)
-        commit('stopLoading')
-      })
+    .then(async (data) => {
+      let message_data = await data[0].json();
+      let location_data = await data[1].json();
+      commit('saveMessageList', { messageList: message_data.content.messageList })
+      commit('saveLocationList', { locationList: location_data.content.locationList })
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
   },
   getNewMessage({ commit, state }) {
     let time = new Date().getTime()
@@ -182,7 +182,7 @@ export default {
   },
   changeMessagePraiseNum({ commit, state }, {mid}) {
     commit('startLoading')
-    fetch(api + '/api/message/likee/' + mid, {
+    fetch(api + '/api/likee/message/' + mid, {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -214,6 +214,52 @@ export default {
       // console.log(data)
       commit('modifyUserInfo', {item, value})
       commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  getUserInfo({ commit, state }) {
+    commit('startLoading')
+    return fetch(api + '/api/user/me', {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': localStorage[SECRET]
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data)
+      commit('saveUserInfo', data.content)
+      commit('saveSecret', { secret: localStorage[SECRET]})
+      commit('stopLoading')
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  getChatAvatar( { commit, state }, { uname, index }) {
+    commit('startLoading')
+    return fetch(api + '/api/user/profile/' + uname, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'janke-authorization': state.user.secret
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.content.user.userPic && data.content.user.userPic.webPath) {
+        commit('saveChatAvatar', { webPath: data.content.user.userPic.webPath, index})
+        commit('stopLoading')
+        return data.content.user.userPic.webPath
+      } else {
+        commit('stopLoading')
+        return 'avatar'
+      }
     })
     .catch(err => {
       console.log(err)

@@ -25,11 +25,12 @@
 </template>
 
 <script>
+import { api } from '../../api'
+import { SECRET } from '../../constant'
 import List from '../Common/List/List.vue'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import add_img from './add.svg'
-import { api } from '../../api'
 
 export default {
   components: {
@@ -55,6 +56,9 @@ export default {
     stomp() {
       return this.$store.state.socket.stomp
     },
+    chatList() {
+      return this.$store.state.chat.chatList
+    },
     uid() {
       return this.$store.state.user.uid
     },
@@ -71,9 +75,21 @@ export default {
     }
   },
   mounted() {
-    if (this.messageList.length == 0) { // 第一次进入
-      this.$store.dispatch('getInitializedMessageAndLocationList')
-      this.connect() // 连接socket开始监听消息
+    if (this.$store.state.messageList.length == 0) {
+      if (!this.$store.state.user.secret) { // 刷新页面store被清空
+        if (localStorage[SECRET] && (localStorage[SECRET] != 'noAutoLogin')) { // 用户选择了自动登录
+          this.$store.dispatch('getUserInfo')
+          .then(() => {
+            this.$store.dispatch('getMessageListAndLocationList') // 获取列表数据
+            this.connect() // 连接websocket
+          })
+        } else {
+          this.$router.push('/logo') // 跳转到首页
+        }
+      } else { // 第一次进入
+        this.$store.dispatch('getMessageListAndLocationList') // 获取列表数据
+        this.connect() // 连接websocket
+      }
     }
   },
   methods: {

@@ -16,7 +16,9 @@ export default {
     chatList: [
       // {
       //   chatId: '',
-      //   chatName: '',
+      //   chatUname: '',
+      //   chatAvatar: '',
+      //   chatNname: '',
       //   isRead: false,
       //   message: [
       //     { position: 'left', content: '123', time: '1231231432'}

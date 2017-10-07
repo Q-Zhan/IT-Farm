@@ -6,16 +6,10 @@
         <span :style="{color: chosen=='home' ? '#282D33':'#A1A5A8'}">无秘</span>
       </router-link>
     </div>
-    <div class="button" @click="switchTo('find')">
-      <router-link to="/app/find">
-        <img :src="chosen=='find' ? inform_chose : inform"/>
-        <span :style="{color: chosen=='find' ? '#282D33':'#A1A5A8'}">通知</span>
-      </router-link>
-    </div>
     <div class="button"  @click="switchTo('chatList')">
       <router-link to="/app/chatList">
         <div class="chatList">
-          <img :src="chosen=='chatList' ? chat_chose : chat" />
+          <img :src="chosen=='chatList' ? inform_chose : inform" />
           <span :style="{color: chosen=='chatList' ? '#282D33':'#A1A5A8'}">消息</span>
           <div class="dot" v-show="!isAllChatRead"></div>
         </div>
@@ -35,8 +29,6 @@ import home from './home.svg'
 import home_chose from './home_chose.svg'
 import inform from './inform.svg'
 import inform_chose from './inform_chose.svg'
-import chat from './chat.svg'
-import chat_chose from './chat_chose.svg'
 import user from './user.svg'
 import user_chose from './user_chose.svg'
 
@@ -47,8 +39,6 @@ export default {
       home_chose,
       inform,
       inform_chose,
-      chat,
-      chat_chose,
       user,
       user_chose,
       chosen: ''

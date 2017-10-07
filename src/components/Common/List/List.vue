@@ -97,6 +97,14 @@ export default {
       }
     }
   },
+  watch: {
+    messageCondition(newCondition) {
+      console.log(newCondition)
+      if (newCondition == '全部') {
+        
+      }
+    }
+  },
   mounted(){
     if (sessionStorage[SCROLL_POSITION]) {
       document.getElementsByClassName('scroll-container')[0].scrollTop = sessionStorage[SCROLL_POSITION]

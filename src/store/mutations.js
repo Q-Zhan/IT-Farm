@@ -39,10 +39,11 @@ export default {
   connectSocket(state, { stomp }) {
     state.socket.stomp = stomp
   },
-  addChat(state, { receiverId, receiverName }) {
+  addChat(state, { receiverId, Nname, Uname }) {
     state.chat.chatList.push({
       chatId: receiverId,
-      chatName: receiverName,
+      chatNname: Nname,
+      chatUname: Uname,
       isRead: false,
       message: []
     })
@@ -61,7 +62,8 @@ export default {
     if (flag == 0) {
       state.chat.chatList.push({
         chatId: chatMsg.senderId,
-        chatName: chatMsg.sender,
+        chatNname: chatMsg.nSender,
+        chatUname: chatMsg.sender,
         isRead: false,
         message: [
           {position: 'left', content: chatMsg.content, time: chatMsg.time}
@@ -84,11 +86,7 @@ export default {
       for (let i = 0, len = state.messageList.length; i < len; i++) {
         if (state.messageList[i].mid == mid) { //找到需要改变点赞状态的message
           if (state.messageList[i].likee) {
-            if (state.messageList[i].likee.like) {
-              state.messageList[i].likeCount -= 1
-            } else {
-              state.messageList[i].likeCount += 1
-            }
+            state.messageList[i].likee.like ? state.messageList[i].likeCount -= 1 : state.messageList[i].likeCount += 1
             state.messageList[i].likee.like = !state.messageList[i].likee.like
           } else {
             state.messageList[i].likee = {like: true}
@@ -111,5 +109,8 @@ export default {
         webPath: webPath
       }
     }
+  },
+  saveChatAvatar(state, { webPath, index}) {
+    state.chat.chatList[index].chatAvatar = webPath
   }
 }

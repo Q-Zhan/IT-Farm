@@ -27,7 +27,7 @@
         </div>
         <div class="footer">
           <div class="comment_num" >评论 {{message.commentCount}}</div>
-          <div class="praise"><img :src="message.isPraised ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
+          <div class="praise" @click="changeMessagePraiseNum"><img :src="message.likee && message.likee.like ? praise_chose : praise"/><span>{{message.likeCount}}</span></div>
           <div class="clear"></div>
         </div>
         <div class="block"></div>
@@ -45,7 +45,7 @@
             </div>
             <div class="list_right_bottom">
               <div class="time">{{ formatTime(item.tmCreated) }}</div>
-              <div class="praise" ><img :src="praise"/>{{ item.likeCount }}</div>
+              <div class="praise" @click.stop="changeCommentPraiseNum(index)"><img :src="item.likee && item.likee.like ? praise_chose : praise"/>{{ item.likeCount }}</div>
               <div class="clear"></div>
             </div>
           </div>
@@ -115,7 +115,8 @@ export default {
       commentIsLoading: false,
       isMaskShowed: false,
       receiverId: '',
-      receiverName: '',
+      receiverNname: '',
+      receiverUname: '',
       receiverIndex: '',
       rcid: '',
       placeholder: '发表评论',
@@ -157,13 +158,15 @@ export default {
       let getComment = fetch(api + `/api/comment/message/${mid}/tmafter/${time}`, {
         method: 'get',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.user.secret
         }
       })
       let getMessage = fetch(api + `/api/message/get/${mid}`, {
         method: 'get',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.user.secret
         }
       })
       Promise.all([getMessage, getComment])
@@ -322,10 +325,11 @@ export default {
     },
     openMask(index) {
       let receiverId = this.commentList[index].user.uid
-      let receiverName = this.commentList[index].user.nname
+      let receiverNname = this.commentList[index].user.nname
       this.receiverId = receiverId
-      this.receiverName = receiverName
+      this.receiverNname = receiverNname
       this.receiverIndex = index
+      this.receiverUname = this.commentList[index].user.uname
       if (receiverId == this.uid) {
         this.$refs.toast.showToast('不能回复自己')
         return 0
@@ -343,7 +347,7 @@ export default {
     },
     turnToChat() {
       let receiverId = this.receiverId
-      let receiverName = this.receiverName
+      let receiverNname = this.receiverNname
       let flag = 0
       let len = this.chatList.length
       let i = 0
@@ -355,7 +359,7 @@ export default {
       }
       // chatList中不存在与此人的聊天
       if (flag == 0) {
-        this.$store.commit('addChat', { receiverId, receiverName })
+        this.$store.commit('addChat', { receiverId, Nname: receiverNname, Uname: this.receiverUname })
         this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
       }
       else {
@@ -364,7 +368,7 @@ export default {
     },
     replyComment() {
       this.rcid = this.commentList[this.receiverIndex].cid
-      this.placeholder = `回复 ${this.receiverName} 的评论：`
+      this.placeholder = `回复 ${this.receiverNname} 的评论：`
       this.isMaskShowed = false
     },
     deleteReply() {
@@ -386,11 +390,50 @@ export default {
       }
     },
     getCommentAvatar(index) {
-      if (this.commentList[index].user.userPic) {
+      if (this.commentList[index] && this.commentList[index].user.userPic) {
         return api + this.commentList[index].user.userPic.webPath
       } else {
         return avatar
       }
+    },
+    changeCommentPraiseNum(index) {
+      this.$store.commit('startLoading')
+      let cid = this.commentList[index].cid
+      fetch(api + `/api/likee/comment/${cid}`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'janke-authorization': this.user.secret
+        }
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code == 200) {
+          if (this.commentList[index].likee) {
+            this.commentList[index].likee.like ? this.commentList[index].likeCount -= 1 : this.commentList[index].likeCount += 1
+            this.commentList[index].likee = !this.commentList[index].likee
+          } else {
+            this.commentList[index].likee = {like: true}
+            this.commentList[index].likeCount += 1
+          }
+        }
+        this.$store.commit('stopLoading')
+      })
+      .catch(err => {
+        console.log(err)
+        this.$store.commit('stopLoading')
+      })
+    },
+    changeMessagePraiseNum(){
+      let mid = this.message.mid
+      if (this.message.likee) {
+        this.message.likee.like ? this.message.likeCount -= 1 : this.message.likeCount += 1
+        this.message.likee = !this.message.likee
+      } else {
+        this.message.likee = {like: true}
+        this.message.likeCount += 1
+      }
+      this.$store.dispatch('changeMessagePraiseNum', {mid})
     },
     parseMessageEmoji() {
       let content = this.message.content

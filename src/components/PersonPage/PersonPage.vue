@@ -231,7 +231,7 @@ export default {
       }
       // chatList中不存在与此人的聊天
       if (flag == 0) {
-        this.$store.commit('addChat', { receiverId, receiverName })
+        this.$store.commit('addChat', { receiverId, Nname: this.personInfo.nname, Uname: this.personInfo.uname })
         this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
       }
       else {
@@ -389,7 +389,7 @@ export default {
   .content {
     width: 100%;
     height: calc(100% - 1.4rem);
-    overflow: hidden;
+    overflow: auto;
     padding-top: 1.4rem;
     .avatar {
       width: 1.8rem;

@@ -95,8 +95,12 @@ export default {
   }),
   mounted() {
     // 避免高度100%被虚拟键盘顶起
-    var _body = document.getElementsByTagName('body')[0]
+    let _body = document.getElementsByTagName('body')[0]
     _body.style.height = _body.clientHeight + 'px'
+  },
+  beforeDestroy() {
+    let _body = document.getElementsByTagName('body')[0]
+    _body.style.height = '100%'
   },
   methods: {
     deleteContent() {

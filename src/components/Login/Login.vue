@@ -81,17 +81,15 @@ export default {
         isAutoLogin: this.isAutoLogin
       })
       .then((code) => {
-        if (code == '-500') {
-          this.$refs.toast.showToast('账号或密码错误')
-        }
         if (code == '200') {
           this.$refs.toast.showToast('登录成功')
           setTimeout(() => {
             this.$router.replace('/app/home')
           }, 800)
-        }
-        if (code == '-202') {
+        } else if (code == '-202') {
           this.$refs.toast.showToast('自动登录已过期')
+        } else {
+          this.$refs.toast.showToast('账号或密码错误')
         }
       })
     },
