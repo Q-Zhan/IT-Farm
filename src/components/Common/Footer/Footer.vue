@@ -11,7 +11,7 @@
         <div class="chatList">
           <img :src="chosen=='chatList' ? inform_chose : inform" />
           <span :style="{color: chosen=='chatList' ? '#282D33':'#A1A5A8'}">消息</span>
-          <div class="dot" v-show="!isAllChatRead"></div>
+          <div class="dot" v-show="!isAllRead"></div>
         </div>
       </router-link>
     </div>
@@ -48,13 +48,22 @@ export default {
     chatList() {
       return this.$store.state.chat.chatList
     },
-    isAllChatRead() {
+    newPraise() {
+      return this.$store.state.socket.newPraise
+    },
+    newComment() {
+      return this.$store.state.socket.newComment
+    },
+    isAllRead() {
       let chatList = this.chatList
       let len = chatList.length
       for (let i = 0; i < len; i++) {
         if(chatList[i].isRead == false) {
           return false
         }
+      }
+      if (this.newPraise.isRead == false || this.newComment.isRead == false) {
+        return false
       }
       return true
     }

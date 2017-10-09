@@ -4,6 +4,20 @@
       <span class="title">匿密</span>
     </header>
     <div class="chat_list">
+      <div class="new_comment" @click="turnToNewComment">
+        <div class="bg">
+          <img :src="new_comment"/>
+          <div class="dot" v-show="!newComment.isRead"></div>
+        </div>
+        <div class="word">新评论</div>
+      </div>
+      <div class="new_praise" @click="turnToNewPraise">
+        <div class="bg">
+          <img :src="new_praise"/>
+          <div class="dot" v-show="!newPraise.isRead"></div>
+        </div>
+        <div class="word">新点赞</div>
+      </div>
       <div v-for="(item, index) in chatList" :key="index" class="chat_item" @click="turnToChat(index)">
         <div class="avatar">
           <img :src="getAvatar(index)"/>
@@ -17,7 +31,6 @@
           {{ formatTime(item.message[item.message.length-1].time) }}
         </div>
       </div>
-      <div class="hint" v-show="chatList.length == 0">暂时没有私聊消息 ~</div>
     </div>
     <Loading v-show="isLoading"/>
   </div>
@@ -26,6 +39,8 @@
 <script>
 import Loading from '../Common/Loading/Loading.vue'
 import avatar from './avatar.svg'
+import new_comment from './new_comment.svg'
+import new_praise from './new_praise.svg'
 import { api } from '../../api'
 import { EMOJI } from '../../constant'
 
@@ -36,6 +51,8 @@ export default {
   data () {
     return {
       avatar,
+      new_comment,
+      new_praise,
       avatarList: []
     }
   },
@@ -45,6 +62,12 @@ export default {
     },
     isLoading() {
       return this.$store.state.isLoading
+    },
+    newPraise() {
+      return this.$store.state.socket.newPraise
+    },
+    newComment() {
+      return this.$store.state.socket.newComment
     }
   },
   mounted() {
@@ -108,7 +131,15 @@ export default {
         return this.avatar
       }
       
-    }  
+    },
+    turnToNewComment() {
+      this.$store.commit('changeNoticeRead', { type: 'comment'})
+      this.$router.push({ name: 'notice', params: { type: 'comment'}})
+    },
+    turnToNewPraise() {
+      this.$store.commit('changeNoticeRead', { type: 'praise'})
+      this.$router.push({ name: 'notice', params: { type: 'praise'}})
+    }    
   }
 }
 </script>
@@ -134,6 +165,53 @@ export default {
     height: calc(100% - 1.4rem);
     overflow: scroll;
     position: relative;
+    .new_comment, .new_praise {
+      width: 100%;
+      height: 2rem;
+      border-bottom: 1px solid #E8E8E8;
+      display: flex;
+      align-items: center;
+      position: relative;
+      .bg {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-left: 0.5rem;
+        border-radius: 50%;
+        position: relative;
+        background: #2EBB84;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 0.84rem;
+          height: 0.84rem;
+        }
+        .dot {
+          position: absolute;
+          top: -0.15rem;
+          right: -0.15rem;
+          width: 0.3rem;
+          height: 0.3rem;
+          background: red;
+          border-radius: 50%;
+        }
+      }
+      .word {
+        height: 1.5rem;
+        margin-left: 0.4rem;
+        line-height: 1.5rem;
+        font-size: 0.52rem;
+      }
+    }
+    .new_praise {
+      .bg {
+        background: #FBA504;
+        img {
+          width: 0.9rem;
+          height: 0.9rem;
+        }
+      }
+    }
     .chat_item {
       width: 100%;
       height: 2rem;
@@ -147,10 +225,12 @@ export default {
         width: 1.5rem;
         height: 1.5rem;
         margin-left: 0.5rem;
+        border-radius: 50%;
         position: relative;
         img {
           width: 100%;
           height: 100%;
+          border-radius: 50%;
         }
         .dot {
           position: absolute;
@@ -196,14 +276,6 @@ export default {
       }
     }
   }
-  .hint {
-    position:absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.45rem;
-    color: gray;
-    letter-spacing: 2px;
-  }
+
 }
 </style>

@@ -28,7 +28,15 @@ export default {
     chatIndex: ''
   },
   socket: {
-    stomp: ''
+    stomp: '',
+    newPraise: {
+      isRead: true,
+      praises: []
+    },
+    newComment: {
+      isRead: true,
+      comments: []
+    },
   },
   messageList: [],
   locationList: []

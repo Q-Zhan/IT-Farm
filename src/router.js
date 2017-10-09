@@ -17,7 +17,7 @@ const PersonPage = () => import('./components/PersonPage/PersonPage.vue')
 const MyMessage = () => import('./components/MyMessage/MyMessage.vue')
 const MyFans = () => import('./components/MyFans/MyFans.vue')
 const MyConcern = () => import('./components/MyConcern/MyConcern.vue')
-
+const Notice = () => import('./components/Notice/Notice.vue')
 
 
 Vue.use(Router)
@@ -88,6 +88,11 @@ let router = new Router({
     {
       path: '/myMessage',
       component: MyMessage
+    },
+    {
+      path: '/notice/:type',
+      component: Notice,
+      name: 'notice'
     }
   ]
 })

@@ -139,6 +139,7 @@ export default {
       outline: none;
       border: 0;
       padding-left: 0.2rem;
+      background: white;
     }
     .input_bottom {
       position: relative;

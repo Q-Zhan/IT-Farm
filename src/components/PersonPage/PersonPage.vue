@@ -85,7 +85,7 @@ import { EMOJI } from '../../constant'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
-import back_arrow from './back_arrow.svg'
+import back_arrow from './back_arrow_white.svg'
 import avatar from './avatar.svg'
 import praise from './praise.svg'
 import error_img from './error_img.jpg'
@@ -372,11 +372,12 @@ export default {
     width: 100%;
     height: 1.4rem;
     position: fixed;
-    background: white;
+    background: #3A393E;
     line-height: 1.4rem;
     font-size: 0.5rem;
     border-bottom: 1px solid #D6D6D6;
     text-align: center;
+    color: white;
     .back_arrow {
       display: inline-block;
       width: 0.54rem;

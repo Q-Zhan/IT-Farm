@@ -81,6 +81,18 @@ export default {
   changeChatRead(state, { chatIndex }) {
     state.chat.chatList[chatIndex].isRead = true
   },
+  receiveNoticeMessage(state, { noticeMsg }) {
+    if (noticeMsg.ntcType == 'mLikee' || noticeMsg.ntcType == 'cLikee') {
+      state.socket.newPraise.praises.push(noticeMsg)
+      state.socket.newPraise.isRead = false
+    } else {
+      state.socket.newComment.comments.push(noticeMsg)
+      state.socket.newComment.isRead = false
+    }
+  },
+  changeNoticeRead(state, { type }) {
+    type == 'comment' ? state.socket.newComment.isRead = true : state.socket.newPraise.isRead = true
+  },
   changeMessagePraiseNum(state, {mid}) {
     if (state.messageList) {
       for (let i = 0, len = state.messageList.length; i < len; i++) {

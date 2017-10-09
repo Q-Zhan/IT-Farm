@@ -65,6 +65,9 @@ export default {
     secret() {
       return this.$store.state.user.secret
     },
+    user() {
+      return this.$store.state.user
+    },
     conditionList() {
       let arr = ['全部']
       this.$store.state.locationList.forEach(function(element) {
@@ -111,6 +114,18 @@ export default {
               stomp.send("/socket/chat/recive", {},
                 JSON.stringify({
                   'msgID': chatMsg.chatID
+                })
+              )
+            })
+            stomp.subscribe('/user/' + this.user.uname + '/notice', (message) => {
+              let noticeMsg = JSON.parse(message.body)
+              console.log(noticeMsg)
+              this.$store.commit('receiveNoticeMessage', { noticeMsg })
+              // 成功接收消息后要推送以确认接收
+              stomp.send('/socket/ntc/rcv', {}, 
+                JSON.stringify({
+                  "ntcType": noticeMsg.ntcType,
+                  'id': noticeMsg.ntcBody.id
                 })
               )
             })
