@@ -32,7 +32,7 @@
 <script>
 import { EMOJI } from '../../constant'
 import { api } from '../../api'
-import back_arrow from './back_arrow.svg'
+import back_arrow from './back_arrow_white.svg'
 import send_arrow from './send_arrow.svg'
 import avatar from './avatar.svg'
 
@@ -151,7 +151,8 @@ export default {
     text-align: center;
     line-height: 1.4rem;
     font-size: 0.4rem;
-    background: #FAFAFA;
+    background: #3A393E;
+    color: white;
     border-bottom: 1px solid #D6D6D6;
     .img {
       width: 0.54rem;
