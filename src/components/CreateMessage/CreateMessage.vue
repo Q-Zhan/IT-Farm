@@ -94,6 +94,9 @@ export default {
     }
   }),
   mounted() {
+    if (!this.user.secret) {
+      this.$router.go(-1)
+    }
     // 避免高度100%被虚拟键盘顶起
     let _body = document.getElementsByTagName('body')[0]
     _body.style.height = _body.clientHeight + 'px'

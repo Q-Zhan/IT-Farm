@@ -32,10 +32,15 @@ export default {
     },
     isLoading() {
       return this.$store.state.isLoading
+    },
+    user() {
+      return this.$store.state.user
     }
   },
   mounted() {
-    
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
   },
   watch: {
     isLoading: function(newValue) {

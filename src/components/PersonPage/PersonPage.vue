@@ -140,6 +140,9 @@ export default {
     }
   },
   mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
     this.getPersonInfo()
   },
   methods: {

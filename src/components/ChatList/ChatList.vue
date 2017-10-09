@@ -68,9 +68,15 @@ export default {
     },
     newComment() {
       return this.$store.state.socket.newComment
+    },
+    user() {
+      return this.$store.state.user
     }
   },
   mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
     this.getAvatar()
   },
   methods: {

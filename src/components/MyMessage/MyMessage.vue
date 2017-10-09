@@ -78,6 +78,9 @@ export default {
     user: state => state.user
   }),
   mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
     this.getMyMessage()
     this.addScrollListener()
   },

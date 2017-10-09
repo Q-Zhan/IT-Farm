@@ -41,6 +41,9 @@ export default {
     user: state => state.user
   }),
   mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
     this.getMyConcern()
     this.addScrollListener()
   },

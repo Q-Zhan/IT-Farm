@@ -68,6 +68,11 @@ export default {
     isLoading: state => state.isLoading,
     user: state => state.user
   }),
+  mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
+  },
   methods: {
     logout() {
       this.$store.dispatch('logout').then(() => {

@@ -39,6 +39,14 @@ export default {
     },
     type() {
       return this.$route.params.type
+    },
+    user() {
+      return this.$store.state.user
+    }
+  },
+  mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
     }
   },
   methods: {

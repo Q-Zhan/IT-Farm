@@ -144,6 +144,9 @@ export default {
     }
   },
   mounted() {
+    if (!this.user.secret) {
+      this.$router.push('/app/home')
+    }
     // 获取最新评论和message信息
     this.getInitializedInfo()
     // 添加滚动事件

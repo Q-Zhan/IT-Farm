@@ -71,6 +71,9 @@ export default {
     }
   },
   mounted() {
+    if (!this.secret) {
+      this.$router.push('/app/home')
+    }
     this.chatIndex = this.$route.params.chatIndex
     this.getChatAvatar()
   },
