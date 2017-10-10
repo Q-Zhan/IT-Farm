@@ -102,7 +102,6 @@ export default {
     width: 90%;
     margin: 0 auto;
     margin-top: 0.5rem;
-    border-bottom: 1px solid #007ACC;
     .input {
       width: 100%;
       height: 0.8rem;
@@ -110,6 +109,7 @@ export default {
       letter-spacing: 1px;
       outline: none;
       border: 0;
+      border-bottom: 1px solid #007ACC;
     }
   }
   .hint {
