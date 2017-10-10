@@ -191,10 +191,11 @@ export default {
       letter-spacing: 0.1rem;
       span {
         position: relative;
+        display: inline-block;
       }
       .triangle {
         position: absolute;
-        top: 0.24rem;
+        top: 0.6rem;
         right: -0.32rem;
         width: 0;
         height: 0;

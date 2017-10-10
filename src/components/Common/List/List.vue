@@ -9,7 +9,7 @@
           <div></div>
         </div>
       </template>
-      <div v-for="(item, index) in renderMessageList" 
+      <div v-for="(item, index) in messageList" 
           :key="item.mid" class="item" 
           :style="{ background: getBackground(index)}"
           @click="turnToDetail(index)">
@@ -84,23 +84,15 @@ export default {
   computed: {
     messageList() {
       return this.$store.state.messageList
-    },
-    renderMessageList() {
-      if (this.messageCondition == '全部') {
-        return this.messageList
-      } else if (this.messageCondition == '我的关注') {
-        return 
-      } else {
-        return this.messageList.filter((item, index) => {
-          return item.location.locale == this.messageCondition
-        })
-      }
     }
   },
   watch: {
     messageCondition(newCondition) {
       this.$store.dispatch('getNewMessage', {condition: newCondition})
       this.noMoreMessage = false
+    },
+    messageList(newValue) {
+      console.log(newValue)
     }
   },
   mounted(){
@@ -177,25 +169,25 @@ export default {
       }
     },
     turnToDetail(index) {
-      let mid = this.renderMessageList[index].mid
+      let mid = this.messageList[index].mid
       this.$router.push({name: 'detail', params: { mid}})
     },
     openImgToast(e) {
       this.$emit('saveImgSrc', e.target.src)
     },
     changePraiseNum(index) {
-      let mid = this.renderMessageList[index].mid
+      let mid = this.messageList[index].mid
       this.$store.dispatch('changeMessagePraiseNum', {mid})
     },
     getAvatar(index) {
-      if (this.renderMessageList[index].user && this.renderMessageList[index].user.userPic) {
-        return api + this.renderMessageList[index].user.userPic.webPath
+      if (this.messageList[index].user && this.messageList[index].user.userPic) {
+        return api + this.messageList[index].user.userPic.webPath
       } else {
         return avatar
       }
     },
     parseEmoji(index) {
-      let content = this.renderMessageList[index].content
+      let content = this.messageList[index].content
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
@@ -205,7 +197,7 @@ export default {
       })
       // parseEmoji函数返回undefined后再插入dom节点
       setTimeout(() => {
-        let contentNode = document.getElementsByClassName('content')[index]
+        let contentNode = document.getElementById('list').getElementsByClassName('content')[index]
         contentNode.innerHTML = newStr
       }, 0)
     }

@@ -5,7 +5,7 @@
         <img src="./logo.png"/>
         <span>匿密</span>
       </div>
-      <div class="subhead" @click="turnToHomeTown">
+      <div class="subhead" >
         华农人的<br/>匿名朋友圈
       </div>
     </header>
@@ -39,7 +39,7 @@ export default {
         str = str + '' + Math.floor(Math.random() * 10 + 1 )
       }
       // window.location.href = "http://www.baidu.com"
-      window.open(`http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=8&response_type=code&redirect_uri=localhost:8080/login&state=${str}&scope=`)
+      window.open(`http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=8&response_type=code&redirect_uri=http://localhost:8080/login&state=${str}&scope=`)
     }
   }
 }
