@@ -142,6 +142,8 @@ export default {
             // 编码
             self.img_list_encoded.push(encodeURIComponent(new_result))
             self.$store.commit('stopLoading')
+            // 清空value以便传同一文件时可以触发input的change事件
+            e.target.value = ''
           }
           img.src = result
         }
@@ -150,6 +152,7 @@ export default {
           reader.readAsDataURL(e.target.files[0])
         } else {
           this.$store.commit('stopLoading')
+          e.target.value = ''
           this.$refs.toast.showToast('请上传图片类型')
         }
       }
