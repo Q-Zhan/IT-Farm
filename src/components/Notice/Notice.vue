@@ -6,7 +6,7 @@
     </header>
     <div class="notice_list">
       <div v-for="(item, index) in noticeList" :key="index" class="item" @click="turnToDetail(item.ntcBody.mid)">
-        <div class="avatar"><img :src="avatar"/></div>
+        <div class="avatar"><img :src="getAvatar(item, index)"/></div>
         <div class="word">
           <div class="title"><span class="Nname">{{item.ntcBody.lkNname || item.ntcBody.cNname}} </span><span>{{type=='comment'? '评论' : '赞'}}了你的{{item.ntcType=='cLikee'? '评论' : '消息'}}</span></div>
           <div class="content">{{parseContent(item)}}</div>
@@ -55,6 +55,10 @@ export default {
     },
     turnToDetail(mid) {
       this.$router.push({name: 'detail', params: {mid}})
+    },
+    getAvatar(item, index) {
+      let uname = item.ntcBody.lkUname || item.ntcBody.cUname
+      console.log(uname)
     },
     parseContent(item) {
       let body = item.ntcBody

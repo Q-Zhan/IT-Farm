@@ -1,8 +1,9 @@
 <template>
   <div id="Chat">
     <header>
-      <div class="img" @click="turnBack"><img :src="back_arrow"/></div>
+      <div class="back_arrow" @click="turnToBack"><img :src="back_arrow"/></div>
       <span>{{chat.chatNname}}</span>
+      <div class="user" @click="turnToPersonPage"><img :src="user_img"/></div>
     </header>
     <div class="chat_list">
       <div v-for="(item, index) in message_list"
@@ -35,6 +36,7 @@ import { api } from '../../api'
 import back_arrow from './back_arrow_white.svg'
 import send_arrow from './send_arrow.svg'
 import avatar from './avatar.svg'
+import user_img from './user.svg'
 
 export default {
   data() {
@@ -42,6 +44,7 @@ export default {
       back_arrow,
       send_arrow,
       avatar,
+      user_img,
       message: '',
       chatIndex: '',
       chatAvatar: ''
@@ -91,8 +94,12 @@ export default {
       this.stomp.send("/socket/chat/send", {}, JSON.stringify(data))
       this.message = ''
     },
-    turnBack() {
+    turnToBack() {
       this.$router.go(-1)
+    },
+    turnToPersonPage() {
+      let uname = this.chat.chatUname
+      this.$router.push({ name: 'personPage', params: { uname }})
     },
     parseEmoji(index) {
       let content = this.message_list[index].content
@@ -156,12 +163,23 @@ export default {
     background: #3A393E;
     color: white;
     border-bottom: 1px solid #D6D6D6;
-    .img {
+    .back_arrow {
       width: 0.54rem;
       height: 0.5rem;
       position: absolute;
       top: 0.1rem;
       left: 0.2rem;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .user {
+      position: absolute;
+      width: 0.7rem;
+      height: 0.65rem;
+      top: 0.14rem;
+      right: 0.4rem;
       img {
         width: 100%;
         height: 100%;
