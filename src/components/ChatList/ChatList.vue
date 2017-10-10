@@ -125,6 +125,7 @@ export default {
           }
           this.$store.dispatch('getChatAvatar', {uname: this.chatList[index].chatUname, index})
           .then((data) => {
+            console.log(data)
             if (data != 'avatar') {
               return api + data
             } else {

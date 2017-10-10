@@ -195,7 +195,7 @@ export default {
       }
       .triangle {
         position: absolute;
-        top: 0.6rem;
+        top: 0.56rem;
         right: -0.32rem;
         width: 0;
         height: 0;

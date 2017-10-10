@@ -139,8 +139,10 @@ export default {
       commit('stopLoading')
     })
   },
-  getNewMessage({ commit, state }, { condition }) {
-    commit('startLoading')
+  getNewMessage({ commit, state }, { condition, isLoading }) {
+    if (isLoading) {
+      commit('startLoading')
+    }
     let time = new Date().getTime()
     let url = ''
     if (condition == '全部') {

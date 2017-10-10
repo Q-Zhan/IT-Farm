@@ -108,8 +108,8 @@ export default {
       font-size: 0.45rem;
       letter-spacing: 1px;
       outline: none;
-      border: 0;
-      border-bottom: 1px solid #007ACC;
+      border: 1px solid #007ACC;
+      background: white;
     }
   }
   .hint {

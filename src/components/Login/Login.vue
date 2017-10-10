@@ -14,7 +14,7 @@
     </div>
     <div class="autoLogin">
       <input type="radio" id="autoLogin" name="autoLogin" @click="chooseAutoLogin"/>
-      <label for="autoLogin">记住密码</label>
+      <label for="autoLogin">自动登录</label>
     </div>
     <div class="button" @click="verifyInfo">
       <button>登录</button>
@@ -109,6 +109,7 @@ export default {
 #login {
   width: 100%;
   height: 100%;
+  background: white;
   header {
     height: 1.4rem;
     border-bottom: 1px solid #D6D6D6;

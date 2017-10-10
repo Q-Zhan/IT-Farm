@@ -5,7 +5,7 @@
       <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
     </header>
     <ul class="list" id="list">
-      <li v-for="(item, index) in concernedList" :key="index" class="item" @click="turnToPersonPage(item.uname)">
+      <li v-for="(item, index) in concernedList" :key="index" class="item" @click="turnToPersonPage(item.user.uname)">
         <div class="avatar"><img :src="getAvatar(index)"/></div>
         <div class="text">
           <div class="name">{{item.user.nname}}</div>

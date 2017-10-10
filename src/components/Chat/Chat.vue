@@ -120,7 +120,6 @@ export default {
       })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.content.user.userPic && data.content.user.userPic.webPath) {
           this.chatAvatar = api + data.content.user.userPic.webPath
         } else {

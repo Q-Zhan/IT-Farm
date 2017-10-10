@@ -111,6 +111,7 @@ export default {
 #register {
   width: 100%;
   height: 100%;
+  background: white;
   header {
     height: 1.4rem;
     border-bottom: 1px solid #D6D6D6;

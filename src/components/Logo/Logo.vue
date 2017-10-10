@@ -33,14 +33,7 @@ export default {
     
   },
   methods: {
-    turnToHomeTown() {
-      let str = ''
-      for (let i = 0; i < 15; i++) {
-        str = str + '' + Math.floor(Math.random() * 10 + 1 )
-      }
-      // window.location.href = "http://www.baidu.com"
-      window.open(`http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=8&response_type=code&redirect_uri=http://localhost:8080/login&state=${str}&scope=`)
-    }
+
   }
 }
 </script>

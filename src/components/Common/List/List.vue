@@ -88,11 +88,8 @@ export default {
   },
   watch: {
     messageCondition(newCondition) {
-      this.$store.dispatch('getNewMessage', {condition: newCondition})
+      this.$store.dispatch('getNewMessage', {condition: newCondition, isLoading: true})
       this.noMoreMessage = false
-    },
-    messageList(newValue) {
-      console.log(newValue)
     }
   },
   mounted(){
@@ -110,7 +107,7 @@ export default {
       let block = document.getElementsByClassName('action-block')[0]
       block.style.height = '75px'
       block.style.marginTop = '-75px'
-      this.$store.dispatch('getNewMessage', {condition: this.messageCondition})
+      this.$store.dispatch('getNewMessage', {condition: this.messageCondition, isLoading: false})
       .then(() => {
         loaded('done')
       })
@@ -191,7 +188,8 @@ export default {
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
-          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+          // return `<img src='./static/emoji/${EMOJI[matchStr]}'/>`
+          return `<img src='${EMOJI[matchStr]}'/>`
         }
         return matchStr
       })
