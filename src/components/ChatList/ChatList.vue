@@ -18,7 +18,10 @@
         </div>
         <div class="word">新点赞</div>
       </div>
-      <div v-for="(item, index) in chatList" :key="index" class="chat_item" @click="turnToChat(index)">
+      <div v-for="(item, index) in chatList" 
+           :key="index" class="chat_item" 
+           @click="turnToChat(index)"
+           v-if="item.message.length != 0">
         <div class="avatar">
           <img :src="getAvatar(index)"/>
           <div class="dot" v-show="!item.isRead"></div>
@@ -28,7 +31,7 @@
           <div class="last_message">{{ parseEmoji(index)}}</div>
         </div>
         <div class="time">
-          {{ formatTime(item.message[item.message.length-1].time) }}
+          {{ formatTime(item.message.length != 0 && item.message[item.message.length-1].time) }}
         </div>
       </div>
     </div>
@@ -101,19 +104,22 @@ export default {
     },
     parseEmoji(index) {
       let item = this.chatList[index]
-      let content = item.message[item.message.length-1].content
-      let reg = /\[.*?\]/g
-      let newStr = content.replace(reg, (matchStr) => {
-        if (matchStr != '[]' && EMOJI[matchStr]) {
-          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
-        }
-        return matchStr
-      })
-      // parseEmoji函数返回undefined后再插入dom节点
-      setTimeout(() => {
-        let contentNode = document.getElementsByClassName('last_message')[index]
-        contentNode.innerHTML = newStr
-      }, 0)
+      if (item.message.length != 0) {
+        let content = item.message[item.message.length-1].content
+        let reg = /\[.*?\]/g
+        let newStr = content.replace(reg, (matchStr) => {
+          if (matchStr != '[]' && EMOJI[matchStr]) {
+            return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+          }
+          return matchStr
+        })
+        // parseEmoji函数返回undefined后再插入dom节点
+        setTimeout(() => {
+          let contentNode = document.getElementsByClassName('last_message')[index]
+          contentNode.innerHTML = newStr
+        }, 0)
+      }
+      
     },
     getAvatar(index) {
       if (this.chatList[index]) {
@@ -125,7 +131,6 @@ export default {
           }
           this.$store.dispatch('getChatAvatar', {uname: this.chatList[index].chatUname, index})
           .then((data) => {
-            console.log(data)
             if (data != 'avatar') {
               return api + data
             } else {
