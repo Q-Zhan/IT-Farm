@@ -191,7 +191,7 @@ export default {
       })
       .then((res) => res.json())
       .then((data) => {
-        this.$store.commit('saveUserPic', { webPath: data.content.webPath.slice(9), imageid: data.content.imageid })
+        this.$store.commit('saveUserPic', { webPath: data.content.webPath.slice(5), imageid: data.content.imageid })
         this.$store.commit('stopLoading')
       })
       .catch(err => {

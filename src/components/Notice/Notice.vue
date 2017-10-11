@@ -63,9 +63,9 @@ export default {
     parseContent(item) {
       let body = item.ntcBody
       if (body.mShrtCntnt) {
-        return body.mShrtCntnt.length >= 10 ? (body.mShrtCntnt + '...') : (body.mShrtCntnt)
+        return body.mShrtCntnt.length >= 18 ? (body.mShrtCntnt + '...') : (body.mShrtCntnt)
       } else {
-        return body.cShrtCntnt.length >= 10 ? (body.cShrtCntnt + '...') : (body.cShrtCntnt)
+        return body.cShrtCntnt.length >= 18 ? (body.cShrtCntnt + '...') : (body.cShrtCntnt)
       }
     }
   }

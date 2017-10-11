@@ -18,6 +18,7 @@ const MyMessage = () => import('./components/MyMessage/MyMessage.vue')
 const MyFans = () => import('./components/MyFans/MyFans.vue')
 const MyConcern = () => import('./components/MyConcern/MyConcern.vue')
 const Notice = () => import('./components/Notice/Notice.vue')
+const HometownBind = () => import('./components/HometownBind/HometownBind.vue')
 
 
 Vue.use(Router)
@@ -93,6 +94,10 @@ let router = new Router({
       path: '/notice/:type',
       component: Notice,
       name: 'notice'
+    },
+    {
+      path: '/hometownBind',
+      component: HometownBind
     }
   ]
 })
@@ -101,7 +106,7 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     // 处于已注销状态或第一次进入时，只能跳到logo、login、register
-    if(to.path == '/' || to.path == '/logo' || to.path == '/register' || to.path == '/login') {
+    if(to.path == '/' || to.path == '/logo' || to.path == '/register' || to.path == '/login' || to.path == '/hometownBind') {
       next()
     } else {
       next('/logo')

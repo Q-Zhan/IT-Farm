@@ -1,4 +1,4 @@
-import { api } from '../api'
+import { api, api_scau } from '../api'
 import { SECRET } from '../constant'
 import 'whatwg-fetch'
 
@@ -55,6 +55,60 @@ export default {
         } else {
           localStorage[SECRET] = 'noAutoLogin'
         }
+      }
+      commit('stopLoading')
+      return data.code
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  hometownLogin({ commit, state }, { uname, passwd, hmtUid, isAutoLogin }) {
+    commit('startLoading')
+    return fetch(api_scau + '/api/OAuth2/bind', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'passwd=' + passwd + '&' + 'uname=' + uname + '&' + 'hmtUid=' + hmtUid
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      if (data.code == '200') {
+        commit('saveUserInfo', data.content.user)
+        commit('saveSecret', {secret: data.content.secret})
+        if (isAutoLogin) {
+          localStorage[SECRET] = data.content.secret
+        } else {
+          localStorage[SECRET] = 'noAutoLogin'
+        }
+      }
+      commit('stopLoading')
+      return data.code
+    })
+    .catch(err => {
+      console.log(err)
+      commit('stopLoading')
+    })
+  },
+  hometownRegister({ commit, state }, {uname, nname, passwd, rpasswd, hmtUid}) {
+    localStorage[SECRET] = 'noAutoLogin'
+    commit('startLoading')
+    return fetch(api_scau + '/api/OAuth2/create', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'passwd=' + passwd + '&' + 'uname=' + uname + '&' + 'hmtUid=' + hmtUid + '&' + 'nname=' + nname + '&' + 'rpasswd=' + rpasswd 
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data)
+      if (data.code == '200') {
+        commit('saveUserInfo', data.content.user)
+        commit('saveSecret', {secret: data.content.secret})
       }
       commit('stopLoading')
       return data.code

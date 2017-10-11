@@ -1,1 +1,3 @@
-export const api = 'http://104.224.174.146:8080/Mimi-4.0'
+export const api = 'http://104.224.174.146:8080/Mimi'
+export const api_scau = 'http://192.168.232.2:8080/Mimi'
+export const redirect_uri = 'http://localhost:8080/hometownBind'

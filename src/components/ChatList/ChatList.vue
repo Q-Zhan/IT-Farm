@@ -80,7 +80,6 @@ export default {
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
-    this.getAvatar()
   },
   methods: {
     turnToChat(index) {
@@ -122,6 +121,7 @@ export default {
       
     },
     getAvatar(index) {
+      console.log('getAvatar')
       if (this.chatList[index]) {
         if (this.chatList[index].chatAvatar) {
           return api + this.chatList[index].chatAvatar
@@ -129,6 +129,7 @@ export default {
           if (this.avatarList[index]) {
             return this.avatar
           }
+          console.log('getAvatar')
           this.$store.dispatch('getChatAvatar', {uname: this.chatList[index].chatUname, index})
           .then((data) => {
             if (data != 'avatar') {
@@ -175,7 +176,8 @@ export default {
   }
   .chat_list {
     height: calc(100% - 1.4rem);
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
     .new_comment, .new_praise {
       width: 100%;

@@ -144,12 +144,13 @@ export default {
           text-overflow: ellipsis;
         }
         span:nth-of-type(1) {
-          font-size: 0.45rem;
+          font-size: 0.5rem;
           display: inline-block;
           margin-bottom: 0.1rem;
         }
         span:nth-of-type(2) {
           font-size: 0.36rem;
+          letter-spacing: 1px;
           color: gray;
         }
       }

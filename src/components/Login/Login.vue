@@ -19,6 +19,7 @@
     <div class="button" @click="verifyInfo">
       <button>登录</button>
     </div>
+    <div class="hometown_login" @click="turnToHomeTown">红满堂账号登录</div>
     <Toast  ref="toast"/>
     <Loading v-show="isLoading"/>
   </div>
@@ -26,6 +27,7 @@
 
 <script>
 import { SECRET } from '../../constant'
+import { redirect_uri } from '../../api'
 import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
@@ -100,6 +102,13 @@ export default {
     },
     turnBack() {
       this.$router.go(-1)
+    },
+    turnToHomeTown() {
+      let str = ''
+      for (let i = 0; i < 15; i++) {
+        str = str + '' + Math.floor(Math.random() * 10 + 1)
+      }
+      window.location.href = `http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=8&response_type=code&redirect_uri=${redirect_uri}&state=${str}&scope=`
     }
   }
 }
@@ -131,7 +140,7 @@ export default {
   .account, .password {
     width: 90%;
     margin: 0 auto;
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
     input {
       width: 100%;
       height: 1rem;
@@ -182,6 +191,19 @@ export default {
       letter-spacing: 1px;
       border-radius: 0.1rem;
     }
+  }
+  .hometown_login {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 0.4rem;
+    height: 1.3rem;
+    background: #C8452B;
+    color: white;
+    text-align: center;
+    line-height: 1.3rem;
+    font-size: 0.45rem;
+    letter-spacing: 1px;
+    border-radius: 0.1rem;
   }
 }
 </style>

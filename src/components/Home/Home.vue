@@ -91,7 +91,7 @@ export default {
         } else {
           this.$router.push('/logo') // 跳转到首页
         }
-      } else { // 第一次进入
+      } else if (this.messageCondition == '全部') { // 第一次进入
         this.$store.dispatch('getMessageListAndLocationList') // 获取列表数据
         this.connect() // 连接websocket
       }

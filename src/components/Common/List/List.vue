@@ -245,15 +245,15 @@ export default {
       align-items: center;
       img {
         display: inline-block;
-        width: 0.88rem;
-        height: 0.88rem;
+        width: 1rem;
+        height: 1rem;
         border-radius: 50%;
       }
       .text {
         display: inline-block;
-        font-size: 0.32rem;
+        font-size: 0.4rem;
         margin-left: 0.2rem;
-        line-height: 0.45rem;
+        line-height: 0.5rem;
         span:nth-of-type(1) {
           color: #AAADB1;
         }
@@ -265,7 +265,7 @@ export default {
     .content {
       width: 90%;
       margin: 0 auto;
-      margin-top: 0.2rem;
+      margin-top: 0.3rem;
       margin-bottom: 0.2rem;
       font-size: 0.5rem;
       letter-spacing: 3px;
@@ -298,6 +298,7 @@ export default {
       .comment {
         float: left;
         letter-spacing: 1px;
+        font-size: 0.35rem;
       }
       .praise {
         float: right;
@@ -305,9 +306,10 @@ export default {
         align-items: center;
         margin-right: 0.2rem;
         color: #8a8a8a;
+        font-size: 0.35rem;
         img {
-          width: 0.4rem;
-          height: 0.4rem;
+          width: 0.5rem;
+          height: 0.5rem;
           margin-right: 0.1rem;
         }
       }
