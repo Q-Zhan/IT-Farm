@@ -2,23 +2,23 @@
   <div id="footer">
     <div class="button" @click="switchTo('home')">
       <router-link to="/app/home">
-        <img :src="chosen=='home' ? home_chose : home"/>
-        <span :style="{color: chosen=='home' ? '#282D33':'#A1A5A8'}">无秘</span>
+        <img :src="footerChosen=='home' ? home_chose : home"/>
+        <span :style="{color: footerChosen=='home' ? '#282D33':'#A1A5A8'}">无秘</span>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('chatList')">
       <router-link to="/app/chatList">
         <div class="chatList">
-          <img :src="chosen=='chatList' ? inform_chose : inform" />
-          <span :style="{color: chosen=='chatList' ? '#282D33':'#A1A5A8'}">消息</span>
+          <img :src="footerChosen=='chatList' ? inform_chose : inform" />
+          <span :style="{color: footerChosen=='chatList' ? '#282D33':'#A1A5A8'}">消息</span>
           <div class="dot" v-show="!isAllRead"></div>
         </div>
       </router-link>
     </div>
     <div class="button"  @click="switchTo('user')">
       <router-link to="/app/user">
-        <img :src="chosen=='user' ? user_chose : user"/>
-        <span :style="{color: chosen=='user' ? '#282D33':'#A1A5A8'}">我的</span>
+        <img :src="footerChosen=='user' ? user_chose : user"/>
+        <span :style="{color: footerChosen=='user' ? '#282D33':'#A1A5A8'}">我的</span>
       </router-link>
     </div>
   </div>
@@ -40,8 +40,7 @@ export default {
       inform,
       inform_chose,
       user,
-      user_chose,
-      chosen: ''
+      user_chose
     }
   },
   computed: {
@@ -66,14 +65,17 @@ export default {
         return false
       }
       return true
+    },
+    footerChosen() {
+      return this.$store.state.footerChosen
     }
   },
   mounted() {
-    this.chosen = this.$route.path.slice(5)
+    // this.chosen = this.$route.path.slice(5)
   },
   methods: {
     switchTo(value) {
-      this.chosen = value
+      this.$store.commit('changeFooterChosen', {value})
     }
   }
 }

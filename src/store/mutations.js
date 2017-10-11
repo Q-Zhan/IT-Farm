@@ -124,5 +124,11 @@ export default {
   },
   saveChatAvatar(state, { webPath, index}) {
     state.chat.chatList[index].chatAvatar = webPath
+  },
+  changeMessageCondition(state, { value }) {
+    state.messageCondition = value
+  },
+  changeFooterChosen(state, {value }) {
+    state.footerChosen = value
   }
 }

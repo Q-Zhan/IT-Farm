@@ -38,6 +38,8 @@ export default {
       comments: []
     },
   },
+  messageCondition: '全部',
+  footerChosen: 'home',
   messageList: [],
   locationList: []
 }

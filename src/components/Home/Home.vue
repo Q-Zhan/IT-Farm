@@ -42,7 +42,6 @@ export default {
     return {
       add_img,
       img_toast_src: '',
-      messageCondition: '全部',
       isConditionListShowed: false
     }
   },
@@ -67,6 +66,9 @@ export default {
     },
     user() {
       return this.$store.state.user
+    },
+    messageCondition() {
+      return this.$store.state.messageCondition
     },
     conditionList() {
       let arr = ['全部']
@@ -149,7 +151,7 @@ export default {
       this.isConditionListShowed = !this.isConditionListShowed
     },
     closeConditionList(item) {
-      this.messageCondition = item
+      this.$store.commit('changeMessageCondition', { value: item})
       this.isConditionListShowed = false
     }
   }
