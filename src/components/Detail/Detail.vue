@@ -266,7 +266,6 @@ export default {
       }
     },
     getNewComment() {
-      console.log('fetcg')
       this.commentIsLoading = true
       let mid = this.message.mid
       let time = ''
@@ -280,7 +279,6 @@ export default {
         })
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data)
           let comments = data.content.commentList
           let len = comments.length
           if (len > 0) {
@@ -291,6 +289,7 @@ export default {
             this.noMoreComment = true
           }
           this.commentIsLoading = false
+          console.log(this.commentList)
         })
         .catch(err => {
           console.log(err)
@@ -307,7 +306,7 @@ export default {
         })
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data)
+          console.log(data)
           let comments = data.content.commentList
           this.commentList.push(comments[0])
           this.commentIsLoading = false
@@ -451,7 +450,9 @@ export default {
       wordNode.innerHTML = newStr
     },
     parseCommentEmoji(index) {
+      console.log(this.commentList[index])
       let content = this.commentList[index].content
+      let rcNname = this.commentList[index].rcNname
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
@@ -462,6 +463,9 @@ export default {
       // parseEmoji函数返回undefined后再插入dom节点
       setTimeout(() => {
         let contentNode = document.getElementsByClassName('list_right_content')[index]
+        if (rcNname) {
+          newStr = `<span class="at">@${rcNname}: </span>` + newStr
+        }
         contentNode.innerHTML = newStr
       }, 0)
     }
@@ -538,7 +542,7 @@ export default {
       right: 0.2rem;
       top: 0.4rem;
       letter-spacing: 1px;
-      color: #007ACC;
+      color: white;
     }
   }
   .content {
@@ -559,15 +563,16 @@ export default {
         background: white;
         img {
           display: inline-block;
-          width: 0.8rem;
-          height: 0.8rem;
+          width: 1rem;
+          height: 1rem;
           border-radius: 50%;
+          vertical-align: top;
         }
         .text {
           display: inline-block;
-          font-size: 0.32rem;
+          font-size: 0.4rem;
           margin-left: 0.1rem;
-          line-height: 0.45rem;
+          line-height: 0.5rem;
           span:nth-of-type(1) {
             color: #AAADB1;
           }
@@ -609,15 +614,17 @@ export default {
         .comment_num {
           float: left;
           letter-spacing: 1px;
+          font-size: 0.35rem;
         }
         .praise {
           float: right;
           display: flex;
           align-items: center;
           color: #8a8a8a;
+          font-size: 0.35rem;
           img {
-            width: 0.4rem;
-            height: 0.4rem;
+            width: 0.5rem;
+            height: 0.5rem;
             margin-right: 0.1rem;
           }
         }
@@ -698,7 +705,9 @@ export default {
         }
         .list_right_content {
           margin: 0.3rem 0;
+          margin-right: 0.4rem;
           font-size: 0.4rem;
+          word-wrap: break-word;
           .at {
             color: #007ACC;
           }
