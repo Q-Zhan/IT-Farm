@@ -80,6 +80,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('changeFooterChosen', {value: 'home'})
     if (this.$store.state.messageList.length == 0) {
       if (!this.$store.state.user.secret) { // 刷新页面store被清空
         if (localStorage[SECRET] && (localStorage[SECRET] != 'noAutoLogin')) { // 用户选择了自动登录

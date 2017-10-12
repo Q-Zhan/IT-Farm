@@ -77,6 +77,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('changeFooterChosen', {value: 'chatList'})
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }

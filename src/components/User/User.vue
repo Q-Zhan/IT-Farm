@@ -69,6 +69,7 @@ export default {
     user: state => state.user
   }),
   mounted() {
+    this.$store.commit('changeFooterChosen', {value: 'user'})
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
