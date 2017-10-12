@@ -29,8 +29,15 @@ export default {
       
     }
   },
+  computed: {
+    secret() {
+      return this.$store.state.user.secret
+    }
+  },
   mounted() {
-    
+    if (this.secret == '注销') {
+      window.location.reload()
+    }
   },
   methods: {
 
