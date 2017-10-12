@@ -118,6 +118,7 @@ export default {
       receiverNname: '',
       receiverUname: '',
       receiverIndex: '',
+      receiverAvatar: '',
       rcid: '',
       placeholder: '发表评论',
       message: ''
@@ -289,7 +290,6 @@ export default {
             this.noMoreComment = true
           }
           this.commentIsLoading = false
-          console.log(this.commentList)
         })
         .catch(err => {
           console.log(err)
@@ -332,6 +332,7 @@ export default {
       this.receiverNname = receiverNname
       this.receiverIndex = index
       this.receiverUname = this.commentList[index].user.uname
+      this.receiverAvatar = this.commentList[index].user.userPic && this.commentList[index].user.userPic.webPath
       if (receiverId == this.uid) {
         this.$refs.toast.showToast('不能回复自己')
         return 0
@@ -361,7 +362,7 @@ export default {
       }
       // chatList中不存在与此人的聊天
       if (flag == 0) {
-        this.$store.commit('addChat', { receiverId, Nname: receiverNname, Uname: this.receiverUname })
+        this.$store.commit('addChat', { receiverId, Nname: receiverNname, Uname: this.receiverUname, avatar: this.receiverAvatar})
         this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
       }
       else {
@@ -450,7 +451,6 @@ export default {
       wordNode.innerHTML = newStr
     },
     parseCommentEmoji(index) {
-      console.log(this.commentList[index])
       let content = this.commentList[index].content
       let rcNname = this.commentList[index].rcNname
       let reg = /\[.*?\]/g

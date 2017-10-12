@@ -121,29 +121,7 @@ export default {
       
     },
     getAvatar(index) {
-      console.log('getAvatar')
-      if (this.chatList[index]) {
-        if (this.chatList[index].chatAvatar) {
-          return api + this.chatList[index].chatAvatar
-        } else {
-          if (this.avatarList[index]) {
-            return this.avatar
-          }
-          console.log('getAvatar')
-          this.$store.dispatch('getChatAvatar', {uname: this.chatList[index].chatUname, index})
-          .then((data) => {
-            if (data != 'avatar') {
-              return api + data
-            } else {
-              return this.avatar
-            }
-          })
-          this.avatarList[index] = true   
-        }
-      } else {
-        return this.avatar
-      }
-      
+      return this.chatList[index].chatAvatar ? (api + this.chatList[index].chatAvatar) : this.avatar
     },
     turnToNewComment() {
       this.$store.commit('changeNoticeRead', { type: 'comment'})

@@ -6,9 +6,9 @@
     </header>
     <div class="notice_list">
       <div v-for="(item, index) in noticeList" :key="index" class="item" @click="turnToDetail(item.ntcBody.mid)">
-        <div class="avatar"><img :src="getAvatar(item, index)"/></div>
+        <div class="avatar"><img :src="getAvatar(item)"/></div>
         <div class="word">
-          <div class="title"><span class="Nname">{{item.ntcBody.lkNname || item.ntcBody.cNname}} </span><span>{{type=='comment'? '评论' : '赞'}}了你的{{item.ntcType=='cLikee'? '评论' : '消息'}}</span></div>
+          <div class="title"><span class="Nname">{{item.ntcBody.lkNname || item.ntcBody.cNname}} </span><span>{{type=='comment'? '评论' : '赞'}}了你的{{(item.ntcType=='cLikee'||item.ntcType=='rCmmnt')? '评论' : '消息'}}</span></div>
           <div class="content">{{parseContent(item)}}</div>
         </div>
       </div>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { api } from '../../api'
 import back_arrow from './back_arrow_white.svg'
 import avatar from './avatar.svg'
 
@@ -56,9 +57,14 @@ export default {
     turnToDetail(mid) {
       this.$router.push({name: 'detail', params: {mid}})
     },
-    getAvatar(item, index) {
-      let uname = item.ntcBody.lkUname || item.ntcBody.cUname
-      console.log(uname)
+    getAvatar(item) {
+      let ntcBody = item.ntcBody
+      let userInfo = ntcBody.cUser || ntcBody.lkUser
+      if (userInfo.userPic) {
+        return api + userInfo.userPic.webPath
+      } else {
+        return this.avatar
+      }
     },
     parseContent(item) {
       let body = item.ntcBody

@@ -39,11 +39,12 @@ export default {
   connectSocket(state, { stomp }) {
     state.socket.stomp = stomp
   },
-  addChat(state, { receiverId, Nname, Uname }) {
+  addChat(state, { receiverId, Nname, Uname, avatar }) {
     state.chat.chatList.push({
       chatId: receiverId,
       chatNname: Nname,
       chatUname: Uname,
+      chatAvatar: avatar,
       isRead: false,
       message: []
     })
@@ -51,19 +52,20 @@ export default {
   receiveChatMessage(state, { chatMsg }) {
     let len = state.chat.chatList.length
     let flag = 0
-    for (let i = 0; i < len; i++) {
-      if (state.chat.chatList[i].chatId == chatMsg.senderId) {
+    for (let i = 0; i < len; i++) { 
+      if (state.chat.chatList[i].chatId == chatMsg.senderId) { // 该聊天对象已存在
         state.chat.chatList[i].message.push({position: 'left', content: chatMsg.content, time: chatMsg.time})
         state.chat.chatList[i].isRead = false
         flag = 1
         break
       }
     }
-    if (flag == 0) {
+    if (flag == 0) { // 该聊天对象未存在于store中
       state.chat.chatList.push({
         chatId: chatMsg.senderId,
-        chatNname: chatMsg.nSender,
-        chatUname: chatMsg.sender,
+        chatNname: chatMsg.sender.nname,
+        chatUname: chatMsg.sender.uname,
+        chatAvatar: chatMsg.sender.userPic && chatMsg.sender.userPic.webPath,
         isRead: false,
         message: [
           {position: 'left', content: chatMsg.content, time: chatMsg.time}

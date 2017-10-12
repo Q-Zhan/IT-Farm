@@ -46,8 +46,7 @@ export default {
       avatar,
       user_img,
       message: '',
-      chatIndex: '',
-      chatAvatar: ''
+      chatIndex: ''
     }
   },
   computed: {
@@ -71,6 +70,9 @@ export default {
     },
     myAvatar() {
       return this.$store.state.user.userPic ? (api + this.$store.state.user.userPic.webPath) : this.avatar
+    },
+    chatAvatar() {
+      return this.chat.chatAvatar ? (api + this.chat.chatAvatar) : this.avatar
     }
   },
   mounted() {
@@ -78,7 +80,6 @@ export default {
       this.$router.push('/app/home')
     }
     this.chatIndex = this.$route.params.chatIndex
-    this.getChatAvatar()
   },
   beforeDestroy() {
     this.$store.commit('changeChatRead', { chatIndex: this.chatIndex})
@@ -115,29 +116,6 @@ export default {
         let contentNode = document.getElementsByClassName('message_content')[index]
         contentNode.innerHTML = newStr
       }, 0)
-    },
-    getChatAvatar() {
-      this.$store.commit('startLoading')
-      fetch(api + '/api/user/profile/' + this.chat.chatUname, {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'janke-authorization': this.secret
-        }
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.content.user.userPic && data.content.user.userPic.webPath) {
-          this.chatAvatar = api + data.content.user.userPic.webPath
-        } else {
-          this.chatAvatar = this.avatar
-        }
-        this.$store.commit('stopLoading')
-      })
-      .catch(err => {
-        console.log(err)
-        this.$store.commit('stopLoading')
-      })
     },
     getAvatar(position) {
       if (position == 'left') {

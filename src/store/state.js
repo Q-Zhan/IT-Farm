@@ -17,8 +17,8 @@ export default {
       // {
       //   chatId: '',
       //   chatUname: '',
-      //   chatAvatar: '',
       //   chatNname: '',
+      //   chatAvatar: '',
       //   isRead: false,
       //   message: [
       //     { position: 'left', content: '123', time: '1231231432'}

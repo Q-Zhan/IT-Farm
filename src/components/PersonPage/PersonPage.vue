@@ -223,6 +223,7 @@ export default {
     turnToChat() {
       let receiverId = this.personInfo.uid
       let receiverName = this.personInfo.nname
+      let receiverAvatar = this.personInfo.userPic && this.personInfo.userPic.webPath
       let flag = 0
       let len = this.chatList.length
       let i = 0
@@ -234,7 +235,7 @@ export default {
       }
       // chatList中不存在与此人的聊天
       if (flag == 0) {
-        this.$store.commit('addChat', { receiverId, Nname: this.personInfo.nname, Uname: this.personInfo.uname })
+        this.$store.commit('addChat', { receiverId, Nname: this.personInfo.nname, Uname: this.personInfo.uname, avatar: receiverAvatar })
         this.$router.push({ name: 'chat', params: { chatIndex: this.chatList.length - 1 }})
       }
       else {
