@@ -89,6 +89,7 @@ export default {
     secret: state => state.user.secret,
     isLoading: state => state.isLoading,
     locationList: state => state.locationList,
+    messageCondition: state => state.messageCondition,
     name() {
       return this.isFake ? '匿名' : this.user.nname
     }
@@ -205,7 +206,6 @@ export default {
       if (this.isFake) {
         params += ('&isFake=' + this.isFake)
       }
-      console.log(params)
       fetch(api + '/api/message/create', {
         method: 'post',
         headers: {
@@ -216,8 +216,8 @@ export default {
       })
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data)
         this.$store.commit('stopLoading')
+        this.$store.dispatch('getNewMessage', {condition: this.messageCondition, isLoading: true})
         this.$router.push('/app/home')
       })
       .catch(err => {

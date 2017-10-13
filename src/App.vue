@@ -13,6 +13,9 @@ export default {
     return {
       
     }
+  },
+  mounted() {
+    document.getElementsByTagName('body')[0].contentEditable = false
   }
 }
 </script>
@@ -35,6 +38,7 @@ html, body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
+  user-select:  none !important;
 }
 #app {
   height: 100%;

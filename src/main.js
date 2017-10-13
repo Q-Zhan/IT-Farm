@@ -8,6 +8,7 @@ import './utils/device' // 动态计算rem font-size
 import picker from 'vue-3d-picker';
 Vue.component(picker.name, picker);
 
+
 new Vue({
   el: '#app',
   store,

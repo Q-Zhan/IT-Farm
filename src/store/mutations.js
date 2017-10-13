@@ -18,10 +18,23 @@ export default {
     state.locationList = locationList
   },
   saveMessageList(state, { messageList }) {
-    state.messageList = messageList.map((item, index) => {
-      item.isPraised = item.likee == null ? false : true
-      return item
-    })
+    state.messageList = messageList
+  },
+  addMessage(state, {}) {
+    // state.messageList.unshift({
+    //   commentCount: 0,
+    //   content: ,
+    //   delete: false,
+    //   fake: ,
+    //   fakeName: null,
+    //   likeCount: 0,
+    //   likee: null,
+    //   location: {
+    //     lid: ,
+    //     locale: 
+    //   },
+
+    // })
   },
   getNewMessage(state, { newMessage }) {
     state.messageList = newMessage

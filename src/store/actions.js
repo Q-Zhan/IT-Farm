@@ -154,7 +154,6 @@ export default {
     })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data)
       localStorage.removeItem(SECRET)
       commit('logout')
       commit('stopLoading')

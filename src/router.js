@@ -1,25 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { SECRET } from './constant'
-const Navigation = () => import('./components/Navigation/Navigation.vue')
-const Home = () => import('./components/Home/Home.vue')
-const User = () => import('./components/User/User.vue')
-const Detail = () => import('./components/Detail/Detail.vue')
-const Logo = () => import('./components/Logo/Logo.vue')
-const Register = () => import('./components/Register/Register.vue')
-const Login = () => import('./components/Login/Login.vue')
-const CreateMessage = () => import('./components/CreateMessage/CreateMessage.vue')
-const Chat = () => import('./components/Chat/Chat.vue')
-const ChatList = () => import('./components/ChatList/ChatList.vue')
-const UserDetail = () => import('./components/UserDetail/UserDetail.vue')
-const ModifyUser = () => import('./components/ModifyUser/ModifyUser.vue')
-const PersonPage = () => import('./components/PersonPage/PersonPage.vue')
-const MyMessage = () => import('./components/MyMessage/MyMessage.vue')
-const MyFans = () => import('./components/MyFans/MyFans.vue')
-const MyConcern = () => import('./components/MyConcern/MyConcern.vue')
-const Notice = () => import('./components/Notice/Notice.vue')
-const HometownBind = () => import('./components/HometownBind/HometownBind.vue')
-
+import Navigation from './components/Navigation/Navigation.vue'
+import Home from './components/Home/Home.vue'
+import User from './components/User/User.vue'
+import Detail from './components/Detail/Detail.vue'
+import Logo from './components/Logo/Logo.vue'
+import Register from './components/Register/Register.vue'
+import Login from './components/Login/Login.vue'
+import CreateMessage from './components/CreateMessage/CreateMessage.vue'
+import Chat from './components/Chat/Chat.vue'
+import ChatList from './components/ChatList/ChatList.vue'
+import UserDetail from './components/UserDetail/UserDetail.vue'
+import ModifyUser from './components/ModifyUser/ModifyUser.vue'
+import PersonPage from './components/PersonPage/PersonPage.vue'
+import MyMessage from './components/MyMessage/MyMessage.vue'
+import MyFans from './components/MyFans/MyFans.vue'
+import MyConcern from './components/MyConcern/MyConcern.vue'
+import Notice from './components/Notice/Notice.vue'
+import HometownBind from './components/HometownBind/HometownBind.vue'
 
 Vue.use(Router)
 

@@ -188,7 +188,6 @@ export default {
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
-          // return `<img src='./static/emoji/${EMOJI[matchStr]}'/>`
           return `<img src='${EMOJI[matchStr]}'/>`
         }
         return matchStr

@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 var autoprefixer = require('autoprefixer')
+// var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const webpackConfig = module.exports = {
   entry: ['babel-polyfill', './src/main.js'],
@@ -70,6 +71,7 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    })
+    }),
+    // new BundleAnalyzerPlugin()
   ])
 }

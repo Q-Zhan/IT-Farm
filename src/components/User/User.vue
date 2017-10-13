@@ -129,6 +129,7 @@ export default {
       .avatar {
         width: 1.6rem;
         height: 1.6rem;
+        border-radius: 50%;
       }
       .word {
         width: 4rem;

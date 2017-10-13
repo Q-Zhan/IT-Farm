@@ -204,12 +204,16 @@ export default {
       })
     },
     createComment() {
-      this.$store.commit('startLoading')
+      if (this.newComment == '') {
+        this.$refs.toast.showToast('评论不能为空')
+        return 0
+      }
       let params = `content=${this.newComment}&mid=${this.message.mid}`
       if (this.rcid != '') {
         params = params + '&rcid=' + this.rcid
       }
       this.newComment = ''
+      this.$store.commit('startLoading')
       fetch(`${api}/api/comment/create`, {
         method: 'post',
         headers: {
@@ -443,7 +447,7 @@ export default {
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
-          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+          return `<img src='${EMOJI[matchStr]}'/>`
         }
         return matchStr
       })
@@ -456,7 +460,7 @@ export default {
       let reg = /\[.*?\]/g
       let newStr = content.replace(reg, (matchStr) => {
         if (matchStr != '[]' && EMOJI[matchStr]) {
-          return `<img src='/static/emoji/${EMOJI[matchStr]}'/>`
+          return `<img src='${EMOJI[matchStr]}'/>`
         }
         return matchStr
       })

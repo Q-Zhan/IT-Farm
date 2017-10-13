@@ -1,6 +1,6 @@
 <template>
   <div id="ImgToast" v-show="isShowed" @click="close">
-    <img :src="src" @click.stop/>
+    <img :src="src"/>
   </div>
 </template>
 
@@ -40,6 +40,7 @@ export default {
   img {
     max-width: 100%;
     min-width: 50%;
+    max-height: 80%;
   }
 }
 </style>

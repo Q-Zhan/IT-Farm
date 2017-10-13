@@ -108,7 +108,7 @@ export default {
       for (let i = 0; i < 15; i++) {
         str = str + '' + Math.floor(Math.random() * 10 + 1)
       }
-      window.location.href = `http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=8&response_type=code&redirect_uri=${redirect_uri}&state=${str}&scope=`
+      window.location.href = `http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=30&response_type=code&redirect_uri=${redirect_uri}&state=${str}&scope=`
     }
   }
 }
