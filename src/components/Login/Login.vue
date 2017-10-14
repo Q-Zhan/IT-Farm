@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <header>
-      <img :src="back_arrow" @click="turnBack"/>
+      <img :src="back_arrow" @click="turnToLogo"/>
       <span>登录匿密</span>
     </header>
     <div class="account">
@@ -100,8 +100,8 @@ export default {
       this.isAutoLogin = !this.isAutoLogin
       radio.checked = this.isAutoLogin
     },
-    turnBack() {
-      this.$router.go(-1)
+    turnToLogo() {
+      this.$router.push('/logo')
     },
     turnToHomeTown() {
       let str = ''

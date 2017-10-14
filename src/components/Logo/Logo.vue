@@ -10,9 +10,11 @@
       </div>
     </header>
     <div class="register">
-      <div class="register_button">
-        <router-link to="/register">立即注册</router-link>
-      </div>
+      <router-link to="/register">
+        <div class="register_button">
+          立即注册
+        </div>
+      </router-link>
     </div>
     <div class="login">
       <router-link to="/login">已有账号? 点此登录</router-link>

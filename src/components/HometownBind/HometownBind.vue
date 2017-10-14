@@ -106,6 +106,7 @@ export default {
         if (data.content.secret) { // 红满堂账号已经绑定了匿密账号
           this.$store.commit('saveUserInfo', data.content.user)
           this.$store.commit('saveSecret', { secret: data.content.secret })
+          localStorage[SECRET] = 'noAutoLogin'
           this.$store.commit('stopLoading')
           this.$router.push('/app/home')
         } else {
