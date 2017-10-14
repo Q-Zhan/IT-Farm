@@ -104,11 +104,12 @@ export default {
       this.$router.push('/logo')
     },
     turnToHomeTown() {
-      let str = ''
-      for (let i = 0; i < 15; i++) {
-        str = str + '' + Math.floor(Math.random() * 10 + 1)
-      }
-      window.location.href = `http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=30&response_type=code&redirect_uri=${redirect_uri}&state=${str}&scope=`
+      this.$refs.toast.showToast('内网维护中')
+      // let str = ''
+      // for (let i = 0; i < 15; i++) {
+      //   str = str + '' + Math.floor(Math.random() * 10 + 1)
+      // }
+      // window.location.href = `http://hometown.scau.edu.cn/open/OAuth/authorize?client_id=30&response_type=code&redirect_uri=${redirect_uri}&state=${str}&scope=`
     }
   }
 }
