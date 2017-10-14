@@ -41,7 +41,7 @@
 
 <script>
 import Loading from '../Common/Loading/Loading.vue'
-import avatar from './avatar.svg'
+import avatar from '../commonImg/avatar.svg'
 import new_comment from './new_comment.svg'
 import new_praise from './new_praise.svg'
 import { api } from '../../api'

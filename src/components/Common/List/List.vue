@@ -52,10 +52,10 @@
 import { api } from '../../../api'
 import { SCROLL_POSITION, EMOJI } from '../../../constant'
 import PullTo from 'vue-pull-to'
-import avatar from './avatar.svg'
-import praise from './praise.svg'
-import praise_chose from './praise_chose.svg'
-import error_img from './error_img.jpg'
+import avatar from '../../commonImg/avatar.svg'
+import praise from '../../commonImg/praise.svg'
+import praise_chose from '../../commonImg/praise_chose.svg'
+import error_img from '../../commonImg/error_img.jpg'
 
 export default {
   props: [

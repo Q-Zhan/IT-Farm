@@ -87,12 +87,12 @@ import { EMOJI } from '../../constant'
 import Loading from '../Common/Loading/Loading.vue'
 import Toast from '../Common/Toast/Toast.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
-import back_arrow from './back_arrow_white.svg'
-import avatar from './avatar.svg'
-import praise from './praise.svg'
-import praise_chose from './praise_chose.svg'
-import send_arrow from './send_arrow.svg'
-import error_img from './error_img.jpg'
+import back_arrow from '../commonImg/back_arrow_white.svg'
+import avatar from '../commonImg/avatar.svg'
+import praise from '../commonImg/praise.svg'
+import praise_chose from '../commonImg/praise_chose.svg'
+import send_arrow from '../commonImg/send_arrow.svg'
+import error_img from '../commonImg/error_img.jpg'
 
 export default {
   components: {

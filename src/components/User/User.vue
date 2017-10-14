@@ -44,7 +44,7 @@
 import { api } from '../../api'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
-import avatar from './avatar.svg'
+import avatar from '../commonImg/avatar.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
 import message_img from './message.svg'

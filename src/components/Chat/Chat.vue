@@ -33,9 +33,9 @@
 <script>
 import { EMOJI } from '../../constant'
 import { api } from '../../api'
-import back_arrow from './back_arrow_white.svg'
-import send_arrow from './send_arrow.svg'
-import avatar from './avatar.svg'
+import back_arrow from '../commonImg/back_arrow_white.svg'
+import send_arrow from '../commonImg/send_arrow.svg'
+import avatar from '../commonImg/avatar.svg'
 import user_img from './user.svg'
 
 export default {

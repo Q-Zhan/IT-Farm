@@ -85,10 +85,10 @@ import { EMOJI } from '../../constant'
 import { mapState } from 'vuex'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
-import back_arrow from './back_arrow_white.svg'
-import avatar from './avatar.svg'
-import praise from './praise.svg'
-import error_img from './error_img.jpg'
+import back_arrow from '../commonImg/back_arrow_white.svg'
+import avatar from '../commonImg/avatar.svg'
+import praise from '../commonImg/praise.svg'
+import error_img from '../commonImg/error_img.jpg'
 
 export default {
   components: {

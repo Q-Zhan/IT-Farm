@@ -35,7 +35,7 @@
 import { mapState } from 'vuex'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
-import back_arrow from './back_arrow.svg'
+import back_arrow from '../commonImg/back_arrow.svg'
 
 export default {
   components: {

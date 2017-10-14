@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import back_arrow from './back_arrow.svg'
+import back_arrow from '../commonImg/back_arrow.svg'
 import { api_scau, api, redirect_uri } from '../../api'
 import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'

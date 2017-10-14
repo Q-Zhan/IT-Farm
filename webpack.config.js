@@ -1,7 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 var autoprefixer = require('autoprefixer')
-// var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const webpackConfig = module.exports = {
   entry: ['babel-polyfill', './src/main.js'],
@@ -66,12 +66,14 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: false,
       compress: {
-        warnings: false
+        warnings: false,
+        drop_console: true,
+        pure_funcs: ['console.log']
       }
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
-    // new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin()
   ])
 }

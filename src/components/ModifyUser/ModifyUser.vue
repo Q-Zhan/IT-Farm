@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import back_arrow from './back_arrow_white.svg'
+import back_arrow from '../commonImg/back_arrow_white.svg'
 
 export default {
   data () {
