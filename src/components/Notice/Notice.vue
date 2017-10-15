@@ -12,6 +12,7 @@
           <div class="content">{{parseContent(item)}}</div>
         </div>
       </div>
+      <div v-if="noticeList.length == 0" class="hint">还没有新的{{type == 'comment' ? '评论' : '点赞'}}~</div>
     </div>
   </div>
 </template>
@@ -51,11 +52,11 @@ export default {
     }
   },
   methods: {
-    turnToBack() {
-      this.$router.go(-1)
-    },
     turnToDetail(mid) {
       this.$router.push({name: 'detail', params: {mid}})
+    },
+    turnToBack() {
+      this.$router.go(-1)
     },
     getAvatar(item) {
       let ntcBody = item.ntcBody
@@ -86,6 +87,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 2;
     width: 100%;
     height: 1.4rem;
     background: #3A393E;
@@ -107,6 +109,16 @@ export default {
     padding-top: 1.4rem;
     width: 100%;
     overflow: scroll;
+    position: relative;
+    .hint {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.5rem;
+      letter-spacing: 1px;
+      color: gray;
+    }
     .item {
       width: 100%;
       border-bottom: 1px solid #E8E8E8;

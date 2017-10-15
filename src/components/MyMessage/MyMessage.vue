@@ -177,9 +177,6 @@ export default {
         this.$store.commit('stopLoading')
       })
     },
-    turnToBack() {
-      this.$router.go(-1)
-    },
     turnToDetail(index) {
       let mid = this.messageList[index].mid
       this.$router.push({name: 'detail', params: { mid}})
@@ -218,6 +215,7 @@ export default {
     width: 100%;
     height: 1.4rem;
     position: fixed;
+    z-index: 2;
     background: #3A393E;
     color: white;
     line-height: 1.4rem;

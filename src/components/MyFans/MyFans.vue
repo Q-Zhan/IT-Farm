@@ -120,9 +120,6 @@ export default {
         this.$store.commit('stopLoading')
       })
     },
-    turnToBack() {
-      this.$router.go(-1)
-    },
     turnToPersonPage(uname) {
       console.log(uname)
       this.$router.push({ name: 'personPage', params: { uname }})

@@ -524,6 +524,7 @@ export default {
   header {
     position: fixed;
     top: 0;
+    z-index: 2;
     height: 1.4rem;
     width: 100%;
     color: white;
