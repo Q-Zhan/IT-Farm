@@ -3,7 +3,7 @@
     <header>
       <div class="logo_name">
         <img src="./logo.png"/>
-        <span>匿密</span>
+        <span>匿秘</span>
       </div>
       <div class="subhead" >
         华农人的<br/>匿名朋友圈

@@ -2,7 +2,7 @@
   <div id="register">
     <header>
       <img :src="back_arrow" @click="turnBack"/>
-      <span>注册匿密</span>
+      <span>注册匿秘</span>
     </header>
     <div class="account">
       <input type="text" placeholder="请输入6至12位英文字母、数字" v-model="account"/>

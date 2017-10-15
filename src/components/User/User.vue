@@ -1,7 +1,7 @@
 <template>
   <div id="user">
     <header>
-      <span>匿密</span>
+      <span>匿秘</span>
     </header>
     <div class="bg">
       <router-link to="/userDetail">
@@ -111,6 +111,7 @@ export default {
       display: inline-block;
       width: 2rem;
       text-align: center;
+      letter-spacing: 1px;
     }
   }
   .bg {

@@ -2,7 +2,7 @@
   <div id="login">
     <header>
       <img :src="back_arrow" @click="turnToLogo"/>
-      <span>登录匿密</span>
+      <span>登录匿秘</span>
     </header>
     <div class="account">
       <input type="text" placeholder="账号" v-model="account"/>

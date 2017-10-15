@@ -1,7 +1,7 @@
 <template>
   <div id="ChatList">
     <header>
-      <span class="title">匿密</span>
+      <span class="title">匿秘</span>
     </header>
     <div class="chat_list">
       <div class="new_comment" @click="turnToNewComment">

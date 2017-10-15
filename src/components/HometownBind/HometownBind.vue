@@ -2,7 +2,7 @@
   <div id="HometownBind">
     <header>
       <img :src="back_arrow" @click="turnToLogin"/>
-      <span>匿密</span>
+      <span>匿秘</span>
     </header>
     <div class="form">
       <div class="login_form" v-if="isloginFromShowed">
@@ -16,7 +16,7 @@
         </div>
         <div class="autoLogin">
           <div class="hint" @click="changeForm('login')">
-            新建并绑定匿密账号
+            新建并绑定匿秘账号
           </div>
           <div>
             <input type="radio" id="autoLogin" name="autoLogin" @click="chooseAutoLogin" />
@@ -44,7 +44,7 @@
           <input type="password" placeholder="请再次输入密码" v-model="registerPasswordAgain" />
           <div class="input_bottom"></div>
         </div>
-        <div class="hint" @click="changeForm('register')">绑定已有的匿密账号</div>
+        <div class="hint" @click="changeForm('register')">绑定已有的匿秘账号</div>
         <div class="button" @click="verifyRegisterInfo">
           <button>注册并绑定</button>
         </div>
