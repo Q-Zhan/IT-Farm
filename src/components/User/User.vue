@@ -31,29 +31,37 @@
           <span>我的消息</span>
         </div>
       </router-link>
+      <div class="auth" @click="authen">
+        <div class="img_bg"><img :src="auth"/></div>
+        <span>校园认证</span>
+      </div>
       <div class="logout" @click="logout">
         退出登录
       </div>
     </div>
     <Loading v-show="isLoading"/>
+    <Toast ref="toast"/>
     <img-toast :src="img_toast_src" ref="img_toast"/>
   </div>
 </template>
 
 <script>
 import { api } from '../../api'
+import Toast from '../Common/Toast/Toast.vue'
 import Loading from '../Common/Loading/Loading.vue'
 import ImgToast from '../Common/ImgToast/ImgToast.vue'
 import avatar from '../commonImg/avatar.svg'
 import concern from './concern.svg'
 import fans from './fans.svg'
 import message_img from './message.svg'
+import auth from './auth.svg'
 import { mapState } from 'vuex'
 
 export default {
   components: {
     Loading,
-    ImgToast
+    ImgToast,
+    Toast
   },
   data () {
     return {
@@ -61,6 +69,7 @@ export default {
       concern,
       fans,
       message_img,
+      auth,
       img_toast_src: ''
     }
   },
@@ -92,6 +101,9 @@ export default {
       this.$refs.img_toast.open()
       this.img_toast_src = e.target.src
     },
+    authen() {
+      this.$refs.toast.showToast('内网维护中')
+    }
   }
 }
 </script>
@@ -158,7 +170,7 @@ export default {
         }
       }
     }
-    .myconcern, .myfans, .mymessage {
+    .myconcern, .myfans, .mymessage, .auth {
       height: 1.2rem;
       margin-top: 0.4rem;
       background: white;
@@ -194,6 +206,11 @@ export default {
     .mymessage {
       .img_bg {
         background: #6292EC;
+      }
+    }
+    .auth {
+      .img_bg {
+        background: #40B680;
       }
     }
     .logout {
