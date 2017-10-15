@@ -2,7 +2,7 @@
   <div id="myMessage">
     <header>
       <span>我的消息</span>
-      <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
+      <router-link :to="'/app/user'"><img :src="back_arrow" class="back_arrow"/></router-link>
     </header>
     <div id="list" ref="list">
       <div v-for="(item, index) in messageList"

@@ -2,7 +2,7 @@
   <div id="myConcern">
     <header>
       <span>我的关注</span>
-      <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
+      <router-link :to="'/app/user'"><img :src="back_arrow" class="back_arrow"/></router-link>
     </header>
     <ul class="list" id="list">
       <li v-for="(item, index) in concernedList" :key="index" class="item" @click="turnToPersonPage(item.user.uname)">
@@ -119,9 +119,6 @@ export default {
         console.log(err)
         this.$store.commit('stopLoading')
       })
-    },
-    turnToBack() {
-      this.$router.go(-1)
     },
     turnToPersonPage(uname) {
       if (uname == 'fake' || uname == this.user.uname) {

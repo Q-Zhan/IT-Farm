@@ -2,7 +2,7 @@
   <div id="myFans">
     <header>
       <span>我的粉丝</span>
-      <img :src="back_arrow" class="back_arrow" @click="turnToBack"/>
+      <router-link :to="'/app/user'"><img :src="back_arrow" class="back_arrow"/></router-link>
     </header>
     <ul class="list" id="list">
       <li v-for="(item, index) in fansList" :key="index" class="item" @click="turnToPersonPage(item.user.uname)">
