@@ -137,16 +137,16 @@ export default {
     height: 1.4rem;
     text-align: center;
     line-height: 1.4rem;
-    font-size: 0.4rem;
+    font-size: 0.5rem;
     background: #3A393E;
     color: white;
     border-bottom: 1px solid #D6D6D6;
     .back_arrow {
       width: 0.54rem;
-      height: 0.5rem;
+      height: 0.54rem;
       position: absolute;
       top: 0.1rem;
-      left: 0.2rem;
+      left: 0.45rem;
       img {
         width: 100%;
         height: 100%;

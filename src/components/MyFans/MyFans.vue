@@ -12,6 +12,7 @@
           <div class="signature">{{item.user.signature || '这个人很懒，还没有自我介绍'}}</div>
         </div>
       </li>
+      <div v-if="fansList.length == 0" class="hint">还没有人关注你~</div>
     </ul>
     <Loading v-show="isLoading"/>
   </div>
@@ -145,6 +146,7 @@ export default {
     height: 1.4rem;
     position: fixed;
     top: 0;
+    z-index: 2;
     background: #3A393E;
     line-height: 1.4rem;
     font-size: 0.5rem;
@@ -167,6 +169,16 @@ export default {
     padding-top: 1.4rem;
     overflow-y: scroll;
     overflow-x: hidden;
+    position: relative;
+    .hint {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.5rem;
+      letter-spacing: 1px;
+      color: gray;
+    }
     .item {
       width: 100%;
       height: 2.2rem;
