@@ -4,7 +4,7 @@
 > __注意：此项目为前端项目，想看后端代码的同学可以点击[后台项目传送地址](https://github.com/wususu/Mimi-Sever)。有问题欢迎提issue，同时也欢迎Star！__
 
 ## 技术栈
-vue2 + vuex + vue-router + webpack + es6/7 + fetch + sass
+vue2 + vuex + vue-router + webpack + websocket + es6/7 + fetch + sass
 
 ## 效果演示
 [demo预览地址](https://123.207.18.102)（建议使用chrome浏览器的手机模式浏览）
@@ -40,5 +40,3 @@ npm run build
 
 # 特别注意
 该项目的部署环境使用了nginx的反向代理来实现前端的跨域请求，本地开发时使用cors进行跨域（可能以后后端cors设置会关闭）。如若本地运行时遇到跨域问题，请自行使用[http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware)进行跨域。
-
-
