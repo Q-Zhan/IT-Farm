@@ -31,14 +31,12 @@
     "node-sass": "^4.5.0",
     "postcss-loader": "^2.0.6",
     "sass-loader": "^5.0.1",
-    "stompjs": "^2.3.3",
     "tls": "^0.0.1",
     "url-loader": "^0.5.9",
     "vue-loader": "^12.1.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^2.6.1",
-    "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.4.5"
   }
 }
