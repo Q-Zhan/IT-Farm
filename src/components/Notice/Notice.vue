@@ -47,6 +47,7 @@ export default {
     }
   },
   mounted() {
+    // 检测store是否被清空
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
@@ -67,6 +68,7 @@ export default {
         return this.avatar
       }
     },
+    // 添加省略号
     parseContent(item) {
       let body = item.ntcBody
       if (body.mShrtCntnt) {

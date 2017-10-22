@@ -96,10 +96,11 @@ export default {
     if (sessionStorage[SCROLL_POSITION]) {
       document.getElementsByClassName('scroll-container')[0].scrollTop = sessionStorage[SCROLL_POSITION]
     }
+    // 添加对滚动事件的监听以保留滚动位置
     this.saveScrollPosition()
   },
   beforeDestroy() {
-    // 保留滚动位置
+    // 离开前保留滚动位置
     sessionStorage.setItem(SCROLL_POSITION, this.scrollPosition)
   },
   methods: {

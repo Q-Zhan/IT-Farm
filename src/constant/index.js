@@ -1,6 +1,6 @@
 export const SCROLL_POSITION = 'scauwumi_scrollPosition'
 export const SECRET = 'scauwumi_secret'
-export const EMOJI = {
+export const EMOJI = { // emoji表情包检索
   "[爱你]": require('./emoji/d_aini.png'),
   "[奥特曼]": require('./emoji/d_aoteman.png'),
   "[拜拜]": require('./emoji/d_baibai.png'),

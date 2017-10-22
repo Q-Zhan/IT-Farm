@@ -96,9 +96,11 @@ export default {
     }
   },
   mounted() {
+    // 刷新页面后store被清空，需要重新到home页请求
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
+    // 初始化picker组件所需要的数据
     this.initGradeData()
   },
   methods: {

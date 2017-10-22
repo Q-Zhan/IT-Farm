@@ -53,18 +53,22 @@ export default {
     this.autoLogin()
   },
   methods: {
+    // 自动登录检测
     autoLogin() {
       if (localStorage[SECRET] && (localStorage[SECRET] != 'noAutoLogin')) {
+        // 用户属于自动登录状态，已经把token存在localStorage中
+        // 存储token
         this.$store.commit('saveSecret', { secret: localStorage[SECRET] })
+        // 使用token获取登录用户信息
         this.$store.dispatch('autoLogin')
         .then((code) => {
-          console.log(code)
           if (code == '200') {
             this.$refs.toast.showToast('登录成功')
             setTimeout(() => {
               this.$router.replace('/app/home')
             }, 800)
           } else {
+            // 自动登录超时
             this.$refs.toast.showToast('请重新登录')
             localStorage.removeItem(SECRET)
           }

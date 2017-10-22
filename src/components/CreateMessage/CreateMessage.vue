@@ -226,6 +226,7 @@ export default {
         this.$refs.toast.showToast('上传失败')
       })
     },
+    // 改变匿名状态
     changeIsFake() {
       this.isFake = !this.isFake
     },

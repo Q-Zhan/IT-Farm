@@ -140,12 +140,15 @@ export default {
     }
   },
   mounted() {
+    // 检测store是否被清空
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
+    // 获取个人信息
     this.getPersonInfo()
   },
   methods: {
+    // 切换tab
     changeTab(value) {
       if (value == 'message') {
         this.isInfoShowed = false
@@ -190,6 +193,7 @@ export default {
           this.$store.commit('stopLoading')
         })
     },
+    // 关注按钮
     concern() {
       let reqApi = ''
       let uname = this.$route.params.uname
@@ -242,6 +246,7 @@ export default {
         this.$router.push({ name: 'chat', params: { chatIndex: i}})
       }
     },
+    // 获取该用户所发过的message
     getMessage() {
       this.$store.commit('startLoading')
       let time = new Date().getTime()

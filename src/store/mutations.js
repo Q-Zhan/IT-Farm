@@ -11,6 +11,7 @@ export default {
   saveUserInfo(state, content) {
     state.user = content
   },
+  // 保存token
   saveSecret(state, { secret }) {
     state.user.secret = secret
   },
@@ -20,28 +21,13 @@ export default {
   saveMessageList(state, { messageList }) {
     state.messageList = messageList
   },
-  addMessage(state, {}) {
-    // state.messageList.unshift({
-    //   commentCount: 0,
-    //   content: ,
-    //   delete: false,
-    //   fake: ,
-    //   fakeName: null,
-    //   likeCount: 0,
-    //   likee: null,
-    //   location: {
-    //     lid: ,
-    //     locale: 
-    //   },
-
-    // })
-  },
   getNewMessage(state, { newMessage }) {
     state.messageList = newMessage
   },
   addOldMessage(state, { oldMessage }) {
     state.messageList = state.messageList.concat(oldMessage)
   },
+  // 增加评论数
   addCommentCount(state, { mid, num }) {
     for (let i = 0, len = state.messageList.length; i < len; i++) {
       if (state.messageList[i].mid == mid) {
@@ -49,9 +35,11 @@ export default {
       }
     }
   },
+  // 保存socket对象
   connectSocket(state, { stomp }) {
     state.socket.stomp = stomp
   },
+  // 添加聊天对象
   addChat(state, { receiverId, Nname, Uname, avatar }) {
     state.chat.chatList.push({
       chatId: receiverId,
@@ -93,6 +81,7 @@ export default {
       time: new Date().getTime()
     })
   },
+  // 改变聊天已读状态
   changeChatRead(state, { chatIndex }) {
     state.chat.chatList[chatIndex].isRead = true
   },

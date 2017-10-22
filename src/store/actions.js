@@ -64,6 +64,7 @@ export default {
       commit('stopLoading')
     })
   },
+  // 第三方登录，外网无法访问学校内网，所以关闭该功能
   hometownLogin({ commit, state }, { uname, passwd, hmtUid, isAutoLogin }) {
     commit('startLoading')
     return fetch(api_scau + '/api/OAuth2/bind', {

@@ -42,6 +42,7 @@ export default {
     user: state => state.user
   }),
   mounted() {
+    // 检测store是否被清空
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }

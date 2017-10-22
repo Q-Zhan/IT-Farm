@@ -78,6 +78,7 @@ export default {
     user: state => state.user
   }),
   mounted() {
+    // 检测store是否被清空
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
@@ -106,6 +107,7 @@ export default {
         this.$store.commit('stopLoading')
       })
     },
+    // 顺序切换背景色
     getBackground(index) {
       if (index % 2 == 0) {
         this.background_array[index] = true

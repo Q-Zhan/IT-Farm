@@ -209,7 +209,7 @@ export default {
         return 0
       }
       let params = `content=${this.newComment}&mid=${this.message.mid}`
-      if (this.rcid != '') {
+      if (this.rcid != '') { // 如果该评论回复了其他某条评论
         params = params + '&rcid=' + this.rcid
       }
       this.newComment = ''
@@ -256,6 +256,7 @@ export default {
           self.getNewComment()
         }
       }
+      // 函数节流
       function throttle(func, wait = 100) {
         let context, args;
         let previous = 0;

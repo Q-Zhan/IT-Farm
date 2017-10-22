@@ -79,6 +79,7 @@ export default {
   }),
   mounted() {
     this.$store.commit('changeFooterChosen', {value: 'user'})
+    // 检测store是否被清空
     if (!this.user.secret) {
       this.$router.push('/app/home')
     }
@@ -103,6 +104,7 @@ export default {
     },
     authen() {
       this.$refs.toast.showToast('内网维护中')
+      // this.$router.push('/auth')
     }
   }
 }
